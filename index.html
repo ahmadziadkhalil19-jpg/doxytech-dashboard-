@@ -194,6 +194,7 @@ textarea.input { min-height: 50px; resize: vertical; }
     <button class="chip" data-filter="HYBRID">HYBRID</button>
     <button class="btn dark" onclick="openEditModal()">+ לקוח חדש</button>
     <button class="btn purple" onclick="openAIModal()">✨ עוזר AI</button>
+    <button class="btn" onclick="openSearchModal()" style="background:#7c3aed;color:#fff">🔍 חיפוש במסמכים</button>
     <button class="btn" onclick="sendDeadlineNotifications()" style="background:#dc2626;color:#fff">🔔 שלח התראות</button>
     <button class="btn" onclick="openSettingsModal()" style="background:#6b7280;color:#fff">⚙️ הגדרות</button>
     <button class="btn" onclick="window.print()">📄 הפקת PDF</button>
@@ -270,6 +271,73 @@ textarea.input { min-height: 50px; resize: vertical; }
     <div class="modalFooter">
       <input class="input" id="aiQuestion" placeholder="שאל שאלה..." style="flex:1" onkeydown="if(event.key==='Enter') sendAI()">
       <button class="btn purple" onclick="sendAI()" id="aiSendBtn">➤</button>
+    </div>
+  </div>
+</div>
+
+<!-- Search Documents Modal -->
+<div class="modalOverlay" id="searchModalOverlay" onclick="closeSearchModal(event)">
+  <div class="modal" onclick="event.stopPropagation()" style="max-width:800px">
+    <div class="modalHeader">
+      <h2>🔍 חיפוש במסמכים</h2>
+      <button class="iconBtn" onclick="closeSearchModal()">✕</button>
+    </div>
+    <div class="modalBody">
+      <div class="field">
+        <label>חפש טקסט בכל המסמכים של כל הלקוחות</label>
+        <input class="input" id="searchInput" placeholder="למשל: כאמל מנסור, 1400, תקנה 24..." onkeydown="if(event.key==='Enter') searchDocuments()">
+      </div>
+      <button class="btn dark" onclick="searchDocuments()" style="width:100%">🔍 חפש</button>
+      <div id="searchResults" style="margin-top:16px"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Files Modal -->
+<div class="modalOverlay" id="filesModalOverlay" onclick="closeFilesModal(event)">
+  <div class="modal" onclick="event.stopPropagation()" style="max-width:900px">
+    <div class="modalHeader">
+      <h2>📁 קבצי לקוח - <span id="filesClientName"></span></h2>
+      <button class="iconBtn" onclick="closeFilesModal()">✕</button>
+    </div>
+    <div class="modalBody">
+      <div style="background:#f3f7fb;padding:14px;border-radius:10px;margin-bottom:16px">
+        <h3 style="margin:0 0 10px;font-size:14px;color:#0f2747">📤 העלה קובץ חדש</h3>
+        <div class="formGrid cols2">
+          <div class="field">
+            <label>קטגוריה</label>
+            <select class="input" id="file_category">
+              <option value="iec">🏢 מסמכי חברת חשמל</option>
+              <option value="certificates">✅ אישורי כיול / קונסטרוקציה / תקנה 24</option>
+              <option value="quote">💰 הצעת מחיר</option>
+              <option value="equipment_order">📦 הזמנת ציוד</option>
+              <option value="panel_plan">📐 תכנית הצבת פנלים</option>
+              <option value="electrical_plan">⚡ תכנית חשמל</option>
+              <option value="construction_plan">🏗️ תכנית קונסטרוקציה</option>
+              <option value="site_photos">📸 תמונות שטח</option>
+              <option value="drone_photos">🚁 צילומי רחפן</option>
+              <option value="signed_contract">📝 חוזה חתום</option>
+              <option value="poa">📋 ייפוי כוח</option>
+              <option value="gov_forms">🏛️ טפסי GOV</option>
+              <option value="other">📄 אחר</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>תיאור (אופציונלי)</label>
+            <input class="input" id="file_description" placeholder="למשל: גרסה סופית">
+          </div>
+        </div>
+        <div class="field">
+          <label>בחר קובץ (עד 50MB)</label>
+          <input class="input" type="file" id="file_input" accept="image/*,application/pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.dwg,.zip">
+        </div>
+        <button class="btn dark" onclick="uploadFile()" style="width:100%" id="uploadBtn">📤 העלה קובץ</button>
+        <div id="uploadProgress" style="display:none;margin-top:10px;padding:10px;background:#e7f0fb;border-radius:8px;color:#1849a9;font-size:13px"></div>
+      </div>
+      <div class="formSection">
+        <h3>📚 כל הקבצים של הלקוח</h3>
+        <div id="filesList" style="display:grid;gap:10px"></div>
+      </div>
     </div>
   </div>
 </div>
@@ -498,6 +566,7 @@ function renderClients(arr) {
         <div style="display:flex;gap:8px;align-items:center">
           <span class="risk ${riskClass(c.risk)}">${riskText(c.risk)}</span>
           <div class="actions">
+            <button class="iconBtn" onclick="openFilesModal('${c.id}')" title="קבצים" style="color:#7c3aed">📁</button>
             <button class="iconBtn" onclick="pushToZoho('${c.id}')" title="סנכרן ל-Zoho" style="color:#0891b2">☁️</button>
             <button class="iconBtn" onclick="openEditModal('${c.id}')" title="עריכה">✏️</button>
             <button class="iconBtn danger" onclick="deleteClient('${c.id}')" title="מחיקה">🗑️</button>
@@ -1006,6 +1075,321 @@ async function pushToZoho(clientId) {
   } catch (err) {
     setSyncStatus('error');
     alert('שגיאה: ' + err.message);
+  }
+}
+
+// ====== Files Management ======
+let currentFilesClient = null;
+
+const CATEGORY_LABELS = {
+  iec: '🏢 מסמכי חברת חשמל',
+  certificates: '✅ אישורי כיול / קונסטרוקציה / תקנה 24',
+  quote: '💰 הצעת מחיר',
+  equipment_order: '📦 הזמנת ציוד',
+  panel_plan: '📐 תכנית הצבת פנלים',
+  electrical_plan: '⚡ תכנית חשמל',
+  construction_plan: '🏗️ תכנית קונסטרוקציה',
+  site_photos: '📸 תמונות שטח',
+  drone_photos: '🚁 צילומי רחפן',
+  signed_contract: '📝 חוזה חתום',
+  poa: '📋 ייפוי כוח',
+  gov_forms: '🏛️ טפסי GOV',
+  other: '📄 אחר'
+};
+
+async function openFilesModal(clientId) {
+  currentFilesClient = clients.find(c => c.id === clientId);
+  if (!currentFilesClient) return;
+  document.getElementById('filesClientName').textContent = currentFilesClient.name;
+  document.getElementById('filesModalOverlay').classList.add('active');
+  await loadClientFiles();
+}
+
+function closeFilesModal(event) {
+  if (event && event.target.id !== 'filesModalOverlay' && event.type === 'click') return;
+  document.getElementById('filesModalOverlay').classList.remove('active');
+  currentFilesClient = null;
+}
+
+async function loadClientFiles() {
+  if (!currentFilesClient) return;
+  const container = document.getElementById('filesList');
+  container.innerHTML = '<div style="text-align:center;color:#66758a;padding:20px">טוען קבצים...</div>';
+  
+  try {
+    const [files, required] = await Promise.all([
+      sbGet('client_files', `client_id=eq.${currentFilesClient.id}&order=uploaded_at.desc`),
+      sbGet('required_documents', `or=(system_type.eq.ALL,system_type.eq.${encodeURIComponent(currentFilesClient.system)})&order=order_index.asc`)
+    ]);
+    
+    // Calculate missing documents
+    const uploadedCategories = new Set((files || []).map(f => f.category));
+    const missing = (required || []).filter(r => r.is_required && !uploadedCategories.has(r.category));
+    const uploaded = (required || []).filter(r => uploadedCategories.has(r.category));
+    
+    container.innerHTML = '';
+    
+    // Show missing documents alert
+    if (missing.length > 0) {
+      const missingDiv = document.createElement('div');
+      missingDiv.style.cssText = 'background:#fef2f2;border:1px solid #fecaca;border-radius:10px;padding:14px;margin-bottom:16px';
+      missingDiv.innerHTML = `
+        <h4 style="margin:0 0 8px;font-size:14px;color:#b42318">⚠️ חסרים ${missing.length} מסמכים נדרשים:</h4>
+        <div style="display:grid;gap:4px">
+          ${missing.map(m => `<div style="font-size:12px;color:#7f1d1d">❌ ${escapeHtml(m.label)}</div>`).join('')}
+        </div>
+      `;
+      container.appendChild(missingDiv);
+    }
+    
+    // Show completed documents summary
+    if (uploaded.length > 0) {
+      const doneDiv = document.createElement('div');
+      doneDiv.style.cssText = 'background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:14px;margin-bottom:16px';
+      doneDiv.innerHTML = `
+        <h4 style="margin:0 0 8px;font-size:14px;color:#166534">✅ יש ${uploaded.length} מסמכים מתוך ${required.length} נדרשים (${Math.round(uploaded.length/required.length*100)}%)</h4>
+      `;
+      container.appendChild(doneDiv);
+    }
+    
+    if (!files || files.length === 0) {
+      const empty = document.createElement('div');
+      empty.style.cssText = 'text-align:center;color:#66758a;padding:20px';
+      empty.textContent = 'אין קבצים עדיין. העלה את הראשון!';
+      container.appendChild(empty);
+      return;
+    }
+    
+    // Group by category
+    const grouped = {};
+    files.forEach(f => {
+      if (!grouped[f.category]) grouped[f.category] = [];
+      grouped[f.category].push(f);
+    });
+    
+    Object.keys(grouped).forEach(cat => {
+      const section = document.createElement('div');
+      section.style.cssText = 'background:#fbfdff;border:1px solid #e8eff7;border-radius:10px;padding:12px';
+      section.innerHTML = `<h4 style="margin:0 0 10px;font-size:13px;color:#0f2747">${CATEGORY_LABELS[cat] || cat} (${grouped[cat].length})</h4>`;
+      
+      grouped[cat].forEach(f => {
+        const sizeMB = (f.file_size / 1024 / 1024).toFixed(2);
+        const icon = f.mime_type?.startsWith('image/') ? '🖼️' : f.mime_type?.includes('pdf') ? '📕' : f.mime_type?.includes('word') ? '📘' : f.mime_type?.includes('sheet') ? '📗' : '📄';
+        const fileUrl = `${SUPABASE_URL}/storage/v1/object/public/client-files/${f.storage_path}`;
+        const ocrBadge = f.ocr_status === 'done' ? '<span style="background:#dcfce7;color:#166534;padding:2px 6px;border-radius:4px;font-size:10px;margin-right:4px">🤖 נקרא</span>' :
+                        f.ocr_status === 'processing' ? '<span style="background:#fef3c7;color:#92400e;padding:2px 6px;border-radius:4px;font-size:10px;margin-right:4px">⏳ מעבד...</span>' :
+                        f.ocr_status === 'failed' ? '<span style="background:#fee2e2;color:#b42318;padding:2px 6px;border-radius:4px;font-size:10px;margin-right:4px">❌ נכשל</span>' : '';
+        const summaryText = f.extracted_metadata?.summary ? `<div style="font-size:11px;color:#1849a9;margin-top:4px;padding:6px;background:#e7f0fb;border-radius:6px">💡 ${escapeHtml(f.extracted_metadata.summary)}</div>` : '';
+        
+        const row = document.createElement('div');
+        row.style.cssText = 'padding:8px;background:white;border-radius:8px;margin-top:6px';
+        row.innerHTML = `
+          <div style="display:flex;align-items:center;gap:10px">
+            <span style="font-size:20px">${icon}</span>
+            <div style="flex:1;min-width:0">
+              <div style="font-weight:600;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escapeHtml(f.file_name)} ${ocrBadge}</div>
+              <div style="font-size:11px;color:#66758a">${sizeMB} MB • ${new Date(f.uploaded_at).toLocaleDateString('he-IL')}${f.description ? ' • ' + escapeHtml(f.description) : ''}</div>
+            </div>
+            <a href="${fileUrl}" target="_blank" class="iconBtn" title="הורד/צפה">⬇️</a>
+            ${(f.mime_type?.startsWith('image/') || f.mime_type === 'application/pdf') && f.ocr_status !== 'done' ? `<button class="iconBtn" onclick="runOCR('${f.id}')" title="קרא טקסט" style="color:#7c3aed">🤖</button>` : ''}
+            <button class="iconBtn danger" onclick="deleteFile('${f.id}', '${f.storage_path}')" title="מחק">🗑️</button>
+          </div>
+          ${summaryText}
+        `;
+        section.appendChild(row);
+      });
+      
+      container.appendChild(section);
+    });
+  } catch (err) {
+    container.innerHTML = '<div style="color:#b42318;padding:20px">שגיאה בטעינת קבצים: ' + err.message + '</div>';
+  }
+}
+
+async function runOCR(fileId) {
+  try {
+    const res = await fetch(`${SUPABASE_URL}/functions/v1/ocr-document`, {
+      method: 'POST',
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ file_id: fileId })
+    });
+    const data = await res.json();
+    if (data.error) {
+      alert('שגיאה ב-OCR: ' + data.error);
+    } else if (data.skipped) {
+      alert('לא ניתן לקרוא קובץ מסוג זה');
+    } else {
+      await loadClientFiles();
+    }
+  } catch (err) {
+    alert('שגיאה: ' + err.message);
+  }
+}
+
+async function uploadFile() {
+  const fileInput = document.getElementById('file_input');
+  const file = fileInput.files[0];
+  if (!file) { alert('בחר קובץ קודם'); return; }
+  if (!currentFilesClient) return;
+  
+  const category = document.getElementById('file_category').value;
+  const description = document.getElementById('file_description').value;
+  const btn = document.getElementById('uploadBtn');
+  const progress = document.getElementById('uploadProgress');
+  
+  btn.disabled = true;
+  btn.textContent = '📤 מעלה...';
+  progress.style.display = 'block';
+  progress.textContent = 'מעלה לענן...';
+  
+  try {
+    // Sanitize filename - remove special chars and Hebrew for storage path
+    const timestamp = Date.now();
+    const ext = file.name.split('.').pop();
+    const safeName = `${timestamp}.${ext}`;
+    const storagePath = `${currentFilesClient.id}/${category}/${safeName}`;
+    
+    // Upload to Supabase Storage
+    const uploadRes = await fetch(`${SUPABASE_URL}/storage/v1/object/client-files/${storagePath}`, {
+      method: 'POST',
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': `Bearer ${SUPABASE_KEY}`,
+        'Content-Type': file.type || 'application/octet-stream',
+        'x-upsert': 'true'
+      },
+      body: file
+    });
+    
+    if (!uploadRes.ok) {
+      const err = await uploadRes.text();
+      throw new Error('Upload failed: ' + err);
+    }
+    
+    // Save metadata to database
+    const fileRecord = await sbPost('client_files', {
+      client_id: currentFilesClient.id,
+      file_name: file.name,
+      storage_path: storagePath,
+      file_size: file.size,
+      mime_type: file.type,
+      category,
+      description: description || null
+    });
+    
+    progress.textContent = '✅ הועלה בהצלחה! מפעיל OCR ברקע...';
+    progress.style.background = '#dff3e5';
+    progress.style.color = '#166534';
+    
+    // Trigger OCR in background (don't wait)
+    if (fileRecord?.[0]?.id && (file.type.startsWith('image/') || file.type === 'application/pdf')) {
+      fetch(`${SUPABASE_URL}/functions/v1/ocr-document`, {
+        method: 'POST',
+        headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ file_id: fileRecord[0].id })
+      }).then(() => loadClientFiles()).catch(() => {});
+    }
+    
+    // Reset form
+    fileInput.value = '';
+    document.getElementById('file_description').value = '';
+    
+    // Reload files list
+    setTimeout(async () => {
+      progress.style.display = 'none';
+      progress.style.background = '#e7f0fb';
+      progress.style.color = '#1849a9';
+      await loadClientFiles();
+    }, 1000);
+  } catch (err) {
+    progress.textContent = '❌ שגיאה: ' + err.message;
+    progress.style.background = '#fde3e3';
+    progress.style.color = '#b42318';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '📤 העלה קובץ';
+  }
+}
+
+async function deleteFile(fileId, storagePath) {
+  if (!confirm('למחוק קובץ זה?')) return;
+  try {
+    // Delete from storage
+    await fetch(`${SUPABASE_URL}/storage/v1/object/client-files/${storagePath}`, {
+      method: 'DELETE',
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+    });
+    // Delete metadata
+    await sbDelete('client_files', `id=eq.${fileId}`);
+    await loadClientFiles();
+  } catch (err) {
+    alert('שגיאה במחיקה: ' + err.message);
+  }
+}
+
+// ====== Document Search ======
+function openSearchModal() {
+  document.getElementById('searchModalOverlay').classList.add('active');
+  document.getElementById('searchInput').focus();
+}
+
+function closeSearchModal(event) {
+  if (event && event.target.id !== 'searchModalOverlay' && event.type === 'click') return;
+  document.getElementById('searchModalOverlay').classList.remove('active');
+}
+
+async function searchDocuments() {
+  const query = document.getElementById('searchInput').value.trim();
+  if (!query || query.length < 2) { alert('יש להזין לפחות 2 תווים'); return; }
+  
+  const container = document.getElementById('searchResults');
+  container.innerHTML = '<div style="text-align:center;color:#66758a;padding:20px">מחפש...</div>';
+  
+  try {
+    // Search in extracted text using ilike (case insensitive)
+    const files = await sbGet('client_files', `extracted_text=ilike.*${encodeURIComponent(query)}*&select=*&order=uploaded_at.desc`);
+    
+    if (!files || files.length === 0) {
+      container.innerHTML = '<div style="text-align:center;color:#66758a;padding:20px">לא נמצאו תוצאות</div>';
+      return;
+    }
+    
+    container.innerHTML = `<h4 style="margin:0 0 12px;font-size:14px">נמצאו ${files.length} תוצאות:</h4>`;
+    
+    files.forEach(f => {
+      const client = clients.find(c => c.id === f.client_id);
+      const text = f.extracted_text || '';
+      const queryLower = query.toLowerCase();
+      const textLower = text.toLowerCase();
+      const idx = textLower.indexOf(queryLower);
+      
+      let snippet = '';
+      if (idx !== -1) {
+        const start = Math.max(0, idx - 80);
+        const end = Math.min(text.length, idx + query.length + 80);
+        const before = text.substring(start, idx);
+        const match = text.substring(idx, idx + query.length);
+        const after = text.substring(idx + query.length, end);
+        snippet = `${start > 0 ? '...' : ''}${escapeHtml(before)}<mark style="background:#fef08a;padding:1px 3px;border-radius:2px">${escapeHtml(match)}</mark>${escapeHtml(after)}${end < text.length ? '...' : ''}`;
+      }
+      
+      const fileUrl = `${SUPABASE_URL}/storage/v1/object/public/client-files/${f.storage_path}`;
+      const card = document.createElement('div');
+      card.style.cssText = 'background:#fbfdff;border:1px solid #e8eff7;border-radius:10px;padding:12px;margin-bottom:10px';
+      card.innerHTML = `
+        <div style="display:flex;justify-content:space-between;align-items:start;gap:10px;margin-bottom:6px">
+          <div>
+            <div style="font-weight:700;font-size:14px;color:#0f2747">${escapeHtml(client?.name || 'לקוח לא ידוע')}</div>
+            <div style="font-size:12px;color:#66758a">${CATEGORY_LABELS[f.category] || f.category} • ${escapeHtml(f.file_name)}</div>
+          </div>
+          <a href="${fileUrl}" target="_blank" class="btn light" style="font-size:11px;padding:6px 10px">פתח ↗</a>
+        </div>
+        <div style="font-size:12px;color:#374151;line-height:1.6;background:white;padding:8px;border-radius:6px;border:1px solid #e5e7eb">${snippet}</div>
+      `;
+      container.appendChild(card);
+    });
+  } catch (err) {
+    container.innerHTML = '<div style="color:#b42318;padding:20px">שגיאה בחיפוש: ' + err.message + '</div>';
   }
 }
 </script>
