@@ -28,6 +28,25 @@ body { font-family: Arial, "Noto Sans Hebrew", sans-serif; background: linear-gr
 /* User badge in header */
 .user-badge { display: flex; align-items: center; gap: 10px; margin-top: 12px; padding: 8px 12px; background: rgba(255,255,255,.1); border-radius: 10px; font-size: 13px; }
 .logout-btn { background: rgba(255,255,255,.2); border: none; color: white; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; font-family: inherit; }
+
+/* Track buttons & stage details */
+.trackBtn { font-size: 12px; padding: 8px 14px; }
+.trackBtn.active { background: #0f2747 !important; color: #fff !important; border-color: #0f2747 !important; }
+.stageItem { background: #fbfdff; border: 1px solid #e8eff7; border-radius: 10px; padding: 12px; margin-bottom: 10px; }
+.stageItem .num { display: inline-block; background: #0f2747; color: #fff; width: 24px; height: 24px; border-radius: 50%; text-align: center; font-size: 12px; font-weight: 700; line-height: 24px; margin-left: 8px; }
+.stageItem.parallel { border-left: 4px solid #ff9800; background: #fff7ed; }
+.stageItem.business-only { border-left: 4px solid #9333ea; background: #faf5ff; }
+.stageItem h4 { margin: 0 0 6px; font-size: 14px; color: #0f2747; }
+.stageItem .desc { font-size: 12px; color: #66758a; margin-bottom: 8px; line-height: 1.5; }
+.stageItem .docs { background: white; border-radius: 6px; padding: 8px; margin-top: 6px; }
+.stageItem .docs-title { font-size: 11px; font-weight: 700; color: #374151; margin-bottom: 4px; }
+.stageItem .docs-item { font-size: 11px; color: #4b5563; padding: 2px 0; }
+.stageItem .docs-item::before { content: "📄 "; }
+.stageItem .fee { display: inline-block; background: #fef3c7; color: #92400e; padding: 3px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; margin-top: 4px; }
+.stageItem .parallel-badge { display: inline-block; background: #ff9800; color: white; padding: 2px 6px; border-radius: 4px; font-size: 10px; margin-right: 4px; }
+.stageItem .business-badge { display: inline-block; background: #9333ea; color: white; padding: 2px 6px; border-radius: 4px; font-size: 10px; margin-right: 4px; }
+.stageItem .link-btn { display: inline-block; background: #0369a1; color: white; padding: 4px 10px; border-radius: 6px; font-size: 11px; text-decoration: none; margin: 4px 4px 0 0; }
+.stageItem .link-btn:hover { background: #0284c7; }
 .logout-btn:hover { background: rgba(255,255,255,.3); }
 .wrap { max-width: 1400px; margin: 0 auto; padding: 28px 24px 40px; }
 .topbar { display: grid; grid-template-columns: 1.7fr 1fr; gap: 16px; background: linear-gradient(135deg,#0f2747,#19406f); color: #fff; border-radius: 24px; padding: 24px 26px; box-shadow: 0 10px 30px rgba(15,39,71,.08); }
@@ -240,6 +259,7 @@ textarea.input { min-height: 50px; resize: vertical; }
     <button class="chip" data-filter="ON GRID">ON GRID</button>
     <button class="chip" data-filter="HYBRID">HYBRID</button>
     <button class="btn dark" onclick="openEditModal()">+ לקוח חדש</button>
+    <button class="btn" onclick="syncFromZoho()" style="background:#0891b2;color:#fff">🔄 סנכרן מ-Zoho</button>
     <button class="btn purple" onclick="openAIModal()">✨ עוזר AI</button>
     <button class="btn" onclick="openSearchModal()" style="background:#7c3aed;color:#fff">🔍 חיפוש במסמכים</button>
     <button class="btn" onclick="sendDeadlineNotifications()" style="background:#dc2626;color:#fff">🔔 שלח התראות</button>
@@ -251,7 +271,7 @@ textarea.input { min-height: 50px; resize: vertical; }
   <div class="stats">
     <div class="card stat"><div class="k">ממוצע התקדמות</div><div class="v" id="avgProgress">-</div><div class="hint">ממוצע כל הפרויקטים</div></div>
     <div class="card stat"><div class="k">חסמים קריטיים</div><div class="v" id="criticalCount">-</div><div class="hint">ציוד / קונסטרוקציה / חח"י</div></div>
-    <div class="card stat"><div class="k">משימות במקביל</div><div class="v" id="parallelCount">-</div><div class="hint">מה אפשר לקדם</div></div>
+    <div class="card stat"><div class="k">סה"כ הכנסות</div><div class="v" id="totalRevenue" style="font-size:22px">-</div><div class="hint">סכום כל הפרויקטים</div></div>
     <div class="card stat"><div class="k">הלקוח הכי מתקדם</div><div class="v" id="topClient" style="font-size:22px">-</div><div class="hint">לפי התקדמות</div></div>
   </div>
 
@@ -264,18 +284,15 @@ textarea.input { min-height: 50px; resize: vertical; }
     </div>
     <div style="display:grid;gap:18px">
       <div class="card section">
-        <h2>שלבי תהליך אחידים</h2>
-        <table>
-          <thead><tr><th>שלב</th><th>מה עושים</th><th>רלוונטי ל</th></tr></thead>
-          <tbody id="processTable"></tbody>
-        </table>
-      </div>
-      <div class="card section">
-        <h2>לוגיסטיקה והובלות</h2>
-        <table>
-          <thead><tr><th>קבוצה</th><th>לקוחות</th><th>חסר</th><th>דדליין</th></tr></thead>
-          <tbody id="deliveries"></tbody>
-        </table>
+        <h2>📋 תהליכי עבודה לפי מסלול</h2>
+        <div class="lead">בחר מסלול כדי לראות את כל השלבים, המסמכים והקישורים הנדרשים</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin:12px 0">
+          <button class="btn light trackBtn active" data-track="regular" onclick="showTrackDetails('regular')">🔵 ייצור מפוזר רגיל</button>
+          <button class="btn light trackBtn" data-track="green_track" onclick="showTrackDetails('green_track')">🟢 מסלול ירוק (עד 15KW)</button>
+          <button class="btn light trackBtn" data-track="commercial" onclick="showTrackDetails('commercial')">🟠 מסחרי</button>
+          <button class="btn light trackBtn" data-track="off_grid" onclick="showTrackDetails('off_grid')">🟣 OFF GRID</button>
+        </div>
+        <div id="trackDetails" style="max-height:600px;overflow-y:auto"></div>
       </div>
       <div class="card section">
         <h2>מסמכים עיקריים</h2>
@@ -608,8 +625,10 @@ function renderClients(arr) {
           <div class="clientName">${escapeHtml(c.name)}</div>
           <div class="tagRow">
             <span class="tag ${systemClass}">${c.system}</span>
+            ${c.track_type ? `<span class="tag" style="background:${trackColor(c.track_type)};color:#fff">${trackLabel(c.track_type)}${c.system_size_kw ? ' • ' + c.system_size_kw + ' KW' : ''}</span>` : ''}
             <span class="tag ${isBusiness ? 'business' : 'private'}">${escapeHtml(c.customer_type || '')}</span>
             <span class="tag type">${escapeHtml(c.installed_at || '')}</span>
+            ${c.zoho_deal_id ? `<span class="tag" style="background:#e0f2fe;color:#0369a1">☁️ Zoho • ${Number(c.zoho_amount || 0).toLocaleString()} ₪</span>` : ''}
           </div>
         </div>
         <div style="display:flex;gap:8px;align-items:center">
@@ -669,7 +688,11 @@ function renderStats(arr) {
   const avg = arr.length ? (arr.reduce((a,c)=>a+(c.progress_overall||0), 0)/arr.length).toFixed(1) : 0;
   document.getElementById('avgProgress').textContent = `${avg}%`;
   document.getElementById('criticalCount').textContent = arr.filter(c=>c.risk==='high').length;
-  document.getElementById('parallelCount').textContent = arr.reduce((a,c)=>a+(parallelMap[c.id]?.length||0), 0);
+  
+  // Calculate total revenue (before VAT)
+  const totalNoVat = arr.reduce((sum, c) => sum + (Number(c.zoho_amount) || 0), 0);
+  document.getElementById('totalRevenue').textContent = `${totalNoVat.toLocaleString()} ₪`;
+  
   const top = [...arr].sort((a,b)=>(b.progress_overall||0)-(a.progress_overall||0))[0];
   document.getElementById('topClient').textContent = top ? top.name : '-';
   document.getElementById('clientCount').textContent = arr.length;
@@ -678,18 +701,115 @@ function renderStats(arr) {
 }
 
 function renderTables() {
-  document.getElementById('processTable').innerHTML = processTemplate.map(r => `<tr><td><b>${r.step}</b></td><td>${r.what}</td><td>${r.applies}</td></tr>`).join('');
-  document.getElementById('docs').innerHTML = docsTemplate.map(r => `<tr><td><b>${r.doc}</b></td><td>${r.when}</td><td>${r.note}</td></tr>`).join('');
-  // Deliveries
-  const grouped = {};
-  clients.forEach(c => {
-    if (!c.deliveries?.length) return;
-    const key = `${c.deadline}__${[...c.deliveries].sort().join('+')}`;
-    if (!grouped[key]) grouped[key] = {deadline: c.deadline, clients: [], items: new Set(), note: c.smart};
-    grouped[key].clients.push(c.name);
-    c.deliveries.forEach(d => grouped[key].items.add(d));
+  // Old deliveries table removed - replaced by per-track stage display
+  const docsEl = document.getElementById('docs');
+  if (docsEl) docsEl.innerHTML = docsTemplate.map(r => `<tr><td><b>${r.doc}</b></td><td>${r.when}</td><td>${r.note}</td></tr>`).join('');
+}
+
+// ====== Track Display ======
+let workflowTemplates = [];
+let currentTrack = 'regular';
+
+function trackColor(track) {
+  const colors = { regular: '#2563eb', green_track: '#16a34a', commercial: '#ea580c', off_grid: '#9333ea' };
+  return colors[track] || '#6b7280';
+}
+
+function trackLabel(track) {
+  const labels = { regular: '🔵 ייצור מפוזר רגיל', green_track: '🟢 מסלול ירוק', commercial: '🟠 מסחרי', off_grid: '🟣 OFF GRID' };
+  return labels[track] || track;
+}
+
+// Auto-suggest track when system type changes
+function autoSuggestTrack() {
+  const systemEl = document.getElementById('f_system');
+  const trackEl = document.getElementById('f_track_type');
+  const sizeEl = document.getElementById('f_system_size_kw');
+  if (!systemEl || !trackEl) return;
+  
+  const system = systemEl.value;
+  const currentTrack = trackEl.value;
+  const size = Number(sizeEl?.value) || 0;
+  
+  let suggestedTrack = currentTrack;
+  
+  if (system === 'OFF GRID') {
+    suggestedTrack = 'off_grid';
+  } else if (system === 'ON GRID' || system === 'HYBRID') {
+    // If currently off_grid, switch to regular
+    if (currentTrack === 'off_grid') {
+      // Suggest green_track if ≤15 KW, else regular
+      suggestedTrack = (size > 0 && size <= 15) ? 'green_track' : 'regular';
+    }
+  }
+  
+  if (suggestedTrack !== currentTrack) {
+    trackEl.value = suggestedTrack;
+    // Visual feedback
+    trackEl.style.background = '#fef3c7';
+    setTimeout(() => { trackEl.style.background = ''; }, 2000);
+  }
+}
+
+async function loadWorkflowTemplates() {
+  try {
+    workflowTemplates = await sbGet('workflow_templates', 'order=track_type.asc,stage_number.asc');
+    showTrackDetails(currentTrack);
+  } catch (err) {
+    console.error('Failed to load workflow templates:', err);
+  }
+}
+
+function showTrackDetails(track) {
+  currentTrack = track;
+  // Update active button
+  document.querySelectorAll('.trackBtn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.track === track);
   });
-  document.getElementById('deliveries').innerHTML = Object.values(grouped).map((g,i) => `<tr><td><b>הובלה ${i+1}</b></td><td>${g.clients.join(', ')}</td><td>${[...g.items].join(' + ')}</td><td class="deadline ${soon(g.deadline)?'soon':'ok'}">${g.deadline}</td></tr>`).join('');
+  
+  const container = document.getElementById('trackDetails');
+  if (!container) return;
+  
+  const stages = workflowTemplates.filter(t => t.track_type === track).sort((a, b) => a.stage_number - b.stage_number);
+  
+  if (stages.length === 0) {
+    container.innerHTML = '<div style="text-align:center;color:#66758a;padding:20px">אין שלבים</div>';
+    return;
+  }
+  
+  container.innerHTML = stages.map(s => {
+    const classes = ['stageItem'];
+    if (s.is_parallel) classes.push('parallel');
+    if (s.required_for_business_only) classes.push('business-only');
+    
+    const docs = (s.required_documents || []).map(d => `<div class="docs-item">${escapeHtml(d)}</div>`).join('');
+    
+    const links = s.fixed_links ? Object.entries(s.fixed_links).map(([key, url]) => {
+      const labels = {
+        gov_pv_form: '🔗 טופס PV - Gov',
+        gov_pv_permit: '🔗 היתר הפעלת PV',
+        gov_exemption: '🔗 דיווח פטור מהיתר',
+        gov_exemption_report: '🔗 דיווח עבודות פטורות',
+        iec_portal: '🔗 פורטל בדיקת חח״י'
+      };
+      return `<a class="link-btn" href="${url}" target="_blank">${labels[key] || key}</a>`;
+    }).join('') : '';
+    
+    return `
+      <div class="${classes.join(' ')}">
+        <h4>
+          <span class="num">${s.stage_number}</span>
+          ${escapeHtml(s.stage_name)}
+          ${s.is_parallel ? '<span class="parallel-badge">⚡ במקביל</span>' : ''}
+          ${s.required_for_business_only ? '<span class="business-badge">🏢 עוסק בלבד</span>' : ''}
+        </h4>
+        <div class="desc">${escapeHtml(s.description || '')}</div>
+        ${s.fee_amount ? `<div class="fee">💰 אגרה: ${Number(s.fee_amount).toLocaleString()} ש״ח</div>` : ''}
+        ${docs ? `<div class="docs"><div class="docs-title">📋 מסמכים נדרשים:</div>${docs}</div>` : ''}
+        ${links ? `<div style="margin-top:8px">${links}</div>` : ''}
+      </div>
+    `;
+  }).join('');
 }
 
 // ====== Filter ======
@@ -726,10 +846,24 @@ function renderEditForm() {
         <div class="field"><label>מייל</label><input class="input" id="f_email" value="${escapeHtml(c.email || '')}"></div>
         <div class="field"><label>נייד</label><input class="input" id="f_phone" value="${escapeHtml(c.phone || '')}"></div>
         <div class="field"><label>מיקום</label><input class="input" id="f_location" value="${escapeHtml(c.location || '')}"></div>
-        <div class="field"><label>סוג מערכת</label><select class="input" id="f_system">
+        <div class="field"><label>סוג מערכת</label><select class="input" id="f_system" onchange="autoSuggestTrack()">
           <option ${c.system==='OFF GRID'?'selected':''}>OFF GRID</option>
           <option ${c.system==='ON GRID'?'selected':''}>ON GRID</option>
           <option ${c.system==='HYBRID'?'selected':''}>HYBRID</option>
+        </select></div>
+        <div class="field"><label>🛤️ מסלול תהליך</label><select class="input" id="f_track_type">
+          <option value="regular" ${c.track_type==='regular'?'selected':''}>🔵 ייצור מפוזר רגיל</option>
+          <option value="green_track" ${c.track_type==='green_track'?'selected':''}>🟢 מסלול ירוק (עד 15 KW AC)</option>
+          <option value="commercial" ${c.track_type==='commercial'?'selected':''}>🟠 מסחרי</option>
+          <option value="off_grid" ${c.track_type==='off_grid'?'selected':''}>🟣 OFF GRID (מנותק רשת)</option>
+        </select></div>
+        <div class="field"><label>⚡ גודל מערכת (KW)</label><input class="input" type="number" step="0.1" id="f_system_size_kw" value="${c.system_size_kw || ''}" placeholder="32.5"></div>
+        <div class="field"><label>👷 מי יוצא לסקר אתר</label><select class="input" id="f_site_surveyor">
+          <option value="">- בחר -</option>
+          <option ${c.site_surveyor==='מוראד שלבי'?'selected':''}>מוראד שלבי</option>
+          <option ${c.site_surveyor==='מוראד שלבי + אברהים'?'selected':''}>מוראד שלבי + אברהים</option>
+          <option ${c.site_surveyor==='מוראד שלבי + אחמד חאליל'?'selected':''}>מוראד שלבי + אחמד חאליל</option>
+          <option ${c.site_surveyor==='מוראד שלבי + אברהים + אחמד חאליל'?'selected':''}>צוות מלא</option>
         </select></div>
         <div class="field"><label>מקום התקנה</label><select class="input" id="f_installed_at">
           <option ${c.installed_at==='בית פרטי'?'selected':''}>בית פרטי</option>
@@ -740,6 +874,11 @@ function renderEditForm() {
           <option ${c.customer_type==='פרטי/פטור'?'selected':''}>פרטי/פטור</option>
           <option ${c.customer_type==='עוסק פטור'?'selected':''}>עוסק פטור</option>
           <option ${c.customer_type==='עוסק מורשה / חברה'?'selected':''}>עוסק מורשה / חברה</option>
+        </select></div>
+        <div class="field"><label>🏢 סוג עסקי (לטפסים נוספים)</label><select class="input" id="f_business_type">
+          <option value="private" ${c.business_type==='private'?'selected':''}>פרטי</option>
+          <option value="osek_morshe" ${c.business_type==='osek_morshe'?'selected':''}>עוסק מורשה</option>
+          <option value="company" ${c.business_type==='company'?'selected':''}>חברה בע״מ</option>
         </select></div>
         <div class="field"><label>דדליין (DD/MM/YYYY)</label><input class="input" id="f_deadline" value="${escapeHtml(c.deadline || '')}" placeholder="10/04/2026"></div>
       </div>
@@ -842,6 +981,10 @@ async function saveClient() {
     phone: document.getElementById('f_phone').value,
     location: document.getElementById('f_location').value,
     system: document.getElementById('f_system').value,
+    track_type: document.getElementById('f_track_type')?.value || 'regular',
+    system_size_kw: Number(document.getElementById('f_system_size_kw')?.value) || null,
+    site_surveyor: document.getElementById('f_site_surveyor')?.value || null,
+    business_type: document.getElementById('f_business_type')?.value || 'private',
     installed_at: document.getElementById('f_installed_at').value,
     customer_type: document.getElementById('f_customer_type').value,
     iec_open: document.getElementById('f_iec_open').value,
@@ -864,16 +1007,102 @@ async function saveClient() {
   
   try {
     let clientId;
+    let trackChanged = false;
+    
     if (editingClient) {
+      // Detect if track_type changed
+      trackChanged = editingClient.track_type !== clientData.track_type;
+      
       await sbPatch('clients', editingClient.id, clientData);
       clientId = editingClient.id;
-      await sbDelete('client_stages', `client_id=eq.${clientId}`);
-      await sbDelete('client_parallel', `client_id=eq.${clientId}`);
+      
+      if (trackChanged) {
+        // Ask user if they want to reset stages based on new track
+        const oldTrackLabel = trackLabel(editingClient.track_type || 'regular');
+        const newTrackLabel = trackLabel(clientData.track_type);
+        const shouldReset = confirm(
+          `🛤️ שינית את המסלול:\n\nמ: ${oldTrackLabel}\nל: ${newTrackLabel}\n\n` +
+          `האם לטעון את השלבים של המסלול החדש?\n\n` +
+          `⚠️ שים לב: אם תאשר, השלבים הקיימים יימחקו וייווצרו שלבים חדשים לפי המסלול.\n` +
+          `ההתקדמות שלך עד עכשיו לא תימחק (הפרטים הכלליים של הלקוח נשארים).`
+        );
+        
+        if (shouldReset) {
+          // Delete old stages
+          await sbDelete('client_stages', `client_id=eq.${clientId}`);
+          await sbDelete('client_parallel', `client_id=eq.${clientId}`);
+          
+          // Load new stages from workflow template
+          const newStages = workflowTemplates.filter(t => 
+            t.track_type === clientData.track_type &&
+            (!t.required_for_business_only || clientData.business_type === 'osek_morshe' || clientData.business_type === 'company')
+          );
+          
+          if (newStages.length > 0) {
+            await sbPost('client_stages', newStages.filter(s => !s.is_parallel).map(s => ({
+              client_id: clientId,
+              text: s.stage_name,
+              status: 'waiting',
+              order_index: s.stage_number
+            })));
+            
+            const parallelStages = newStages.filter(s => s.is_parallel);
+            if (parallelStages.length > 0) {
+              await sbPost('client_parallel', parallelStages.map(s => ({
+                client_id: clientId,
+                text: s.stage_name,
+                status: 'parallel',
+                order_index: s.stage_number
+              })));
+            }
+          }
+          
+          // Skip the manual tempStages/tempParallel save since we just set new ones
+          closeEditModal();
+          await loadAll();
+          alert(`✅ השלבים עודכנו למסלול ${newTrackLabel}!`);
+          return;
+        }
+      } else {
+        // Track didn't change - regular flow: delete and recreate from tempStages
+        await sbDelete('client_stages', `client_id=eq.${clientId}`);
+        await sbDelete('client_parallel', `client_id=eq.${clientId}`);
+      }
     } else {
       const result = await sbPost('clients', clientData);
       clientId = result[0].id;
+      
+      // For new clients - automatically load stages from template
+      const newStages = workflowTemplates.filter(t => 
+        t.track_type === clientData.track_type &&
+        (!t.required_for_business_only || clientData.business_type === 'osek_morshe' || clientData.business_type === 'company')
+      );
+      
+      if (newStages.length > 0) {
+        await sbPost('client_stages', newStages.filter(s => !s.is_parallel).map(s => ({
+          client_id: clientId,
+          text: s.stage_name,
+          status: 'waiting',
+          order_index: s.stage_number
+        })));
+        
+        const parallelStages = newStages.filter(s => s.is_parallel);
+        if (parallelStages.length > 0) {
+          await sbPost('client_parallel', parallelStages.map(s => ({
+            client_id: clientId,
+            text: s.stage_name,
+            status: 'parallel',
+            order_index: s.stage_number
+          })));
+        }
+        
+        closeEditModal();
+        await loadAll();
+        return;
+      }
     }
     
+    // Only runs if track didn't change (editing existing) - save manual stages from form
     if (tempStages.length > 0) {
       await sbPost('client_stages', tempStages.filter(s=>s.text).map((s, i) => ({
         client_id: clientId, text: s.text, status: s.status, order_index: i
@@ -890,7 +1119,7 @@ async function saveClient() {
   } catch (err) {
     console.error(err);
     setSyncStatus('error');
-    alert('שגיאה בשמירה');
+    alert('שגיאה בשמירה: ' + err.message);
   }
 }
 
@@ -1121,6 +1350,63 @@ async function pushToZoho(clientId) {
     } else {
       alert('⚠️ ' + (data.error || JSON.stringify(data.result)));
     }
+  } catch (err) {
+    setSyncStatus('error');
+    alert('שגיאה: ' + err.message);
+  }
+}
+
+// ====== Sync from Zoho ======
+async function syncFromZoho() {
+  setSyncStatus('saving');
+  try {
+    // First, check what's new
+    const checkRes = await fetch(`${SUPABASE_URL}/functions/v1/zoho-sync`, {
+      method: 'POST',
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'sync_all_closed' })
+    });
+    const checkData = await checkRes.json();
+    
+    if (checkData.error) {
+      setSyncStatus('error');
+      alert('⚠️ ' + checkData.error);
+      return;
+    }
+    
+    if (checkData.to_import === 0) {
+      setSyncStatus('synced');
+      alert(`✅ הכל מסונכרן!\n\nסה"כ עסקאות נסגרות ב-Zoho: ${checkData.total_closed}\nכבר קיימות ב-Dashboard: ${checkData.already_imported}`);
+      return;
+    }
+    
+    const dealsList = checkData.new_deals.map(d => `• ${d.name} (${d.detected_system}) - ${Number(d.amount).toLocaleString()} ₪`).join('\n');
+    if (!confirm(`נמצאו ${checkData.to_import} עסקאות חדשות לייבוא:\n\n${dealsList}\n\nלייבא אותן?`)) {
+      setSyncStatus('synced');
+      return;
+    }
+    
+    // Import each deal
+    let imported = 0;
+    let failed = 0;
+    for (const deal of checkData.new_deals) {
+      try {
+        const res = await fetch(`${SUPABASE_URL}/functions/v1/zoho-sync`, {
+          method: 'POST',
+          headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'import_deal', deal_id: deal.id })
+        });
+        const data = await res.json();
+        if (data.success) imported++;
+        else failed++;
+      } catch {
+        failed++;
+      }
+    }
+    
+    setSyncStatus('synced');
+    await loadAll();
+    alert(`✅ סנכרון הושלם!\n\nיובאו: ${imported}\n${failed > 0 ? 'נכשלו: ' + failed : ''}`);
   } catch (err) {
     setSyncStatus('error');
     alert('שגיאה: ' + err.message);
@@ -1550,6 +1836,7 @@ function showApp() {
   addUserBadge();
   // Load data
   loadAll();
+  loadWorkflowTemplates();
 }
 
 function showLogin() {
