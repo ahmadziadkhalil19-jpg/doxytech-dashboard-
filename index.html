@@ -1,0 +1,1013 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DOXY TECH - Dashboard מנהלים</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: Arial, "Noto Sans Hebrew", sans-serif; background: linear-gradient(180deg,#eef4fa,#f8fbff 35%,#f4f7fb); color: #10243e; min-height: 100vh; }
+.wrap { max-width: 1400px; margin: 0 auto; padding: 28px 24px 40px; }
+.topbar { display: grid; grid-template-columns: 1.7fr 1fr; gap: 16px; background: linear-gradient(135deg,#0f2747,#19406f); color: #fff; border-radius: 24px; padding: 24px 26px; box-shadow: 0 10px 30px rgba(15,39,71,.08); }
+.brand { display: flex; gap: 16px; align-items: flex-start; }
+.logo { width: 58px; height: 58px; border-radius: 16px; background: rgba(255,255,255,.12); display: flex; align-items: center; justify-content: center; font-size: 28px; }
+h1 { margin: 0 0 8px; font-size: 28px; line-height: 1.1; }
+h2 { margin: 0 0 4px; font-size: 20px; }
+.subtitle { color: #d5e0ef; font-size: 14px; line-height: 1.6; }
+.sync-status { margin-top: 8px; display: flex; align-items: center; gap: 6px; font-size: 12px; }
+.sync-synced { color: #86efac; }
+.sync-saving { color: #fbbf24; }
+.sync-error { color: #f87171; }
+.metaPanel { background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.14); border-radius: 18px; padding: 16px 18px; }
+.metaGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.meta { background: rgba(255,255,255,.08); border-radius: 14px; padding: 12px 14px; }
+.meta .k { font-size: 12px; color: #c8d7ea; margin-bottom: 4px; }
+.meta .v { font-size: 20px; font-weight: 700; }
+.toolbar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin: 18px 0 20px; }
+.chip, .btn { border: none; border-radius: 999px; padding: 10px 14px; font-weight: 700; cursor: pointer; font-size: 14px; font-family: inherit; }
+.chip { background: #fff; color: #0f2747; border: 1px solid #dbe4ee; }
+.chip.active { background: #0f2747; color: #fff; border-color: #0f2747; }
+.btn { background: #e4b654; color: #2f2400; box-shadow: 0 4px 16px rgba(228,182,84,.28); }
+.btn.dark { background: #0f2747; color: #fff; box-shadow: none; }
+.btn.purple { background: linear-gradient(135deg,#6d28d9,#8b5cf6); color: #fff; box-shadow: none; }
+.btn.light { background: #fff; color: #0f2747; border: 1px solid #dbe4ee; box-shadow: none; }
+.stats { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; margin-bottom: 18px; }
+.card { background: #fff; border: 1px solid #dbe4ee; border-radius: 18px; box-shadow: 0 10px 30px rgba(15,39,71,.08); }
+.stat { padding: 18px; }
+.stat .k { font-size: 13px; color: #66758a; margin-bottom: 8px; }
+.stat .v { font-size: 32px; font-weight: 800; line-height: 1; }
+.stat .hint { font-size: 12px; color: #66758a; margin-top: 8px; }
+.layout { display: grid; grid-template-columns: 1.2fr .8fr; gap: 18px; align-items: start; }
+.section { padding: 18px; }
+.lead { color: #66758a; font-size: 13px; margin-bottom: 14px; }
+.clients { display: grid; gap: 14px; }
+.client { padding: 18px; }
+.clientHead { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; margin-bottom: 14px; flex-wrap: wrap; }
+.clientName { font-size: 24px; font-weight: 800; margin: 0 0 6px; }
+.tagRow { display: flex; flex-wrap: wrap; gap: 8px; }
+.tag { padding: 6px 10px; border-radius: 999px; font-size: 12px; font-weight: 700; }
+.offgrid { background: #efe9ff; color: #6d28d9; }
+.ongrid { background: #e0f2fe; color: #075985; }
+.hybrid { background: #dff5f6; color: #0f766e; }
+.business { background: #efe9ff; color: #5b32a3; }
+.private { background: #edf7ed; color: #256f37; }
+.type { background: #e7f0fb; color: #1849a9; }
+.risk { padding: 8px 12px; border-radius: 999px; font-size: 12px; font-weight: 800; }
+.riskHigh { background: #fde3e3; color: #b42318; }
+.riskMed { background: #fff3d4; color: #9a6700; }
+.riskLow { background: #dff3e5; color: #166534; }
+.details { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-bottom: 14px; }
+.detail { background: #fbfdff; border: 1px solid #e8eff7; border-radius: 14px; padding: 11px 12px; }
+.detail .k { font-size: 11px; color: #66758a; }
+.detail .v { font-size: 14px; font-weight: 700; margin-top: 5px; }
+.prog { display: grid; grid-template-columns: repeat(4,1fr); gap: 10px; margin-bottom: 14px; }
+.progBox { background: #fbfdff; border: 1px solid #e8eff7; border-radius: 14px; padding: 12px; }
+.progBox .label { font-size: 12px; color: #66758a; margin-bottom: 8px; }
+.bar { height: 8px; background: #e8eef6; border-radius: 999px; overflow: hidden; margin-bottom: 7px; }
+.bar span { display: block; height: 100%; border-radius: 999px; }
+.progBox .value { font-weight: 800; font-size: 16px; }
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.mini { background: #fbfdff; border: 1px solid #e8eff7; border-radius: 14px; padding: 14px; }
+.mini h3 { margin: 0 0 10px; font-size: 14px; }
+.list { display: grid; gap: 8px; }
+.item { display: flex; justify-content: space-between; gap: 10px; border-bottom: 1px dashed #e3ebf4; padding-bottom: 8px; font-size: 13px; }
+.item:last-child { border-bottom: none; padding-bottom: 0; }
+.pill { padding: 4px 8px; border-radius: 999px; font-size: 11px; font-weight: 800; white-space: nowrap; }
+.done { background: #dff3e5; color: #166534; }
+.waiting { background: #fde3e3; color: #b42318; }
+.running { background: #fff3d4; color: #9a6700; }
+.parallel { background: #e7f0fb; color: #1849a9; }
+table { width: 100%; border-collapse: collapse; }
+th, td { padding: 11px 12px; border-bottom: 1px solid #e8eff7; font-size: 13px; text-align: right; vertical-align: middle; }
+th { background: #f3f7fb; color: #49617f; font-size: 12px; }
+tr:last-child td { border-bottom: none; }
+.deadline { font-weight: 800; }
+.soon { color: #b42318; }
+.ok { color: #166534; }
+.foot { margin-top: 12px; color: #66758a; font-size: 12px; line-height: 1.6; }
+.note { margin-top: 14px; color: #526173; font-size: 13px; background: #fff; border: 1px dashed #c9d7e6; border-radius: 14px; padding: 12px 14px; }
+.iconBtn { background: transparent; border: none; cursor: pointer; padding: 6px; color: #66758a; display: inline-flex; align-items: center; justify-content: center; border-radius: 6px; font-size: 14px; }
+.iconBtn:hover { background: #f3f7fb; }
+.iconBtn.danger { color: #b42318; }
+.actions { display: flex; gap: 4px; align-items: center; }
+
+/* Modal */
+.modalOverlay { position: fixed; inset: 0; background: rgba(15,39,71,.6); z-index: 100; display: none; align-items: flex-start; justify-content: center; padding: 20px; overflow-y: auto; }
+.modalOverlay.active { display: flex; }
+.modal { background: #fff; border-radius: 18px; max-width: 800px; width: 100%; margin: 20px auto; box-shadow: 0 20px 60px rgba(0,0,0,.3); }
+.modal.ai { max-width: 700px; }
+.modalHeader { padding: 16px 20px; border-bottom: 1px solid #e8eff7; display: flex; justify-content: space-between; align-items: center; border-radius: 18px 18px 0 0; }
+.modalHeader.ai { background: linear-gradient(135deg,#6d28d9,#8b5cf6); color: #fff; }
+.modalBody { padding: 20px; max-height: 70vh; overflow-y: auto; }
+.modalFooter { padding: 16px 20px; border-top: 1px solid #e8eff7; display: flex; gap: 10px; justify-content: flex-end; align-items: center; }
+
+/* Form */
+.formSection { margin-bottom: 20px; }
+.formSection h3 { margin: 0 0 10px; font-size: 15px; color: #0f2747; border-bottom: 2px solid #e4b654; padding-bottom: 6px; }
+.formGrid { display: grid; gap: 10px; margin-bottom: 10px; }
+.formGrid.cols2 { grid-template-columns: repeat(2, 1fr); }
+.formGrid.cols4 { grid-template-columns: repeat(4, 1fr); }
+.field { margin-bottom: 8px; }
+.field label { display: block; font-size: 12px; color: #66758a; margin-bottom: 4px; font-weight: 600; }
+.input { width: 100%; padding: 8px 12px; border: 1px solid #dbe4ee; border-radius: 8px; font-size: 13px; font-family: inherit; background: #fff; }
+.input:focus { outline: none; border-color: #6d28d9; }
+textarea.input { min-height: 50px; resize: vertical; }
+
+/* List items in modal */
+.listRow { display: flex; gap: 8px; align-items: center; margin-bottom: 8px; }
+.listRow .input { flex: 1; }
+.listRow select { width: 120px; }
+.addBtn { background: #f3f7fb; color: #0f2747; border: 1px dashed #c9d7e6; padding: 8px 12px; border-radius: 8px; font-size: 13px; cursor: pointer; font-family: inherit; width: 100%; }
+
+/* AI */
+.aiMsg { margin-bottom: 12px; padding: 12px; border-radius: 10px; }
+.aiMsg.user { background: #e7f0fb; border-right: 3px solid #1849a9; }
+.aiMsg.ai { background: #f3f0ff; border-right: 3px solid #6d28d9; }
+.aiMsg .role { font-size: 11px; font-weight: 700; margin-bottom: 4px; }
+.aiMsg .text { font-size: 14px; white-space: pre-wrap; line-height: 1.6; }
+.suggestion { background: #f3f7fb; color: #0f2747; border: 1px solid #dbe4ee; padding: 10px 14px; border-radius: 999px; font-size: 13px; cursor: pointer; text-align: right; font-family: inherit; margin-bottom: 8px; display: block; width: 100%; font-weight: 600; }
+.suggestion:hover { background: #e7f0fb; }
+.loadingDot { display: inline-block; animation: pulse 1.4s infinite; }
+.loadingDot:nth-child(2) { animation-delay: 0.2s; }
+.loadingDot:nth-child(3) { animation-delay: 0.4s; }
+@keyframes pulse { 0%, 80%, 100% { opacity: 0.3; } 40% { opacity: 1; } }
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+.spinner { display: inline-block; animation: spin 1s linear infinite; }
+
+/* Responsive */
+@media(max-width:1100px) {
+  .topbar, .layout { grid-template-columns: 1fr; }
+  .stats { grid-template-columns: repeat(2,1fr); }
+  .details, .prog, .two { grid-template-columns: 1fr 1fr; }
+}
+@media(max-width:720px) {
+  .wrap { padding: 16px; }
+  .stats, .details, .prog, .two, .formGrid.cols2, .formGrid.cols4 { grid-template-columns: 1fr; }
+  .clientHead { flex-direction: column; }
+  h1 { font-size: 22px; }
+}
+
+/* Print */
+@media print {
+  body { background: #fff; }
+  .wrap { max-width: none; padding: 0; }
+  .toolbar, .actions { display: none !important; }
+  .card { box-shadow: none; }
+  .topbar { break-inside: avoid; border-radius: 0; }
+  .client, .section, .card, .mini, table { break-inside: avoid; }
+  @page { size: A4 landscape; margin: 12mm; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <!-- Top Bar -->
+  <div class="topbar">
+    <div class="brand">
+      <div class="logo">☀️</div>
+      <div>
+        <h1>DOXY TECH - Dashboard מנהלים</h1>
+        <div class="subtitle">
+          מעקב אחיד לכל לקוח - מרגע חתימת חוזה ועד אישור סופי והפעלה.
+          <div class="sync-status" id="syncStatus">
+            <span>☁️</span>
+            <span>מסונכרן עם הענן</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="metaPanel">
+      <div class="metaGrid">
+        <div class="meta"><div class="k">עדכון אחרון</div><div class="v" id="today"></div></div>
+        <div class="meta"><div class="k">לקוחות פעילים</div><div class="v" id="clientCount">-</div></div>
+        <div class="meta"><div class="k">הובלות פתוחות</div><div class="v" id="deliveryCount">-</div></div>
+        <div class="meta"><div class="k">פרויקטים עם חח"י</div><div class="v" id="iecCount">-</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toolbar -->
+  <div class="toolbar">
+    <button class="chip active" data-filter="all">כל הלקוחות</button>
+    <button class="chip" data-filter="OFF GRID">OFF GRID</button>
+    <button class="chip" data-filter="ON GRID">ON GRID</button>
+    <button class="chip" data-filter="HYBRID">HYBRID</button>
+    <button class="btn dark" onclick="openEditModal()">+ לקוח חדש</button>
+    <button class="btn purple" onclick="openAIModal()">✨ עוזר AI</button>
+    <button class="btn" onclick="sendDeadlineNotifications()" style="background:#dc2626;color:#fff">🔔 שלח התראות</button>
+    <button class="btn" onclick="openSettingsModal()" style="background:#6b7280;color:#fff">⚙️ הגדרות</button>
+    <button class="btn" onclick="window.print()">📄 הפקת PDF</button>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats">
+    <div class="card stat"><div class="k">ממוצע התקדמות</div><div class="v" id="avgProgress">-</div><div class="hint">ממוצע כל הפרויקטים</div></div>
+    <div class="card stat"><div class="k">חסמים קריטיים</div><div class="v" id="criticalCount">-</div><div class="hint">ציוד / קונסטרוקציה / חח"י</div></div>
+    <div class="card stat"><div class="k">משימות במקביל</div><div class="v" id="parallelCount">-</div><div class="hint">מה אפשר לקדם</div></div>
+    <div class="card stat"><div class="k">הלקוח הכי מתקדם</div><div class="v" id="topClient" style="font-size:22px">-</div><div class="hint">לפי התקדמות</div></div>
+  </div>
+
+  <!-- Main Layout -->
+  <div class="layout">
+    <div class="card section">
+      <h2>סטטוס לקוחות</h2>
+      <div class="lead">אותו מבנה אחיד לכל לקוח - ענן Supabase</div>
+      <div class="clients" id="clients"></div>
+    </div>
+    <div style="display:grid;gap:18px">
+      <div class="card section">
+        <h2>שלבי תהליך אחידים</h2>
+        <table>
+          <thead><tr><th>שלב</th><th>מה עושים</th><th>רלוונטי ל</th></tr></thead>
+          <tbody id="processTable"></tbody>
+        </table>
+      </div>
+      <div class="card section">
+        <h2>לוגיסטיקה והובלות</h2>
+        <table>
+          <thead><tr><th>קבוצה</th><th>לקוחות</th><th>חסר</th><th>דדליין</th></tr></thead>
+          <tbody id="deliveries"></tbody>
+        </table>
+      </div>
+      <div class="card section">
+        <h2>מסמכים עיקריים</h2>
+        <table>
+          <thead><tr><th>מסמך</th><th>מתי</th><th>הערה</th></tr></thead>
+          <tbody id="docs"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="note">
+    <b>☁️ מחובר ל-Supabase:</b> כל השינויים נשמרים אוטומטית בענן ונגישים מכל מכשיר. פרויקט: <b>DoxyTech Dashboard</b> (Frankfurt)
+  </div>
+</div>
+
+<!-- Edit/Add Modal -->
+<div class="modalOverlay" id="editModalOverlay" onclick="closeEditModal(event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modalHeader">
+      <h2 id="editModalTitle">לקוח חדש</h2>
+      <button class="iconBtn" onclick="closeEditModal()">✕</button>
+    </div>
+    <div class="modalBody" id="editModalBody"></div>
+    <div class="modalFooter">
+      <button class="btn light" onclick="closeEditModal()">ביטול</button>
+      <button class="btn dark" onclick="saveClient()">💾 שמור לענן</button>
+    </div>
+  </div>
+</div>
+
+<!-- AI Modal -->
+<div class="modalOverlay" id="aiModalOverlay" onclick="closeAIModal(event)">
+  <div class="modal ai" onclick="event.stopPropagation()">
+    <div class="modalHeader ai">
+      <div style="display:flex;align-items:center;gap:10px"><span style="font-size:20px">✨</span><h2 style="color:#fff">עוזר AI - Claude Sonnet 4</h2></div>
+      <button class="iconBtn" style="color:#fff" onclick="closeAIModal()">✕</button>
+    </div>
+    <div class="modalBody" id="aiModalBody" style="min-height:300px"></div>
+    <div class="modalFooter">
+      <input class="input" id="aiQuestion" placeholder="שאל שאלה..." style="flex:1" onkeydown="if(event.key==='Enter') sendAI()">
+      <button class="btn purple" onclick="sendAI()" id="aiSendBtn">➤</button>
+    </div>
+  </div>
+</div>
+
+<!-- Settings Modal -->
+<div class="modalOverlay" id="settingsModalOverlay" onclick="closeSettingsModal(event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modalHeader">
+      <h2>⚙️ הגדרות מערכת</h2>
+      <button class="iconBtn" onclick="closeSettingsModal()">✕</button>
+    </div>
+    <div class="modalBody">
+      <div class="formSection">
+        <h3>📧 הגדרות מייל למנהל</h3>
+        <div class="field"><label>מייל המנהל (לקבלת התראות)</label><input class="input" id="s_manager_email" placeholder="manager@company.com"></div>
+        <div class="field"><label>מייל שולח (ברירת מחדל: <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="9ff0f1fdf0feedfbf6f1f8dfedfaecfaf1fbb1fbfae9">[email&#160;protected]</a>)</label><input class="input" id="s_from_email" placeholder="noreply@yourdomain.com"></div>
+        <div class="field"><button class="btn dark" onclick="saveSettings()" style="width:100%">💾 שמור הגדרות</button></div>
+        <div class="field"><button class="btn" onclick="sendDeadlineNotifications()" style="width:100%;background:#dc2626;color:#fff">🔔 שלח התראות עכשיו (בדיקה)</button></div>
+      </div>
+      <div class="formSection">
+        <h3>🔗 סטטוס אינטגרציות</h3>
+        <div id="integrationsStatus" style="display:grid;gap:10px"></div>
+      </div>
+      <div class="formSection">
+        <h3>📝 הוראות הגדרה</h3>
+        <div style="background:#f3f7fb;padding:14px;border-radius:10px;font-size:13px;line-height:1.8">
+          <b>לשליחת מיילים (Resend):</b><br>
+          1. הירשם ב-<a href="https://resend.com" target="_blank" style="color:#1849a9">resend.com</a> (חינם עד 3,000 מיילים בחודש)<br>
+          2. צור API key<br>
+          3. הוסף אותו ל-Supabase Secrets בשם <code>RESEND_API_KEY</code><br>
+          <br>
+          <b>לחיבור Zoho CRM:</b><br>
+          1. היכנס ל-<a href="https://api-console.zoho.com" target="_blank" style="color:#1849a9">api-console.zoho.com</a><br>
+          2. צור Self Client / Server-based Application<br>
+          3. הוסף ל-Supabase Secrets:<br>
+          &nbsp;&nbsp;<code>ZOHO_CLIENT_ID</code><br>
+          &nbsp;&nbsp;<code>ZOHO_CLIENT_SECRET</code><br>
+          &nbsp;&nbsp;<code>ZOHO_REFRESH_TOKEN</code><br>
+          &nbsp;&nbsp;<code>ZOHO_DATA_CENTER</code> (com/eu/in)<br>
+          <br>
+          <b>ל-AI (Anthropic):</b><br>
+          1. צור key ב-<a href="https://console.anthropic.com" target="_blank" style="color:#1849a9">console.anthropic.com</a><br>
+          2. הוסף ל-Supabase Secrets בשם <code>ANTHROPIC_API_KEY</code>
+        </div>
+        <div class="field" style="margin-top:10px"><a href="https://supabase.com/dashboard/project/hcmmtmfzdgzdisobvpav/settings/functions" target="_blank" class="btn dark" style="display:block;text-align:center;text-decoration:none">פתח Supabase Secrets</a></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+// ====== Supabase Configuration ======
+const SUPABASE_URL = 'https://hcmmtmfzdgzdisobvpav.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_lQ62NRLxF8pST3qNF1Pqzw_ba-WQIwt';
+
+// ====== State ======
+let clients = [];
+let stagesMap = {};
+let parallelMap = {};
+let currentFilter = 'all';
+let editingClient = null;
+let tempStages = [];
+let tempParallel = [];
+let aiConversation = [];
+
+// ====== Templates ======
+const processTemplate = [
+  {step:'1. חתימת חוזה ופתיחת לקוח', what:'שם לקוח, מייל, נייד, מיקום, סוג מערכת, פרטי עסק/פרטי', applies:'כולם'},
+  {step:'2. חח"י ראשוני', what:'ייפוי כוח, פתיחת תיק, אישור ביצוע עבודה, אגרה ~914 ש"ח', applies:'ON GRID / HYBRID'},
+  {step:'3. הזמנת ציוד', what:'ממיר + פנלים, וב-HYBRID/OFF GRID גם סוללות', applies:'כולם'},
+  {step:'4. סקר שטח + צ׳ק ליסט', what:'רחפן, תמונות, כשירות גג/שטח', applies:'כולם'},
+  {step:'5. תכנון והצבת פנלים', what:'תכנון מלא + פריסה + חוד אנרגיה', applies:'כולם'},
+  {step:'6. הזמנת קונסטרוקציה', what:'אחרי קבלת התכנון ואישור הצעת מחיר', applies:'כולם'},
+  {step:'7. תהליך מקביל חח"י', what:'מתכנן, גומה, חפירה, פילר, הגשטל', applies:'מסחרי / ON GRID / HYBRID'},
+  {step:'8. התקנה', what:'קונסטרוקציה, פנלים, AC/DC, חיבור מלא', applies:'כולם'},
+  {step:'9. בדיקות פרטיות', what:'בודק פרטי, אישור קונסטרוקציה, תקנה 24', applies:'לפי הצורך'},
+  {step:'10. מסמכי סיום', what:'הצהרת חשמלאי + GOV', applies:'כולם'},
+  {step:'11. העלאה לחח"י', what:'כל מסמכי הסיום, בקשה לבדיקה', applies:'ON GRID / HYBRID'},
+  {step:'12. אישור סופי והפעלה', what:'בדיקת חח"י, אישור סופי, חיבור', applies:'ON GRID / HYBRID'}
+];
+
+const docsTemplate = [
+  {doc:'ייפוי כוח חתום', when:'בהתחלה', note:'נדרש לפתיחת חח"י'},
+  {doc:'אישור ביצוע עבודה + אגרה', when:'תחילת התהליך', note:'סביב 914 ש"ח'},
+  {doc:'הסכם רכישה חתום', when:'לפני המשך', note:'במערכות רשת'},
+  {doc:'טופס 1400/1401', when:'במהלך', note:'תלוי סוג חיבור'},
+  {doc:'GOV - פטור מהיתר', when:'לקראת סוף', note:'מילוי והעלאה'},
+  {doc:'הצהרת חשמלאי שוב"ל', when:'בסיום', note:'חתימת חשמלאי מוסמך'},
+  {doc:'אישור תקנה 24 / בודק פרטי', when:'אחרי התקנה', note:'לפני העלאה לחח"י'},
+  {doc:'בקשה לבדיקה ואישור הפעלה', when:'סיום', note:'למערכות רשת'}
+];
+
+const statusOptions = [
+  {value:'done', label:'הושלם'},
+  {value:'running', label:'בתהליך'},
+  {value:'waiting', label:'ממתין'},
+  {value:'parallel', label:'במקביל'}
+];
+
+// ====== Supabase API ======
+async function sbGet(table, query = '') {
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}?${query}`, {
+    headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+  });
+  return res.json();
+}
+
+async function sbPost(table, data) {
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}`, {
+    method: 'POST',
+    headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=representation' },
+    body: JSON.stringify(data)
+  });
+  return res.json();
+}
+
+async function sbPatch(table, id, data) {
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}?id=eq.${id}`, {
+    method: 'PATCH',
+    headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=representation' },
+    body: JSON.stringify(data)
+  });
+  return res.json();
+}
+
+async function sbDelete(table, filter) {
+  await fetch(`${SUPABASE_URL}/rest/v1/${table}?${filter}`, {
+    method: 'DELETE',
+    headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+  });
+}
+
+// ====== Helpers ======
+function soon(txt) {
+  if (!txt) return false;
+  const [d,m,y] = txt.split('/').map(Number);
+  if (!d||!m||!y) return false;
+  const dt = new Date(y, m-1, d);
+  return ((dt - new Date()) / (1000*60*60*24)) <= 10;
+}
+function progColor(v) { return v >= 70 ? '#1f7a45' : v >= 30 ? '#b58105' : '#b42318'; }
+function riskText(r) { return r === 'high' ? 'חסם גבוה' : r === 'medium' ? 'חסם בינוני' : 'תקין'; }
+function riskClass(r) { return r === 'high' ? 'riskHigh' : r === 'medium' ? 'riskMed' : 'riskLow'; }
+function stageText(s) { return s === 'done' ? 'הושלם' : s === 'waiting' ? 'ממתין' : s === 'parallel' ? 'במקביל' : 'בתהליך'; }
+function escapeHtml(str) { return String(str||'').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+
+function setSyncStatus(status) {
+  const el = document.getElementById('syncStatus');
+  if (status === 'saving') {
+    el.innerHTML = '<span class="spinner">⟳</span><span>שומר בענן...</span>';
+    el.className = 'sync-status sync-saving';
+  } else if (status === 'error') {
+    el.innerHTML = '<span>⚠️</span><span>שגיאה בשמירה</span>';
+    el.className = 'sync-status sync-error';
+  } else {
+    el.innerHTML = '<span>☁️</span><span>מסונכרן עם הענן</span>';
+    el.className = 'sync-status sync-synced';
+  }
+}
+
+// ====== Load Data ======
+async function loadAll() {
+  try {
+    const [clientsData, stagesData, parallelData] = await Promise.all([
+      sbGet('clients', 'select=*&order=created_at.asc'),
+      sbGet('client_stages', 'select=*&order=order_index.asc'),
+      sbGet('client_parallel', 'select=*&order=order_index.asc')
+    ]);
+    clients = Array.isArray(clientsData) ? clientsData : [];
+    stagesMap = {};
+    (Array.isArray(stagesData) ? stagesData : []).forEach(s => {
+      if (!stagesMap[s.client_id]) stagesMap[s.client_id] = [];
+      stagesMap[s.client_id].push(s);
+    });
+    parallelMap = {};
+    (Array.isArray(parallelData) ? parallelData : []).forEach(p => {
+      if (!parallelMap[p.client_id]) parallelMap[p.client_id] = [];
+      parallelMap[p.client_id].push(p);
+    });
+    render();
+    setSyncStatus('synced');
+  } catch (err) {
+    console.error(err);
+    setSyncStatus('error');
+  }
+}
+
+// ====== Render ======
+function render() {
+  const arr = currentFilter === 'all' ? clients : clients.filter(c => c.system === currentFilter);
+  renderClients(arr);
+  renderStats(arr);
+  renderTables();
+  document.getElementById('today').textContent = new Date().toLocaleDateString('he-IL');
+}
+
+function progBox(label, val) {
+  const v = val == null ? 0 : val;
+  return `<div class="progBox"><div class="label">${label}</div><div class="bar"><span style="width:${v}%;background:${progColor(v)}"></span></div><div class="value">${v}%</div></div>`;
+}
+
+function renderClients(arr) {
+  const mount = document.getElementById('clients');
+  mount.innerHTML = '';
+  if (arr.length === 0) {
+    mount.innerHTML = '<div style="padding:40px;text-align:center;color:#66758a">אין לקוחות להצגה</div>';
+    return;
+  }
+  arr.forEach(c => {
+    const systemClass = c.system === 'OFF GRID' ? 'offgrid' : c.system === 'ON GRID' ? 'ongrid' : 'hybrid';
+    const isBusiness = (c.customer_type || '').includes('עוסק') || (c.customer_type || '').includes('חברה');
+    const stages = stagesMap[c.id] || [];
+    const parallels = parallelMap[c.id] || [];
+    const el = document.createElement('div');
+    el.className = 'card client';
+    el.innerHTML = `
+      <div class="clientHead">
+        <div style="flex:1;min-width:0">
+          <div class="clientName">${escapeHtml(c.name)}</div>
+          <div class="tagRow">
+            <span class="tag ${systemClass}">${c.system}</span>
+            <span class="tag ${isBusiness ? 'business' : 'private'}">${escapeHtml(c.customer_type || '')}</span>
+            <span class="tag type">${escapeHtml(c.installed_at || '')}</span>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <span class="risk ${riskClass(c.risk)}">${riskText(c.risk)}</span>
+          <div class="actions">
+            <button class="iconBtn" onclick="pushToZoho('${c.id}')" title="סנכרן ל-Zoho" style="color:#0891b2">☁️</button>
+            <button class="iconBtn" onclick="openEditModal('${c.id}')" title="עריכה">✏️</button>
+            <button class="iconBtn danger" onclick="deleteClient('${c.id}')" title="מחיקה">🗑️</button>
+          </div>
+        </div>
+      </div>
+      <div class="details">
+        <div class="detail"><div class="k">מייל</div><div class="v">${escapeHtml(c.email || '-')}</div></div>
+        <div class="detail"><div class="k">נייד</div><div class="v">${escapeHtml(c.phone || '-')}</div></div>
+        <div class="detail"><div class="k">מיקום</div><div class="v">${escapeHtml(c.location || '-')}</div></div>
+        <div class="detail"><div class="k">פתיחת חח"י</div><div class="v">${escapeHtml(c.iec_open || '-')}</div></div>
+        <div class="detail"><div class="k">ייפוי כוח</div><div class="v">${escapeHtml(c.poa || '-')}</div></div>
+        <div class="detail"><div class="k">אישור / אגרה</div><div class="v">${escapeHtml(c.work_permit || '-')} · ${escapeHtml(c.fee || '-')}</div></div>
+      </div>
+      <div class="prog">
+        ${progBox('ניירת / חח"י', c.progress_papers)}
+        ${progBox('ציוד', c.progress_equipment)}
+        ${progBox('התקנה', c.progress_installation)}
+        ${progBox('סה"כ', c.progress_overall)}
+      </div>
+      <div class="two">
+        <div class="mini">
+          <h3>שלבים בפועל</h3>
+          <div class="list">
+            ${stages.map(s => `<div class="item"><div>${escapeHtml(s.text)}</div><span class="pill ${s.status}">${stageText(s.status)}</span></div>`).join('')}
+          </div>
+        </div>
+        <div class="mini">
+          <h3>חסם / פעולה / לוגיסטיקה</h3>
+          <div class="list">
+            <div class="item"><div><b>חסם נוכחי</b><div style="margin-top:4px;color:#66758a;font-size:12px">${escapeHtml(c.blocker || '-')}</div></div><span class="pill waiting">חסם</span></div>
+            <div class="item"><div><b>פעולה הבאה</b><div style="margin-top:4px;color:#66758a;font-size:12px">${escapeHtml(c.next_action || '-')}</div></div><span class="pill running">הבא</span></div>
+            <div class="item"><div><b>הובלה</b><div style="margin-top:4px;color:#66758a;font-size:12px">${(c.deliveries || []).join(' + ') || '-'}</div></div><span class="pill parallel">לוגיסטיקה</span></div>
+            <div class="item"><div><b>דדליין</b><div class="deadline ${soon(c.deadline) ? 'soon' : 'ok'}" style="margin-top:4px">${escapeHtml(c.deadline || '-')}</div></div><span class="pill ${soon(c.deadline) ? 'waiting' : 'done'}">יעד</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="mini" style="margin-top:12px">
+        <h3>דברים שאפשר לקדם במקביל</h3>
+        <div class="list">
+          ${parallels.map(p => `<div class="item"><div>${escapeHtml(p.text)}</div><span class="pill ${p.status}">${stageText(p.status)}</span></div>`).join('')}
+        </div>
+        <div class="foot"><b>הערה:</b> ${escapeHtml(c.notes || '-')}</div>
+      </div>
+    `;
+    mount.appendChild(el);
+  });
+}
+
+function renderStats(arr) {
+  const avg = arr.length ? (arr.reduce((a,c)=>a+(c.progress_overall||0), 0)/arr.length).toFixed(1) : 0;
+  document.getElementById('avgProgress').textContent = `${avg}%`;
+  document.getElementById('criticalCount').textContent = arr.filter(c=>c.risk==='high').length;
+  document.getElementById('parallelCount').textContent = arr.reduce((a,c)=>a+(parallelMap[c.id]?.length||0), 0);
+  const top = [...arr].sort((a,b)=>(b.progress_overall||0)-(a.progress_overall||0))[0];
+  document.getElementById('topClient').textContent = top ? top.name : '-';
+  document.getElementById('clientCount').textContent = arr.length;
+  document.getElementById('deliveryCount').textContent = clients.filter(c=>c.deliveries?.length).length;
+  document.getElementById('iecCount').textContent = clients.filter(c=>c.system!=='OFF GRID').length;
+}
+
+function renderTables() {
+  document.getElementById('processTable').innerHTML = processTemplate.map(r => `<tr><td><b>${r.step}</b></td><td>${r.what}</td><td>${r.applies}</td></tr>`).join('');
+  document.getElementById('docs').innerHTML = docsTemplate.map(r => `<tr><td><b>${r.doc}</b></td><td>${r.when}</td><td>${r.note}</td></tr>`).join('');
+  // Deliveries
+  const grouped = {};
+  clients.forEach(c => {
+    if (!c.deliveries?.length) return;
+    const key = `${c.deadline}__${[...c.deliveries].sort().join('+')}`;
+    if (!grouped[key]) grouped[key] = {deadline: c.deadline, clients: [], items: new Set(), note: c.smart};
+    grouped[key].clients.push(c.name);
+    c.deliveries.forEach(d => grouped[key].items.add(d));
+  });
+  document.getElementById('deliveries').innerHTML = Object.values(grouped).map((g,i) => `<tr><td><b>הובלה ${i+1}</b></td><td>${g.clients.join(', ')}</td><td>${[...g.items].join(' + ')}</td><td class="deadline ${soon(g.deadline)?'soon':'ok'}">${g.deadline}</td></tr>`).join('');
+}
+
+// ====== Filter ======
+document.querySelectorAll('.chip').forEach(b => b.onclick = () => {
+  currentFilter = b.dataset.filter;
+  document.querySelectorAll('.chip').forEach(x => x.classList.toggle('active', x === b));
+  render();
+});
+
+// ====== Edit Modal ======
+function openEditModal(clientId) {
+  editingClient = clientId ? clients.find(c => c.id === clientId) : null;
+  document.getElementById('editModalTitle').textContent = editingClient ? 'עריכת לקוח' : 'לקוח חדש';
+  tempStages = editingClient ? [...(stagesMap[clientId] || []).map(s => ({text: s.text, status: s.status}))] : [];
+  tempParallel = editingClient ? [...(parallelMap[clientId] || []).map(p => ({text: p.text, status: p.status}))] : [];
+  renderEditForm();
+  document.getElementById('editModalOverlay').classList.add('active');
+}
+
+function closeEditModal(event) {
+  if (event && event.target.id !== 'editModalOverlay' && event.type === 'click') return;
+  document.getElementById('editModalOverlay').classList.remove('active');
+  editingClient = null;
+}
+
+function renderEditForm() {
+  const c = editingClient || {};
+  const body = document.getElementById('editModalBody');
+  body.innerHTML = `
+    <div class="formSection">
+      <h3>פרטי לקוח</h3>
+      <div class="formGrid cols2">
+        <div class="field"><label>שם לקוח *</label><input class="input" id="f_name" value="${escapeHtml(c.name || '')}"></div>
+        <div class="field"><label>מייל</label><input class="input" id="f_email" value="${escapeHtml(c.email || '')}"></div>
+        <div class="field"><label>נייד</label><input class="input" id="f_phone" value="${escapeHtml(c.phone || '')}"></div>
+        <div class="field"><label>מיקום</label><input class="input" id="f_location" value="${escapeHtml(c.location || '')}"></div>
+        <div class="field"><label>סוג מערכת</label><select class="input" id="f_system">
+          <option ${c.system==='OFF GRID'?'selected':''}>OFF GRID</option>
+          <option ${c.system==='ON GRID'?'selected':''}>ON GRID</option>
+          <option ${c.system==='HYBRID'?'selected':''}>HYBRID</option>
+        </select></div>
+        <div class="field"><label>מקום התקנה</label><select class="input" id="f_installed_at">
+          <option ${c.installed_at==='בית פרטי'?'selected':''}>בית פרטי</option>
+          <option ${c.installed_at==='עסק/אתר מסחרי'?'selected':''}>עסק/אתר מסחרי</option>
+          <option ${c.installed_at==='תעשייה'?'selected':''}>תעשייה</option>
+        </select></div>
+        <div class="field"><label>סוג לקוח</label><select class="input" id="f_customer_type">
+          <option ${c.customer_type==='פרטי/פטור'?'selected':''}>פרטי/פטור</option>
+          <option ${c.customer_type==='עוסק פטור'?'selected':''}>עוסק פטור</option>
+          <option ${c.customer_type==='עוסק מורשה / חברה'?'selected':''}>עוסק מורשה / חברה</option>
+        </select></div>
+        <div class="field"><label>דדליין (DD/MM/YYYY)</label><input class="input" id="f_deadline" value="${escapeHtml(c.deadline || '')}" placeholder="10/04/2026"></div>
+      </div>
+    </div>
+    <div class="formSection">
+      <h3>חברת חשמל / חח"י</h3>
+      <div class="formGrid cols2">
+        <div class="field"><label>פתיחת חח"י</label><input class="input" id="f_iec_open" value="${escapeHtml(c.iec_open || '')}"></div>
+        <div class="field"><label>ייפוי כוח</label><input class="input" id="f_poa" value="${escapeHtml(c.poa || '')}"></div>
+        <div class="field"><label>אישור ביצוע</label><input class="input" id="f_work_permit" value="${escapeHtml(c.work_permit || '')}"></div>
+        <div class="field"><label>אגרה</label><input class="input" id="f_fee" value="${escapeHtml(c.fee || '')}"></div>
+      </div>
+    </div>
+    <div class="formSection">
+      <h3>אחוזי התקדמות</h3>
+      <div class="formGrid cols4">
+        <div class="field"><label>ניירת / חח"י</label><input class="input" type="number" min="0" max="100" id="f_progress_papers" value="${c.progress_papers ?? ''}"></div>
+        <div class="field"><label>ציוד</label><input class="input" type="number" min="0" max="100" id="f_progress_equipment" value="${c.progress_equipment ?? 0}"></div>
+        <div class="field"><label>התקנה</label><input class="input" type="number" min="0" max="100" id="f_progress_installation" value="${c.progress_installation ?? 0}"></div>
+        <div class="field"><label>סיום</label><input class="input" type="number" min="0" max="100" id="f_progress_final" value="${c.progress_final ?? 0}"></div>
+      </div>
+    </div>
+    <div class="formSection">
+      <h3>סטטוס וחסמים</h3>
+      <div class="formGrid cols2">
+        <div class="field"><label>רמת סיכון</label><select class="input" id="f_risk">
+          <option value="low" ${c.risk==='low'?'selected':''}>תקין</option>
+          <option value="medium" ${c.risk==='medium'?'selected':''}>חסם בינוני</option>
+          <option value="high" ${c.risk==='high'?'selected':''}>חסם גבוה</option>
+        </select></div>
+        <div class="field"><label>הובלות (מופרד בפסיקים)</label><input class="input" id="f_deliveries" value="${escapeHtml((c.deliveries || []).join(', '))}"></div>
+      </div>
+      <div class="field"><label>חסם נוכחי</label><textarea class="input" id="f_blocker">${escapeHtml(c.blocker || '')}</textarea></div>
+      <div class="field"><label>פעולה הבאה</label><textarea class="input" id="f_next_action">${escapeHtml(c.next_action || '')}</textarea></div>
+      <div class="field"><label>לוגיסטיקה חכמה</label><textarea class="input" id="f_smart">${escapeHtml(c.smart || '')}</textarea></div>
+      <div class="field"><label>הערות</label><textarea class="input" id="f_notes">${escapeHtml(c.notes || '')}</textarea></div>
+    </div>
+    <div class="formSection">
+      <h3>שלבים בפועל</h3>
+      <div id="stagesContainer"></div>
+      <button class="addBtn" onclick="addStage()">+ הוסף שלב</button>
+    </div>
+    <div class="formSection">
+      <h3>משימות במקביל</h3>
+      <div id="parallelContainer"></div>
+      <button class="addBtn" onclick="addParallel()">+ הוסף משימה</button>
+    </div>
+  `;
+  renderStagesList();
+  renderParallelList();
+}
+
+function renderStagesList() {
+  const container = document.getElementById('stagesContainer');
+  container.innerHTML = tempStages.map((s, i) => `
+    <div class="listRow">
+      <input class="input" value="${escapeHtml(s.text)}" oninput="tempStages[${i}].text=this.value" placeholder="שם השלב">
+      <select class="input" onchange="tempStages[${i}].status=this.value">
+        ${statusOptions.map(o => `<option value="${o.value}" ${s.status===o.value?'selected':''}>${o.label}</option>`).join('')}
+      </select>
+      <button class="iconBtn danger" onclick="removeStage(${i})">🗑️</button>
+    </div>
+  `).join('');
+}
+
+function renderParallelList() {
+  const container = document.getElementById('parallelContainer');
+  container.innerHTML = tempParallel.map((p, i) => `
+    <div class="listRow">
+      <input class="input" value="${escapeHtml(p.text)}" oninput="tempParallel[${i}].text=this.value" placeholder="תיאור משימה">
+      <select class="input" onchange="tempParallel[${i}].status=this.value">
+        ${statusOptions.map(o => `<option value="${o.value}" ${p.status===o.value?'selected':''}>${o.label}</option>`).join('')}
+      </select>
+      <button class="iconBtn danger" onclick="removeParallel(${i})">🗑️</button>
+    </div>
+  `).join('');
+}
+
+function addStage() { tempStages.push({text: '', status: 'waiting'}); renderStagesList(); }
+function removeStage(i) { tempStages.splice(i, 1); renderStagesList(); }
+function addParallel() { tempParallel.push({text: '', status: 'parallel'}); renderParallelList(); }
+function removeParallel(i) { tempParallel.splice(i, 1); renderParallelList(); }
+
+async function saveClient() {
+  const name = document.getElementById('f_name').value.trim();
+  if (!name) { alert('יש להזין שם לקוח'); return; }
+  
+  setSyncStatus('saving');
+  
+  const papersVal = document.getElementById('f_progress_papers').value;
+  const papers = papersVal === '' ? null : Number(papersVal);
+  const equipment = Number(document.getElementById('f_progress_equipment').value) || 0;
+  const installation = Number(document.getElementById('f_progress_installation').value) || 0;
+  const final = Number(document.getElementById('f_progress_final').value) || 0;
+  const overall = Math.round(((papers || 0) + equipment + installation + final) / 4 * 10) / 10;
+  
+  const clientData = {
+    name,
+    email: document.getElementById('f_email').value,
+    phone: document.getElementById('f_phone').value,
+    location: document.getElementById('f_location').value,
+    system: document.getElementById('f_system').value,
+    installed_at: document.getElementById('f_installed_at').value,
+    customer_type: document.getElementById('f_customer_type').value,
+    iec_open: document.getElementById('f_iec_open').value,
+    poa: document.getElementById('f_poa').value,
+    work_permit: document.getElementById('f_work_permit').value,
+    fee: document.getElementById('f_fee').value,
+    progress_papers: papers,
+    progress_equipment: equipment,
+    progress_installation: installation,
+    progress_final: final,
+    progress_overall: overall,
+    risk: document.getElementById('f_risk').value,
+    blocker: document.getElementById('f_blocker').value,
+    next_action: document.getElementById('f_next_action').value,
+    deadline: document.getElementById('f_deadline').value,
+    deliveries: document.getElementById('f_deliveries').value.split(',').map(s=>s.trim()).filter(Boolean),
+    smart: document.getElementById('f_smart').value,
+    notes: document.getElementById('f_notes').value
+  };
+  
+  try {
+    let clientId;
+    if (editingClient) {
+      await sbPatch('clients', editingClient.id, clientData);
+      clientId = editingClient.id;
+      await sbDelete('client_stages', `client_id=eq.${clientId}`);
+      await sbDelete('client_parallel', `client_id=eq.${clientId}`);
+    } else {
+      const result = await sbPost('clients', clientData);
+      clientId = result[0].id;
+    }
+    
+    if (tempStages.length > 0) {
+      await sbPost('client_stages', tempStages.filter(s=>s.text).map((s, i) => ({
+        client_id: clientId, text: s.text, status: s.status, order_index: i
+      })));
+    }
+    if (tempParallel.length > 0) {
+      await sbPost('client_parallel', tempParallel.filter(p=>p.text).map((p, i) => ({
+        client_id: clientId, text: p.text, status: p.status, order_index: i
+      })));
+    }
+    
+    closeEditModal();
+    await loadAll();
+  } catch (err) {
+    console.error(err);
+    setSyncStatus('error');
+    alert('שגיאה בשמירה');
+  }
+}
+
+async function deleteClient(id) {
+  if (!confirm('למחוק לקוח זה?')) return;
+  setSyncStatus('saving');
+  try {
+    await sbDelete('clients', `id=eq.${id}`);
+    await loadAll();
+  } catch (err) {
+    setSyncStatus('error');
+  }
+}
+
+// ====== AI Modal ======
+function openAIModal() {
+  document.getElementById('aiModalOverlay').classList.add('active');
+  renderAIConversation();
+}
+
+function closeAIModal(event) {
+  if (event && event.target.id !== 'aiModalOverlay' && event.type === 'click') return;
+  document.getElementById('aiModalOverlay').classList.remove('active');
+}
+
+function renderAIConversation() {
+  const body = document.getElementById('aiModalBody');
+  if (aiConversation.length === 0) {
+    const suggestions = [
+      'אילו לקוחות צריכים התייחסות דחופה?',
+      'מה המשימות הכי קריטיות להיום?',
+      'תן לי סיכום שבועי למנהל',
+      'איך לתעדף את העבודה השבוע?',
+      'אילו הובלות אפשר לאחד?'
+    ];
+    body.innerHTML = `
+      <p style="color:#66758a;margin-bottom:12px;font-size:13px">שאל אותי כל דבר על הלקוחות שלך.</p>
+      ${suggestions.map(s => `<button class="suggestion" onclick="sendAI('${escapeHtml(s).replace(/'/g,"\\'")}')">${s}</button>`).join('')}
+    `;
+  } else {
+    body.innerHTML = aiConversation.map(m => `
+      <div class="aiMsg ${m.role}">
+        <div class="role" style="color:${m.role==='user'?'#1849a9':'#6d28d9'}">${m.role==='user'?'את/ה':'AI'}</div>
+        <div class="text">${escapeHtml(m.text)}</div>
+      </div>
+    `).join('');
+    body.scrollTop = body.scrollHeight;
+  }
+}
+
+async function sendAI(preset) {
+  const questionEl = document.getElementById('aiQuestion');
+  const query = preset || questionEl.value.trim();
+  if (!query) return;
+  
+  aiConversation.push({role: 'user', text: query});
+  questionEl.value = '';
+  renderAIConversation();
+  
+  const body = document.getElementById('aiModalBody');
+  const loadingEl = document.createElement('div');
+  loadingEl.id = 'aiLoading';
+  loadingEl.style.cssText = 'text-align:center;padding:20px;color:#66758a';
+  loadingEl.innerHTML = 'חושב<span class="loadingDot">.</span><span class="loadingDot">.</span><span class="loadingDot">.</span>';
+  body.appendChild(loadingEl);
+  body.scrollTop = body.scrollHeight;
+  
+  document.getElementById('aiSendBtn').disabled = true;
+
+  try {
+    const response = await fetch(`${SUPABASE_URL}/functions/v1/ai-assistant`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': SUPABASE_KEY,
+        'Authorization': `Bearer ${SUPABASE_KEY}`
+      },
+      body: JSON.stringify({ question: query, clients })
+    });
+    const data = await response.json();
+    const answer = data.answer || data.error || 'שגיאה בתשובה';
+    aiConversation.push({role: 'ai', text: answer});
+  } catch (err) {
+    aiConversation.push({role: 'ai', text: 'שגיאה בחיבור ל-AI: ' + err.message});
+  }
+  
+  document.getElementById('aiSendBtn').disabled = false;
+  renderAIConversation();
+}
+
+// ====== Initialize ======
+loadAll();
+
+// ====== Settings Modal ======
+async function openSettingsModal() {
+  document.getElementById('settingsModalOverlay').classList.add('active');
+  // Load existing settings
+  try {
+    const res = await sbGet('settings', 'key=eq.email_config');
+    if (res && res[0]) {
+      document.getElementById('s_manager_email').value = res[0].value.manager_email || '';
+      document.getElementById('s_from_email').value = res[0].value.from_email || '';
+    }
+  } catch {}
+  checkIntegrations();
+}
+
+function closeSettingsModal(event) {
+  if (event && event.target.id !== 'settingsModalOverlay' && event.type === 'click') return;
+  document.getElementById('settingsModalOverlay').classList.remove('active');
+}
+
+async function saveSettings() {
+  const manager_email = document.getElementById('s_manager_email').value.trim();
+  const from_email = document.getElementById('s_from_email').value.trim() || 'onboarding@resend.dev';
+  if (!manager_email) { alert('יש להזין מייל מנהל'); return; }
+  
+  try {
+    // Upsert settings
+    const existing = await sbGet('settings', 'key=eq.email_config');
+    const payload = { key: 'email_config', value: { manager_email, from_email } };
+    if (existing && existing[0]) {
+      await fetch(`${SUPABASE_URL}/rest/v1/settings?key=eq.email_config`, {
+        method: 'PATCH',
+        headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ value: { manager_email, from_email } })
+      });
+    } else {
+      await sbPost('settings', payload);
+    }
+    alert('✅ הגדרות נשמרו בהצלחה');
+    checkIntegrations();
+  } catch (err) {
+    alert('שגיאה בשמירה: ' + err.message);
+  }
+}
+
+async function checkIntegrations() {
+  const container = document.getElementById('integrationsStatus');
+  container.innerHTML = '<div style="color:#66758a">בודק חיבורים...</div>';
+  
+  const integrations = [
+    { name: '🤖 AI (Claude)', check: async () => {
+      try {
+        const r = await fetch(`${SUPABASE_URL}/functions/v1/ai-assistant`, {
+          method: 'POST',
+          headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ question: 'test', clients: [] })
+        });
+        const d = await r.json();
+        return { ok: !d.error, msg: d.error || 'פעיל' };
+      } catch(e) { return { ok: false, msg: e.message }; }
+    }},
+    { name: '📧 מיילים (Resend)', check: async () => {
+      try {
+        const r = await fetch(`${SUPABASE_URL}/functions/v1/deadline-notifications`, {
+          method: 'POST',
+          headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ test: true })
+        });
+        const d = await r.json();
+        return { ok: !d.error || d.message === 'No urgent deadlines', msg: d.error || 'פעיל' };
+      } catch(e) { return { ok: false, msg: e.message }; }
+    }},
+    { name: '🔗 Zoho CRM', check: async () => {
+      try {
+        const r = await fetch(`${SUPABASE_URL}/functions/v1/zoho-sync`, {
+          method: 'POST',
+          headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'test_connection' })
+        });
+        const d = await r.json();
+        return { ok: d.success, msg: d.error || 'פעיל' };
+      } catch(e) { return { ok: false, msg: e.message }; }
+    }}
+  ];
+  
+  container.innerHTML = '';
+  for (const int of integrations) {
+    const row = document.createElement('div');
+    row.style.cssText = 'padding:10px;background:#f9fafb;border-radius:8px;display:flex;justify-content:space-between;align-items:center';
+    row.innerHTML = `<span>${int.name}</span><span style="color:#9ca3af;font-size:12px">בודק...</span>`;
+    container.appendChild(row);
+    const result = await int.check();
+    row.lastElementChild.style.color = result.ok ? '#166534' : '#b42318';
+    row.lastElementChild.innerHTML = result.ok ? '✓ פעיל' : `✗ ${result.msg.substring(0, 50)}`;
+  }
+}
+
+async function sendDeadlineNotifications() {
+  setSyncStatus('saving');
+  try {
+    const res = await fetch(`${SUPABASE_URL}/functions/v1/deadline-notifications`, {
+      method: 'POST',
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({})
+    });
+    const data = await res.json();
+    setSyncStatus('synced');
+    if (data.error) {
+      alert('⚠️ ' + data.error);
+    } else if (data.sent === 0) {
+      alert('✅ אין deadlines קרובים - לא נשלחה התראה');
+    } else {
+      alert(`✅ נשלחה התראה עם ${data.sent} לקוחות: ${(data.clients || []).join(', ')}`);
+    }
+  } catch (err) {
+    setSyncStatus('error');
+    alert('שגיאה: ' + err.message);
+  }
+}
+
+async function pushToZoho(clientId) {
+  const client = clients.find(c => c.id === clientId);
+  if (!client) return;
+  if (!confirm(`לסנכרן את "${client.name}" ל-Zoho CRM?`)) return;
+  setSyncStatus('saving');
+  try {
+    const res = await fetch(`${SUPABASE_URL}/functions/v1/zoho-sync`, {
+      method: 'POST',
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'push_to_zoho', client })
+    });
+    const data = await res.json();
+    setSyncStatus('synced');
+    if (data.success) {
+      alert(`✅ ${client.name} סונכרן ל-Zoho CRM בהצלחה!`);
+    } else {
+      alert('⚠️ ' + (data.error || JSON.stringify(data.result)));
+    }
+  } catch (err) {
+    setSyncStatus('error');
+    alert('שגיאה: ' + err.message);
+  }
+}
+</script>
+</body>
+</html>
