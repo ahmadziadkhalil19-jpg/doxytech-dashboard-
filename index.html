@@ -5,10 +5,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>DOXY TECH - Dashboard מנהלים</title>
 <style>
+/* ================= CSS RESET & BASE ================= */
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: Arial, "Noto Sans Hebrew", sans-serif; background: linear-gradient(180deg,#eef4fa,#f8fbff 35%,#f4f7fb); color: #10243e; min-height: 100vh; }
+body { 
+    font-family: Arial, "Noto Sans Hebrew", sans-serif; 
+    background: linear-gradient(180deg, #eef4fa, #f8fbff 35%, #f4f7fb); 
+    color: #10243e; 
+    min-height: 100vh; 
+}
 
-/* Login Screen */
+/* ================= LOGIN SCREEN ================= */
 .login-screen { position: fixed; inset: 0; background: linear-gradient(135deg,#0f2747,#19406f); display: flex; align-items: center; justify-content: center; padding: 20px; z-index: 1000; }
 .login-box { background: white; border-radius: 20px; padding: 40px; max-width: 420px; width: 100%; box-shadow: 0 20px 60px rgba(0,0,0,.3); }
 .login-logo { font-size: 48px; text-align: center; margin-bottom: 16px; }
@@ -22,672 +28,938 @@ body { font-family: Arial, "Noto Sans Hebrew", sans-serif; background: linear-gr
 .login-btn:hover { transform: translateY(-1px); }
 .login-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 .login-error { background: #fee2e2; color: #b42318; padding: 10px; border-radius: 8px; font-size: 13px; margin-bottom: 16px; }
-.login-footer { text-align: center; margin-top: 20px; font-size: 12px; color: #66758a; }
 .hidden { display: none !important; }
 
-/* Toast Notifications */
+/* ================= TOASTS ================= */
 #toastContainer { position: fixed; bottom: 24px; left: 24px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; }
 .toast { background: #fff; color: #0f2747; padding: 16px 20px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); border-right: 4px solid #0891b2; font-size: 14px; font-weight: 600; opacity: 0; transform: translateY(20px); transition: all 0.3s ease; display: flex; align-items: center; gap: 10px; }
 .toast.show { opacity: 1; transform: translateY(0); }
 .toast.success { border-color: #16a34a; }
 .toast.error { border-color: #dc2626; }
 
-/* User badge in header */
-.user-badge { display: flex; align-items: center; gap: 10px; margin-top: 12px; padding: 8px 12px; background: rgba(255,255,255,.1); border-radius: 10px; font-size: 13px; }
-.logout-btn { background: rgba(255,255,255,.2); border: none; color: white; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; font-family: inherit; }
-
-/* Track buttons & stage details */
-.trackBtn { font-size: 12px; padding: 8px 14px; }
-.trackBtn.active { background: #0f2747 !important; color: #fff !important; border-color: #0f2747 !important; }
-.stageItem { background: #fbfdff; border: 1px solid #e8eff7; border-radius: 10px; padding: 12px; margin-bottom: 10px; }
-.stageItem .num { display: inline-block; background: #0f2747; color: #fff; width: 24px; height: 24px; border-radius: 50%; text-align: center; font-size: 12px; font-weight: 700; line-height: 24px; margin-left: 8px; }
-.stageItem.parallel { border-left: 4px solid #ff9800; background: #fff7ed; }
-.stageItem.business-only { border-left: 4px solid #9333ea; background: #faf5ff; }
-.stageItem h4 { margin: 0 0 6px; font-size: 14px; color: #0f2747; }
-.stageItem .desc { font-size: 12px; color: #66758a; margin-bottom: 8px; line-height: 1.5; }
-.stageItem .docs { background: rgba(15,39,71,0.03); border-left: 2px solid #0891b2; border-radius: 6px; padding: 10px; margin-top: 8px; }
-.stageItem .docs-title { font-size: 12px; font-weight: 700; color: #0f2747; margin-bottom: 6px; display:flex; align-items:center; gap:4px; }
-.stageItem .docs-item { font-size: 11px; color: #4b5563; padding: 4px 0; display:flex; align-items:center; gap:6px; border-bottom: 1px dashed #dbe4ee; }
-.stageItem .docs-item:last-child { border-bottom: none; }
-.stageItem .docs-item::before { content: "☐"; color: #0891b2; font-size:14px; }
-.stageItem .fee { display: inline-block; background: #fef3c7; color: #92400e; padding: 3px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; margin-top: 4px; }
-.stageItem .parallel-badge { display: inline-block; background: #ff9800; color: white; padding: 2px 6px; border-radius: 4px; font-size: 10px; margin-right: 4px; }
-.stageItem .business-badge { display: inline-block; background: #9333ea; color: white; padding: 2px 6px; border-radius: 4px; font-size: 10px; margin-right: 4px; }
-.stageItem .link-btn { display: inline-block; background: #0369a1; color: white; padding: 4px 10px; border-radius: 6px; font-size: 11px; text-decoration: none; margin: 4px 4px 0 0; }
-.stageItem .link-btn:hover { background: #0284c7; }
-.wrap { max-width: 1400px; margin: 0 auto; padding: 28px 24px 40px; }
-.topbar { display: grid; grid-template-columns: 1.7fr 1fr; gap: 16px; background: linear-gradient(135deg,#0f2747,#19406f); color: #fff; border-radius: 24px; padding: 24px 26px; box-shadow: 0 10px 30px rgba(15,39,71,.08); }
+/* ================= HEADER & TOPBAR ================= */
+.wrap { max-width: 1500px; margin: 0 auto; padding: 20px; }
+.topbar { display: grid; grid-template-columns: 1.7fr 1fr; gap: 16px; background: linear-gradient(135deg,#0f2747,#19406f); color: #fff; border-radius: 20px; padding: 20px; box-shadow: 0 10px 30px rgba(15,39,71,.1); }
 .brand { display: flex; gap: 16px; align-items: flex-start; }
-.logo { width: 58px; height: 58px; border-radius: 16px; background: rgba(255,255,255,.12); display: flex; align-items: center; justify-content: center; font-size: 28px; }
+.logo { width: 50px; height: 50px; border-radius: 12px; background: rgba(255,255,255,.1); display: flex; align-items: center; justify-content: center; font-size: 24px; }
 h1 { margin: 0 0 8px; font-size: 28px; line-height: 1.1; }
-.subtitle { color: #d5e0ef; font-size: 14px; line-height: 1.6; }
-.sync-status { margin-top: 8px; display: flex; align-items: center; gap: 6px; font-size: 12px; }
-.sync-synced { color: #86efac; }
-.sync-saving { color: #fbbf24; }
+.sync-status { margin-top: 8px; display: flex; align-items: center; gap: 6px; font-size: 12px; color: #86efac; }
 .sync-error { color: #f87171; }
 .metaPanel { background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.14); border-radius: 18px; padding: 16px 18px; }
 .metaGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .meta { background: rgba(255,255,255,.08); border-radius: 14px; padding: 12px 14px; }
 .meta .k { font-size: 12px; color: #c8d7ea; margin-bottom: 4px; display:flex; justify-content:space-between; }
 .meta .v { font-size: 20px; font-weight: 700; }
-.toolbar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin: 18px 0 20px; }
-.chip, .btn { border: none; border-radius: 999px; padding: 10px 14px; font-weight: 700; cursor: pointer; font-size: 14px; font-family: inherit; }
-.chip { background: #fff; color: #0f2747; border: 1px solid #dbe4ee; }
+
+/* ================= TOOLBAR & SEARCH ================= */
+.toolbar-wrapper { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; margin: 20px 0; background: #fff; padding: 12px 20px; border-radius: 15px; border: 1px solid #dbe4ee; box-shadow: 0 4px 15px rgba(15,39,71,.03); }
+.toolbar-filters { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.toolbar-actions { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+.toolbar-divider { width: 1px; height: 30px; background: #dbe4ee; margin: 0 8px; }
+.live-search { padding: 10px 18px; border-radius: 20px; border: 1px solid #dbe4ee; width: 250px; outline: none; font-family: inherit; font-size: 13px; background: #f9fafb; transition: 0.2s; }
+.live-search:focus { border-color: #0891b2; background: #fff; box-shadow: 0 0 0 3px rgba(8,145,178,0.1); }
+.chip, .btn { border: none; border-radius: 999px; padding: 10px 16px; font-weight: 700; cursor: pointer; font-size: 13px; font-family: inherit; }
+.chip { background: #f3f7fb; color: #0f2747; border: 1px solid #dbe4ee; }
 .chip.active { background: #0f2747; color: #fff; border-color: #0f2747; }
-.btn { background: #e4b654; color: #2f2400; box-shadow: 0 4px 16px rgba(228,182,84,.28); }
-.btn.dark { background: #0f2747; color: #fff; box-shadow: none; }
-.btn.purple { background: linear-gradient(135deg,#6d28d9,#8b5cf6); color: #fff; box-shadow: none; }
-.btn.light { background: #fff; color: #0f2747; border: 1px solid #dbe4ee; box-shadow: none; }
+.btn.dark { background: #0f2747; color: #fff; }
+.btn.purple { background: linear-gradient(135deg,#6d28d9,#8b5cf6); color: #fff; }
+.btn.light { background: #fff; color: #0f2747; border: 1px solid #dbe4ee; }
+.btn-icon { background: #f3f7fb; border: 1px solid #dbe4ee; border-radius: 10px; width: 40px; height: 40px; display: flex; justify-content: center; align-items: center; font-size: 18px; cursor: pointer; position: relative; transition: 0.2s; }
+.btn-icon:hover { background: #e7f0fb; }
+.badge-dot { position: absolute; top: -4px; right: -4px; background: #dc2626; color: white; font-size: 10px; font-weight: bold; width: 18px; height: 18px; border-radius: 50%; display: flex; justify-content: center; align-items: center; border: 2px solid #fff; }
+
+/* ================= STATS ================= */
 .stats { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; margin-bottom: 18px; }
-.card { background: #fff; border: 1px solid #dbe4ee; border-radius: 18px; box-shadow: 0 10px 30px rgba(15,39,71,.08); }
-.stat { padding: 18px; position:relative; }
-.stat .k { font-size: 13px; color: #66758a; margin-bottom: 8px; }
-.stat .v { font-size: 32px; font-weight: 800; line-height: 1; }
-.stat .hint { font-size: 12px; color: #66758a; margin-top: 8px; }
+.stat-card { background: #fff; border: 1px solid #dbe4ee; border-radius: 18px; padding: 18px; box-shadow: 0 10px 30px rgba(15,39,71,.05); position: relative; overflow: hidden; }
+.stat-card.alert { border-color: #fca5a5; background: #fef2f2; }
+.stat-card .k { font-size: 13px; color: #66758a; margin-bottom: 8px; }
+.stat-card.alert .k { color: #b42318; font-weight: 800; }
+.stat-card .v { font-size: 32px; font-weight: 800; line-height: 1; }
+.stat-card .hint { font-size: 12px; color: #66758a; margin-top: 8px; }
 .company-prog-bar { height: 6px; background: #e8eef6; border-radius: 999px; overflow: hidden; margin-top: 10px; }
 .company-prog-bar span { display: block; height: 100%; border-radius: 999px; background: linear-gradient(90deg, #16a34a, #0891b2); transition: width 0.5s; }
-.layout { display: grid; grid-template-columns: 1.2fr .8fr; gap: 18px; align-items: start; }
-.section { padding: 18px; }
-.lead { color: #66758a; font-size: 13px; margin-bottom: 14px; }
-.clients { display: grid; gap: 14px; }
-.client { padding: 18px; }
-.clientHead { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; margin-bottom: 14px; flex-wrap: wrap; }
-.clientName { font-size: 24px; font-weight: 800; margin: 0 0 6px; }
-.tagRow { display: flex; flex-wrap: wrap; gap: 8px; }
-.tag { padding: 6px 10px; border-radius: 999px; font-size: 12px; font-weight: 700; }
+
+/* ================= MAIN GRID & CLIENTS ================= */
+.main-grid { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 20px; align-items: start; }
+.sticky-side { position: sticky; top: 20px; }
+.card-section { background: #fff; border-radius: 18px; padding: 20px; border: 1px solid #dbe4ee; box-shadow: 0 4px 12px rgba(0,0,0,0.03); }
+
+.clients-list { display: grid; gap: 15px; }
+.client-card { background: #fff; border-radius: 18px; padding: 20px; border: 1px solid #dbe4ee; box-shadow: 0 4px 12px rgba(0,0,0,0.03); transition: border-color 0.2s; }
+.client-card:hover { border-color: #0891b2; }
+.clientHead { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; }
+.client-name { font-size: 22px; font-weight: 800; color: #0f2747; margin-bottom: 4px; }
+.client-mini-prog { height: 5px; background: #e8eef6; border-radius: 10px; margin: 8px 0; overflow: hidden; max-width: 250px; }
+.client-mini-prog span { display: block; height: 100%; border-radius: 10px; transition: width 0.5s; }
+.tagRow { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.tag { padding: 4px 10px; border-radius: 999px; font-size: 11px; font-weight: 700; }
 .offgrid { background: #efe9ff; color: #6d28d9; }
 .ongrid { background: #e0f2fe; color: #075985; }
-.hybrid { background: #dff5f6; color: #0f766e; }
-.business { background: #efe9ff; color: #5b32a3; }
-.private { background: #edf7ed; color: #256f37; }
-.type { background: #e7f0fb; color: #1849a9; }
-.risk { padding: 8px 12px; border-radius: 999px; font-size: 12px; font-weight: 800; }
+.risk { padding: 6px 12px; border-radius: 999px; font-size: 11px; font-weight: 800; }
 .riskHigh { background: #fde3e3; color: #b42318; }
-.riskMed { background: #fff3d4; color: #9a6700; }
 .riskLow { background: #dff3e5; color: #166534; }
-.details { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-bottom: 14px; }
-.detail { background: #fbfdff; border: 1px solid #e8eff7; border-radius: 14px; padding: 11px 12px; }
-.detail .k { font-size: 11px; color: #66758a; }
-.detail .v { font-size: 14px; font-weight: 700; margin-top: 5px; }
-.prog { display: grid; grid-template-columns: repeat(4,1fr); gap: 10px; margin-bottom: 14px; }
-.progBox { background: #fbfdff; border: 1px solid #e8eff7; border-radius: 14px; padding: 12px; }
-.progBox .label { font-size: 12px; color: #66758a; margin-bottom: 8px; }
-.bar { height: 8px; background: #e8eef6; border-radius: 999px; overflow: hidden; margin-bottom: 7px; }
-.bar span { display: block; height: 100%; border-radius: 999px; }
-.progBox .value { font-weight: 800; font-size: 16px; }
-.two { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.mini { background: #fbfdff; border: 1px solid #e8eff7; border-radius: 14px; padding: 14px; }
-.mini h3 { margin: 0 0 10px; font-size: 14px; }
-.list { display: grid; gap: 8px; }
-.item { display: flex; justify-content: space-between; gap: 10px; border-bottom: 1px dashed #e3ebf4; padding-bottom: 8px; font-size: 13px; }
-.item:last-child { border-bottom: none; padding-bottom: 0; }
-.pill { padding: 4px 8px; border-radius: 999px; font-size: 11px; font-weight: 800; white-space: nowrap; }
-.done { background: #dff3e5; color: #166534; }
-.waiting { background: #fde3e3; color: #b42318; }
-.running { background: #fff3d4; color: #9a6700; }
-.parallel { background: #e7f0fb; color: #1849a9; }
-table { width: 100%; border-collapse: collapse; }
-th, td { padding: 11px 12px; border-bottom: 1px solid #e8eff7; font-size: 13px; text-align: right; vertical-align: middle; }
-th { background: #f3f7fb; color: #49617f; font-size: 12px; }
-tr:last-child td { border-bottom: none; }
-.deadline { font-weight: 800; }
-.soon { color: #b42318; }
-.ok { color: #166534; }
-.foot { margin-top: 12px; color: #66758a; font-size: 12px; line-height: 1.6; }
-.note { margin-top: 14px; color: #526173; font-size: 13px; background: #fff; border: 1px dashed #c9d7e6; border-radius: 14px; padding: 12px 14px; }
-.iconBtn { background: transparent; border: none; cursor: pointer; padding: 6px; color: #66758a; display: inline-flex; align-items: center; justify-content: center; border-radius: 6px; font-size: 14px; }
+.iconBtn { background: transparent; border: none; cursor: pointer; padding: 6px; border-radius: 6px; font-size: 14px; }
 .iconBtn:hover { background: #f3f7fb; }
 .iconBtn.danger { color: #b42318; }
-.actions { display: flex; gap: 4px; align-items: center; }
 
-/* Modal */
-.modalOverlay { position: fixed; inset: 0; background: rgba(15,39,71,.6); z-index: 100; display: none; align-items: flex-start; justify-content: center; padding: 20px; overflow-y: auto; }
-.modalOverlay.active { display: flex; }
-.modal { background: #fff; border-radius: 18px; max-width: 800px; width: 100%; margin: 20px auto; box-shadow: 0 20px 60px rgba(0,0,0,.3); }
-.modal.ai { max-width: 700px; }
-.modalHeader { padding: 16px 20px; border-bottom: 1px solid #e8eff7; display: flex; justify-content: space-between; align-items: center; border-radius: 18px 18px 0 0; }
-.modalHeader.ai { background: linear-gradient(135deg,#6d28d9,#8b5cf6); color: #fff; }
-.modalBody { padding: 20px; max-height: 70vh; overflow-y: auto; }
-.modalFooter { padding: 16px 20px; border-top: 1px solid #e8eff7; display: flex; gap: 10px; justify-content: flex-end; align-items: center; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 15px 0; }
+.info-box { background: #fbfdff; border: 1px solid #e8eff7; border-radius: 12px; padding: 10px; }
+.info-box .k { font-size: 11px; color: #66758a; }
+.info-box .v { font-size: 13px; font-weight: 700; margin-top: 3px; }
 
-/* Form */
+.steps-container { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px; }
+.steps-list { background: #f9fafb; border-radius: 12px; padding: 12px; border: 1px solid #edf2f7; }
+.steps-list h4 { font-size: 13px; margin-bottom: 10px; color: #0f2747; border-bottom: 1px solid #e2e8f0; padding-bottom: 5px; }
+.step-item { display: flex; justify-content: space-between; font-size: 12px; padding: 6px 0; border-bottom: 1px dashed #e2e8f0; align-items: center; }
+.step-item:last-child { border-bottom: none; }
+.pill { padding: 3px 8px; border-radius: 10px; font-size: 10px; font-weight: bold; white-space: nowrap; }
+.p-done { background: #dff3e5; color: #166534; }
+.p-run { background: #fff3d4; color: #9a6700; }
+.p-wait { background: #fde3e3; color: #b42318; }
+.deadline.soon { color: #b42318; font-weight: 800; }
+
+/* ================= TRACK DETAILS & DOC LINKS ================= */
+.trackBtn { font-size: 12px; padding: 8px 14px; margin-bottom: 5px; }
+.trackBtn.active { background: #0f2747 !important; color: #fff !important; border-color: #0f2747 !important; }
+.stage-item { background: #fff; border: 1px solid #e8eff7; border-radius: 12px; padding: 15px; margin-bottom: 10px; }
+.stage-num { background: #0f2747; color: #fff; width: 22px; height: 22px; border-radius: 50%; display: inline-block; text-align: center; line-height: 22px; font-size: 11px; margin-left: 8px; }
+.docs-box { background: rgba(8,145,178,0.05); border-right: 3px solid #0891b2; padding: 10px; margin-top: 10px; border-radius: 6px; }
+.doc-check { display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: #4b5563; padding: 6px 0; border-bottom: 1px dashed #dbe4ee; }
+.doc-check:last-child { border-bottom: none; }
+.doc-link { background: #e0f2fe; color: #0369a1; padding: 3px 8px; border-radius: 6px; text-decoration: none; font-size: 10px; font-weight: 700; transition: background 0.2s; border: 1px solid #bae6fd; }
+.doc-link:hover { background: #bae6fd; }
+.edit-link-btn { background: none; border: none; cursor: pointer; font-size: 12px; margin-right: 5px; opacity: 0.5; transition: opacity 0.2s; }
+.edit-link-btn:hover { opacity: 1; }
+
+/* ================= MODALS & FORMS ================= */
+.modal-overlay { position: fixed; inset: 0; background: rgba(15,39,71,0.6); z-index: 1000; display: none; align-items: center; justify-content: center; padding: 20px; overflow-y: auto; }
+.modal-overlay.active { display: flex; }
+.modal-content { background: #fff; border-radius: 20px; width: 100%; max-width: 800px; max-height: 90vh; overflow-y: auto; padding: 25px; position: relative; }
+.modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e8eff7; padding-bottom: 15px; margin-bottom: 15px; }
+.modal-footer { margin-top: 20px; display: flex; justify-content: flex-end; gap: 10px; border-top: 1px solid #e8eff7; padding-top: 15px; }
+
 .formSection { margin-bottom: 20px; }
-.formSection h3 { margin: 0 0 10px; font-size: 15px; color: #0f2747; border-bottom: 2px solid #e4b654; padding-bottom: 6px; }
-.formGrid { display: grid; gap: 10px; margin-bottom: 10px; }
-.formGrid.cols2 { grid-template-columns: repeat(2, 1fr); }
-.formGrid.cols4 { grid-template-columns: repeat(4, 1fr); }
-.field { margin-bottom: 8px; }
-.field label { display: block; font-size: 12px; color: #66758a; margin-bottom: 4px; font-weight: 600; }
-.input { width: 100%; padding: 8px 12px; border: 1px solid #dbe4ee; border-radius: 8px; font-size: 13px; font-family: inherit; background: #fff; }
+.formSection h3 { font-size: 14px; margin-bottom: 10px; border-bottom: 2px solid #e4b654; padding-bottom: 5px; color: #0f2747; }
+.formGrid { display: grid; gap: 12px; }
+.cols2 { grid-template-columns: repeat(2, 1fr); }
+.cols4 { grid-template-columns: repeat(4, 1fr); }
+.field label { display: block; font-size: 12px; margin-bottom: 4px; font-weight: 600; color: #66758a; }
+.input { width: 100%; padding: 8px 12px; border: 1px solid #dbe4ee; border-radius: 8px; font-size: 13px; font-family: inherit; }
 .input:focus { outline: none; border-color: #6d28d9; }
-.input:disabled { background: #f3f7fb; cursor: not-allowed; opacity: 0.8; }
-textarea.input { min-height: 50px; resize: vertical; }
+textarea.input { min-height: 60px; resize: vertical; }
 
-/* AI */
-.aiMsg { margin-bottom: 12px; padding: 12px; border-radius: 10px; }
-.aiMsg.user { background: #e7f0fb; border-right: 3px solid #1849a9; }
-.aiMsg.ai { background: #f3f0ff; border-right: 3px solid #6d28d9; }
-.aiMsg .role { font-size: 11px; font-weight: 700; margin-bottom: 4px; }
-.aiMsg .text { font-size: 14px; white-space: pre-wrap; line-height: 1.6; }
-.suggestion { background: #f3f7fb; color: #0f2747; border: 1px solid #dbe4ee; padding: 10px 14px; border-radius: 999px; font-size: 13px; cursor: pointer; text-align: right; font-family: inherit; margin-bottom: 8px; display: block; width: 100%; font-weight: 600; }
-.suggestion:hover { background: #e7f0fb; }
-.spinner { display: inline-block; animation: spin 1s linear infinite; }
-@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+/* ================= FILES MODAL (NEW DESIGN) ================= */
+.file-upload-area { background: #fff; border: 2px dashed #cbd5e1; border-radius: 12px; padding: 20px; text-align: center; margin-bottom: 20px; transition: border-color 0.2s; }
+.file-upload-area:hover { border-color: #0f2747; }
+.file-item { display: flex; align-items: center; gap: 12px; background: #fff; padding: 12px; border: 1px solid #e2e8f0; border-radius: 12px; margin-bottom: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+.file-icon { font-size: 24px; background: #f1f5f9; padding: 10px; border-radius: 8px; }
+.file-actions { display: flex; gap: 6px; }
+.btn-action-sm { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 6px 10px; font-size: 11px; font-weight: bold; cursor: pointer; color: #0f2747; text-decoration: none; display: flex; align-items: center; gap: 4px; }
+.btn-action-sm:hover { background: #f1f5f9; }
+
+/* ================= AI CHAT ================= */
+.aiMsg { margin-bottom: 15px; display: flex; flex-direction: column; }
+.aiMsg.user { align-items: flex-start; }
+.aiMsg.ai { align-items: flex-end; }
+.aiMsg .bubble { max-width: 85%; padding: 12px 16px; border-radius: 12px; font-size: 13px; line-height: 1.5; }
+.aiMsg.user .bubble { background: #e0f2fe; color: #0369a1; border-bottom-right-radius: 2px; }
+.aiMsg.ai .bubble { background: #fff; border: 1px solid #dbe4ee; color: #0f2747; border-bottom-left-radius: 2px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
+.ai-card { background: #fbfdff; border: 1px solid #e8eff7; border-radius: 8px; padding: 10px; margin-top: 8px; font-size: 12px; display: flex; justify-content: space-between; align-items: center; }
+
+@media(max-width:1100px) { .main-grid { grid-template-columns: 1fr; } .sticky-side { position: static; } .stats { grid-template-columns: repeat(2,1fr); } }
+@media(max-width:720px) { .cols2, .cols4 { grid-template-columns: 1fr; } .clientHead { flex-direction: column; } .grid-3 { grid-template-columns: 1fr 1fr; } .steps-container { grid-template-columns: 1fr; } }
 </style>
 </head>
 <body>
 
 <div id="toastContainer"></div>
 
-<div class="login-screen" id="loginScreen">
+<div class="login-screen" id="loginScreen" style="display:none;">
   <div class="login-box">
     <div class="login-logo">☀️</div>
     <div class="login-title">DOXY TECH</div>
     <div class="login-subtitle">Dashboard מנהלים - התחברות</div>
     <div id="loginError" class="login-error hidden"></div>
-    <div class="login-field">
-      <label>כתובת מייל</label>
-      <input type="email" id="loginEmail" placeholder="ahmad@doxy-tech.com">
-    </div>
-    <div class="login-field">
-      <label>סיסמה</label>
-      <input type="password" id="loginPassword" placeholder="••••••••" onkeydown="if(event.key==='Enter') doLogin()">
-    </div>
+    <div class="login-field"><label>כתובת מייל</label><input type="email" id="loginEmail" placeholder="ahmad@doxy-tech.com"></div>
+    <div class="login-field"><label>סיסמה</label><input type="password" id="loginPassword" onkeydown="if(event.key==='Enter') doLogin()"></div>
     <button class="login-btn" id="loginBtn" onclick="doLogin()">🔐 התחבר</button>
   </div>
 </div>
 
 <div id="mainApp" class="hidden">
-<div class="wrap">
-  <div class="topbar">
-    <div class="brand">
-      <div class="logo">☀️</div>
-      <div>
-        <h1>DOXY TECH - Dashboard מנהלים</h1>
-        <div class="subtitle">
-          מעקב אחיד לכל לקוח - מרגע חתימת חוזה ועד אישור סופי.
-          <div class="sync-status" id="syncStatus">
-            <span>☁️</span>
-            <span>מסונכרן בזמן אמת</span>
+  <div class="wrap">
+    
+    <div class="topbar">
+      <div class="brand">
+        <div class="logo">☀️</div>
+        <div>
+          <h1>DOXY TECH - ניהול תפעול</h1>
+          <div class="sync-status" id="syncStatus"><span>☁️</span><span>מסונכרן לענן Supabase</span></div>
+        </div>
+      </div>
+      <div class="metaPanel">
+        <div class="metaGrid">
+          <div class="meta"><div class="k"><span>זמן:</span> <span id="liveClock" style="color:#fff;font-weight:bold;">--:--:--</span></div><div class="v" id="todayDate"></div></div>
+          <div class="meta"><div class="k">לקוחות מנוהלים</div><div class="v" id="clientCount">0</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="toolbar-wrapper">
+      <div class="toolbar-filters">
+        <span style="font-size: 13px; font-weight: 600; color: #66758a; margin-left: 8px;">תצוגה:</span>
+        <button class="chip active" data-filter="all" onclick="setFilter('all')">הכל</button>
+        <button class="chip" data-filter="OFF GRID" onclick="setFilter('OFF GRID')">OFF GRID</button>
+        <button class="chip" data-filter="ON GRID" onclick="setFilter('ON GRID')">ON GRID</button>
+        <button class="chip" data-filter="HYBRID" onclick="setFilter('HYBRID')">HYBRID</button>
+        <div class="toolbar-divider"></div>
+        <input type="text" id="liveSearch" class="live-search" placeholder="🔍 חיפוש לקוח חי (הקלד שם...)" oninput="render()">
+      </div>
+
+      <div class="toolbar-actions">
+        <button class="btn dark" onclick="openEditModal()">+ לקוח חדש</button>
+        <button class="btn purple" onclick="openAIModal()">✨ עוזר AI חכם</button>
+        <div class="toolbar-divider"></div>
+        <button class="btn-icon" onclick="openAlertsModal()" title="התראות דחופות">🔔<span class="badge-dot" id="alertBadge" style="display:none;">0</span></button>
+        <button class="btn-icon" onclick="openSettingsModal()" title="הגדרות וסנכרון">⚙️</button>
+      </div>
+    </div>
+
+    <div class="stats">
+      <div class="stat-card">
+        <div class="k">ממוצע התקדמות חברה</div><div class="v" id="avgProgress">0%</div>
+        <div class="company-prog-bar"><span id="avgProgressBar" style="width: 0%"></span></div>
+      </div>
+      <div class="stat-card"><div class="k">סה"כ הכנסות צפויות</div><div class="v" id="totalRevenue" style="font-size:26px">0 ₪</div><div class="hint">ללא מע"מ</div></div>
+      <div class="stat-card"><div class="k">לקוחות פעילים</div><div class="v" id="activeClientsCount" style="font-size:26px">0</div><div class="hint">בתהליכי עבודה</div></div>
+      
+      <div class="stat-card alert">
+        <div class="k">⚠️ לקוח בחריגה / עיכוב קריטי</div>
+        <div class="v" id="topDelayedClient" style="font-size:20px; color:#b42318;">-</div>
+        <div class="hint" id="topDelayedReason" style="color:#b42318;">הכל תקין כרגע</div>
+      </div>
+    </div>
+
+    <div class="main-grid">
+      <div class="card-section" style="min-height: 500px;">
+        <h2 style="font-size:20px; margin-bottom:5px;">סטטוס לקוחות (Real-Time)</h2>
+        <p style="font-size:13px; color:#66758a; margin-bottom:15px;">מתעדכן אוטומטית בהתאם לשלבי העבודה</p>
+        <div class="clients-list" id="clientsList"></div>
+      </div>
+      
+      <div class="sticky-side">
+        <div class="card-section">
+          <h2 style="font-size:18px; margin-bottom:5px;">📋 מסלולי עבודה וטפסים</h2>
+          <p style="font-size:12px; color:#66758a; margin-bottom:15px;">(לחץ על ה-✏️ ליד טופס כדי לערוך את הקישור שלו)</p>
+          <div style="display:flex; gap:5px; margin-bottom:15px; flex-wrap:wrap;">
+            <button class="btn light trackBtn active" data-track="commercial" onclick="showTrack('commercial')">🟠 מסחרי</button>
+            <button class="btn light trackBtn" data-track="green_track" onclick="showTrack('green_track')">🟢 מסלול ירוק</button>
+            <button class="btn light trackBtn" data-track="off_grid" onclick="showTrack('off_grid')">🟣 OFF GRID</button>
           </div>
+          <div id="trackDetails" style="max-height:600px; overflow-y:auto; padding-right:5px;"></div>
         </div>
       </div>
     </div>
-    <div class="metaPanel">
-      <div class="metaGrid">
-        <div class="meta"><div class="k"><span>תאריך:</span> <span id="liveClock" style="color:#fff;font-weight:bold;">--:--:--</span></div><div class="v" id="today"></div></div>
-        <div class="meta"><div class="k">לקוחות פעילים</div><div class="v" id="clientCount">-</div></div>
-        <div class="meta"><div class="k">הובלות פתוחות</div><div class="v" id="deliveryCount">-</div></div>
-        <div class="meta"><div class="k">פרויקטים עם חח"י</div><div class="v" id="iecCount">-</div></div>
-      </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="editModal" onclick="closeEditModal(event)">
+  <div class="modal-content" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <h2 id="editTitle">לקוח חדש</h2>
+      <button class="iconBtn" onclick="closeEditModal(true)">✕</button>
+    </div>
+    <div id="editBody"></div>
+    <div class="modal-footer">
+      <button class="btn light" onclick="closeEditModal(true)">ביטול</button>
+      <button class="btn dark" onclick="saveClient()">💾 שמור וסנכרן לענן</button>
     </div>
   </div>
+</div>
 
-  <div class="toolbar">
-    <button class="chip active" data-filter="all">כל הלקוחות</button>
-    <button class="chip" data-filter="OFF GRID">OFF GRID</button>
-    <button class="chip" data-filter="ON GRID">ON GRID</button>
-    <button class="chip" data-filter="HYBRID">HYBRID</button>
-    <button class="btn dark" onclick="openEditModal()">+ לקוח חדש</button>
-    <button class="btn" onclick="syncFromZoho()" style="background:#0891b2;color:#fff">🔄 סנכרן מ-Zoho</button>
-    <button class="btn" onclick="syncZohoCalendar()" style="background:#0284c7;color:#fff">📅 יומן Zoho</button>
-    <button class="btn purple" onclick="openAIModal()">✨ עוזר AI</button>
-  </div>
-
-  <div class="stats">
-    <div class="card stat">
-      <div class="k">ממוצע התקדמות חברה</div>
-      <div class="v" id="avgProgress">-</div>
-      <div class="company-prog-bar"><span id="avgProgressBar" style="width: 0%"></span></div>
+<div class="modal-overlay" id="filesModal" onclick="closeFilesModal(event)">
+  <div class="modal-content" style="max-width:700px;" onclick="event.stopPropagation()">
+    <div class="modal-header" style="border:none; padding-bottom:0;">
+      <h2 style="color:#0f2747; font-size:22px;">📁 קבצי לקוח - <span id="filesClientName"></span></h2>
+      <button class="iconBtn" onclick="closeFilesModal(true)">✕</button>
     </div>
-    <div class="card stat"><div class="k">חסמים קריטיים</div><div class="v" id="criticalCount">-</div><div class="hint">ציוד / קונסטרוקציה / חח"י</div></div>
-    <div class="card stat"><div class="k">סה"כ הכנסות צפויות</div><div class="v" id="totalRevenue" style="font-size:22px">-</div><div class="hint">סכום כל הפרויקטים</div></div>
-    <div class="card stat"><div class="k">הלקוח הכי מתקדם</div><div class="v" id="topClient" style="font-size:22px">-</div><div class="hint">לפי התקדמות</div></div>
-  </div>
-
-  <div class="layout">
-    <div class="card section">
-      <h2>סטטוס לקוחות (Real-Time)</h2>
-      <div class="lead">אותו מבנה אחיד לכל לקוח - מתעדכן אוטומטית</div>
-      <div class="clients" id="clients"></div>
-    </div>
-    <div style="display:grid;gap:18px">
-      <div class="card section">
-        <h2>📋 תהליכי עבודה לפי מסלול</h2>
-        <div class="lead">בחר מסלול לראות שלבים ומסמכים הנדרשים כחלק מהתהליך</div>
-        <div style="display:flex;gap:6px;flex-wrap:wrap;margin:12px 0">
-          <button class="btn light trackBtn active" data-track="commercial" onclick="showTrackDetails('commercial')">🟠 מסחרי / ייצור מפוזר</button>
-          <button class="btn light trackBtn" data-track="green_track" onclick="showTrackDetails('green_track')">🟢 מסלול ירוק (עד 15KW)</button>
-          <button class="btn light trackBtn" data-track="off_grid" onclick="showTrackDetails('off_grid')">🟣 OFF GRID</button>
+    
+    <div style="padding:15px 0;">
+      <div class="file-upload-area">
+        <h3 style="font-size:14px; margin-bottom:15px; color:#0f2747;">📥 העלאת קובץ חדש (נשמר לענן Supabase)</h3>
+        <div class="formGrid cols2" style="text-align:right; margin-bottom:15px;">
+          <div class="field"><label>קטגוריה</label><select class="input" id="file_category"><option value="iec">🏢 חברת חשמל</option><option value="certificates">✅ אישורים/כיול</option><option value="quote">💰 הצעת מחיר / חוזה</option><option value="equipment_order">📦 הזמנת ציוד / שרטוט</option><option value="site_photos">📸 תמונות שטח</option><option value="other">📄 אחר</option></select></div>
+          <div class="field"><label>תיאור (אופציונלי)</label><input class="input" id="file_description" placeholder="למשל: תכנית חשמל מעודכנת..."></div>
         </div>
-        <div id="trackDetails" style="max-height:600px;overflow-y:auto;padding-right:5px;"></div>
+        <div style="display:flex; align-items:center; gap:10px;">
+           <input type="file" class="input" id="file_input" style="flex:1;" accept="image/*,application/pdf,.doc,.docx,.xls,.xlsx,.zip">
+           <button class="btn dark" style="background:#0f2747; padding:10px 20px;" onclick="uploadFile()" id="uploadBtn">📤 העלה קובץ</button>
+        </div>
       </div>
+      
+      <h3 style="font-size:14px; color:#0f2747; margin-bottom:10px; border-bottom:1px solid #e8eff7; padding-bottom:5px;">📚 מסמכים קיימים בתיק</h3>
+      <div id="filesListContainer" style="min-height:150px;">
+        </div>
     </div>
   </div>
 </div>
 
-<div class="modalOverlay" id="editModalOverlay" onclick="closeEditModal(event)">
-  <div class="modal" onclick="event.stopPropagation()">
-    <div class="modalHeader">
-      <h2 id="editModalTitle">לקוח חדש</h2>
-      <button class="iconBtn" onclick="closeEditModal()">✕</button>
+<div class="modal-overlay" id="aiModal" onclick="closeAIModal(event)">
+  <div class="modal-content" style="max-width:600px; background:#f8fafc;" onclick="event.stopPropagation()">
+    <div class="modal-header" style="border-color:#e2e8f0;">
+      <h2 style="color:#6d28d9; font-size:20px;">✨ עוזר ה-AI שלך</h2>
+      <button class="iconBtn" onclick="closeAIModal(true)">✕</button>
     </div>
-    <div class="modalBody" id="editModalBody"></div>
-    <div class="modalFooter">
-      <button class="btn light" onclick="closeEditModal()">ביטול</button>
-      <button class="btn dark" onclick="saveClient()">💾 שמור וסנכרן</button>
-    </div>
-  </div>
-</div>
-
-<div class="modalOverlay" id="aiModalOverlay" onclick="closeAIModal(event)">
-  <div class="modal ai" onclick="event.stopPropagation()">
-    <div class="modalHeader ai">
-      <div style="display:flex;align-items:center;gap:10px"><span style="font-size:20px">✨</span><h2 style="color:#fff">עוזר AI - DOXY</h2></div>
-      <button class="iconBtn" style="color:#fff" onclick="closeAIModal()">✕</button>
-    </div>
-    <div class="modalBody" id="aiModalBody" style="min-height:300px"></div>
-    <div class="modalFooter">
-      <input class="input" id="aiQuestion" placeholder="שאל שאלה על הלקוחות..." style="flex:1" onkeydown="if(event.key==='Enter') sendAI()">
-      <button class="btn purple" onclick="sendAI()" id="aiSendBtn">➤</button>
+    
+    <div id="aiChatBox" style="min-height:350px; max-height:450px; overflow-y:auto; padding-right:10px; margin-bottom:15px; display:flex; flex-direction:column; gap:10px;">
+      </div>
+    
+    <div style="display:flex; gap:10px; background:#fff; padding:10px; border-radius:12px; border:1px solid #e2e8f0;">
+      <input type="text" class="input" style="border:none; box-shadow:none;" id="aiInput" placeholder="בקש ניתוח פרויקטים, איתור עיכובים, או ארגון הלוז..." onkeydown="if(event.key==='Enter') sendAI()">
+      <button class="btn purple" style="border-radius:8px;" onclick="sendAI()" id="aiBtn">שלח ➤</button>
     </div>
   </div>
 </div>
 
-</div><script>
-// ====== Setup & Utils ======
+<div class="modal-overlay" id="alertsModal" onclick="closeAlertsModal(event)">
+  <div class="modal-content" style="max-width:600px;" onclick="event.stopPropagation()">
+    <div class="modal-header"><h2>🔔 לקוחות דורשי התייחסות דחופה</h2><button class="iconBtn" onclick="closeAlertsModal(true)">✕</button></div>
+    <div id="alertsContainer"></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="settingsModal" onclick="closeSettingsModal(event)">
+  <div class="modal-content" style="max-width:550px;" onclick="event.stopPropagation()">
+    <div class="modal-header"><h2>⚙️ סנכרון וכלים</h2><button class="iconBtn" onclick="closeSettingsModal(true)">✕</button></div>
+    <div class="formSection">
+      <h3>🔄 סנכרון מערכות (ידני)</h3>
+      <button class="btn" style="width:100%; margin-bottom:10px; background:#0891b2; color:#fff;" onclick="syncFromZoho()">משוך עסקאות מ-Zoho</button>
+      <button class="btn" style="width:100%; margin-bottom:10px; background:#0284c7; color:#fff;" onclick="syncZohoCalendar()">סנכרן יומן צוות שטח (Zoho Calendar)</button>
+      <button class="btn" style="width:100%; background:#7c3aed; color:#fff;" onclick="closeSettingsModal(true); openSearchModal()">🔍 חיפוש OCR מתקדם במסמכים</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="searchModal" onclick="closeSearchModal(event)">
+  <div class="modal-content" style="max-width:700px;" onclick="event.stopPropagation()">
+    <div class="modal-header"><h2>🔍 חיפוש חכם בתוך מסמכים סרוקים (OCR)</h2><button class="iconBtn" onclick="closeSearchModal(true)">✕</button></div>
+    <div class="field">
+      <label>חפש מילה או משפט בכל המסמכים שהועלו אי פעם למערכת:</label>
+      <input type="text" class="input" id="ocrInput" placeholder="למשל: תוכנית חשמל, 1400, אישור קונסטרוקטור..." onkeydown="if(event.key==='Enter') doSearchOCR()">
+    </div>
+    <button class="btn dark" style="width:100%; margin-top:10px;" onclick="doSearchOCR()">🔍 חפש במסמכים</button>
+    <div id="ocrResults" style="margin-top:20px; display:grid; gap:10px;"></div>
+  </div>
+</div>
+
+<script>
+// ================= CONFIG & STATE =================
 const SUPABASE_URL = 'https://hcmmtmfzdgzdisobvpav.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_lQ62NRLxF8pST3qNF1Pqzw_ba-WQIwt';
 
 let clients = [];
 let stagesMap = {};
 let parallelMap = {};
+let workflowTemplates = [];
 let currentFilter = 'all';
-let editingClient = null;
-let currentTrack = 'commercial';
+let editingClientId = null;
+let tempStages = [];
+let tempParallel = [];
+let currentFilesClient = null;
+let aiConversation = [];
 
-// Toasts System
-function showToast(msg, type = 'info') {
-    const container = document.getElementById('toastContainer');
-    const toast = document.createElement('div');
-    toast.className = `toast ${type}`;
-    toast.innerHTML = `${type === 'success' ? '✅' : type === 'error' ? '❌' : 'ℹ️'} ${msg}`;
-    container.appendChild(toast);
-    
-    // Trigger animation
-    setTimeout(() => toast.classList.add('show'), 10);
-    
-    // Remove
-    setTimeout(() => {
-        toast.classList.remove('show');
-        setTimeout(() => toast.remove(), 300);
-    }, 4000);
+const statusOptions = [{value:'done', label:'הושלם'}, {value:'running', label:'בתהליך'}, {value:'waiting', label:'ממתין'}, {value:'parallel', label:'במקביל'}];
+const CATEGORY_LABELS = { iec: '🏢 חברת חשמל', certificates: '✅ אישורים', quote: '💰 חוזה/הצעת מחיר', equipment_order: '📦 ציוד', site_photos: '📸 תמונות שטח', other: '📄 אחר' };
+
+// ================= DYNAMIC LINKS (EDITABLE IN-LINE) =================
+let officialLinks = JSON.parse(localStorage.getItem('doxy_official_links')) || {
+  exemption: "https://govforms.gov.il/mw/forms/Exemption_permit@planning.gov.il?gbxid=1",
+  pv_permit: "https://govforms.gov.il/mw/forms/PvForm%40mnz.gov.il?gbxid=1",
+  shoval: "https://www.iec.co.il/content/suppliers/pages/shoval",
+  masav: "https://www.iec.co.il/content/suppliers/pages/forms",
+  form1400: "https://www.iec.co.il/content/suppliers/pages/connection-forms"
+};
+
+function renderDocWithLink(docName) {
+  let key = ""; let link = "";
+  if (docName.includes('פטור מהיתר') || docName.includes('דיווח פטור')) { key = 'exemption'; link = officialLinks.exemption; }
+  else if (docName.includes('PV') || docName.includes('הפעלת מתקן')) { key = 'pv_permit'; link = officialLinks.pv_permit; }
+  else if (docName.includes('שוב"ל') || docName.includes('טופס בדיקה')) { key = 'shoval'; link = officialLinks.shoval; }
+  else if (docName.includes('מס"ב') || docName.includes('ספקים')) { key = 'masav'; link = officialLinks.masav; }
+  else if (docName.includes('1400')) { key = 'form1400'; link = officialLinks.form1400; }
+  
+  if (key) {
+    return `
+      <div class="doc-check">
+        <div><span style="color:#0891b2">☐</span> <span style="font-weight:600; color:#0f2747;">${escapeHtml(docName)}</span></div>
+        <div style="display:flex; align-items:center;">
+          <button class="edit-link-btn" title="ערוך קישור מקוון" onclick="editDocLink('${key}')">✏️</button>
+          <a href="${link}" target="_blank" class="doc-link">🔗 פתח טופס</a>
+        </div>
+      </div>`;
+  }
+  return `<div class="doc-check"><div><span style="color:#0891b2">☐</span> <span>${escapeHtml(docName)}</span></div></div>`;
 }
 
-// Live Clock
-setInterval(() => {
-    const clockEl = document.getElementById('liveClock');
-    if(clockEl) clockEl.textContent = new Date().toLocaleTimeString('he-IL');
-}, 1000);
-
-// API Helpers
-async function sbGet(table, query = '') {
-  const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}?${query}`, {
-    headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
-  });
-  return res.json();
-}
-async function sbPost(table, data) {
-  const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}`, {
-    method: 'POST',
-    headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=representation' },
-    body: JSON.stringify(data)
-  });
-  return res.json();
-}
-async function sbPatch(table, id, data) {
-  const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}?id=eq.${id}`, {
-    method: 'PATCH',
-    headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=representation' },
-    body: JSON.stringify(data)
-  });
-  return res.json();
-}
-async function sbDelete(table, filter) {
-  await fetch(`${SUPABASE_URL}/rest/v1/${table}?${filter}`, {
-    method: 'DELETE',
-    headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
-  });
-}
-
-function escapeHtml(str) { return String(str||'').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
-
-// ====== Load & Sync ======
-async function loadAll(silent = false) {
-  try {
-    const [clientsData, stagesData, parallelData] = await Promise.all([
-      sbGet('clients', 'select=*&order=created_at.asc'),
-      sbGet('client_stages', 'select=*&order=order_index.asc'),
-      sbGet('client_parallel', 'select=*&order=order_index.asc')
-    ]);
-    clients = Array.isArray(clientsData) ? clientsData : [];
-    
-    stagesMap = {};
-    (Array.isArray(stagesData) ? stagesData : []).forEach(s => {
-      if (!stagesMap[s.client_id]) stagesMap[s.client_id] = [];
-      stagesMap[s.client_id].push(s);
-    });
-    
-    parallelMap = {};
-    (Array.isArray(parallelData) ? parallelData : []).forEach(p => {
-      if (!parallelMap[p.client_id]) parallelMap[p.client_id] = [];
-      parallelMap[p.client_id].push(p);
-    });
-    
-    render();
-    if(!silent) document.getElementById('syncStatus').className = 'sync-status sync-synced';
-  } catch (err) {
-    document.getElementById('syncStatus').className = 'sync-status sync-error';
-    if(!silent) showToast('שגיאה בסנכרון נתונים', 'error');
+function editDocLink(key) {
+  const currentLink = officialLinks[key];
+  const newLink = prompt("הדבק כאן את הקישור החדש והמעודכן לטופס זה:", currentLink);
+  if (newLink !== null && newLink.trim() !== "") {
+    officialLinks[key] = newLink.trim();
+    localStorage.setItem('doxy_official_links', JSON.stringify(officialLinks));
+    showToast("הקישור עודכן בהצלחה!", "success");
+    const activeTrackBtn = document.querySelector('.trackBtn.active');
+    if(activeTrackBtn) showTrack(activeTrackBtn.dataset.track);
   }
 }
 
-// Background Sync (Fake Realtime until WebSocket SDK is added)
-setInterval(() => {
-    if(!document.getElementById('mainApp').classList.contains('hidden')) {
-        loadAll(true);
-    }
-}, 30000);
+// ================= UTILS & AUTH =================
+function showToast(m, t='info') {
+  const c = document.getElementById('toastContainer');
+  const div = document.createElement('div'); div.className = `toast show ${t}`; div.innerText = m;
+  c.appendChild(div); setTimeout(() => { div.classList.remove('show'); setTimeout(()=>div.remove(),300); }, 3000);
+}
+setInterval(() => { const el=document.getElementById('liveClock'); if(el) el.innerText=new Date().toLocaleTimeString('he-IL'); }, 1000);
+document.getElementById('todayDate').innerText = new Date().toLocaleDateString('he-IL');
+function escapeHtml(s) { return String(s||'').replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+function soon(dStr) { if(!dStr) return false; const [d,m,y]=dStr.split('/').map(Number); if(!d||!m||!y) return false; return ((new Date(y,m-1,d)-new Date())/86400000) <= 10; }
+function setSyncStatus(st) { const el=document.getElementById('syncStatus'); if(st==='saving'){el.innerHTML='<span>⟳ שומר...</span>'; el.className='sync-status';}else if(st==='error'){el.innerHTML='<span>⚠️ שגיאה</span>'; el.className='sync-status sync-error';}else{el.innerHTML='<span>☁️ מסונכרן לענן Supabase</span>'; el.className='sync-status';} }
+function progColor(v) { return v>=70?'#16a34a':v>=30?'#ea580c':'#dc2626'; }
 
-// ====== Rendering ======
+let accessToken = null;
+const originalFetch = window.fetch;
+window.fetch = function(url, options = {}) {
+  if (typeof url==='string' && url.startsWith(SUPABASE_URL) && accessToken) {
+    options.headers = options.headers || {};
+    if (url.includes('/rest/v1/') || url.includes('/storage/v1/') || url.includes('/functions/v1/')) options.headers['Authorization'] = `Bearer ${accessToken}`;
+  }
+  return originalFetch.call(this, url, options);
+};
+
+async function checkAuth() {
+  const s = localStorage.getItem('doxy_session');
+  if(s) { try { const sess=JSON.parse(s); if(sess.access_token){ accessToken=sess.access_token; initApp(); return; } } catch(e){} }
+  document.getElementById('loginScreen').style.display='flex';
+}
+async function doLogin() {
+  const e = document.getElementById('loginEmail').value, p = document.getElementById('loginPassword').value, err = document.getElementById('loginError');
+  if(!e||!p) { err.innerText='מלא הכל'; err.classList.remove('hidden'); return; }
+  document.getElementById('loginBtn').innerText='⏳ מתחבר...';
+  try {
+    const r = await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=password`, {method:'POST', headers:{'apikey':SUPABASE_KEY,'Content-Type':'application/json'}, body:JSON.stringify({email:e,password:p})});
+    const d = await r.json();
+    if(d.access_token) { accessToken=d.access_token; localStorage.setItem('doxy_session',JSON.stringify(d)); document.getElementById('loginScreen').style.display='none'; initApp(); }
+    else { err.innerText=d.error_description||'שגיאה'; err.classList.remove('hidden'); document.getElementById('loginBtn').innerText='🔐 התחבר'; }
+  } catch(ex) { err.innerText='שגיאת תקשורת'; err.classList.remove('hidden'); document.getElementById('loginBtn').innerText='🔐 התחבר'; }
+}
+
+async function sb(method, table, data=null, query='') {
+  const opt = { method, headers: {'apikey':SUPABASE_KEY, 'Content-Type':'application/json', 'Prefer':'return=representation'} };
+  if(data) opt.body = JSON.stringify(data);
+  const r = await fetch(`${SUPABASE_URL}/rest/v1/${table}${query}`, opt);
+  if(!r.ok) throw new Error(await r.text());
+  if (method === 'DELETE') return null;
+  return r.json();
+}
+
+function initApp() { document.getElementById('mainApp').classList.remove('hidden'); loadAll(); }
+
+async function loadAll(silent=false) {
+  if(!silent) setSyncStatus('saving');
+  try {
+    const [c, s, p, w] = await Promise.all([
+      sb('GET', 'clients', null, '?select=*&order=created_at.desc'),
+      sb('GET', 'client_stages'), sb('GET', 'client_parallel'), sb('GET', 'workflow_templates', null, '?order=stage_number.asc')
+    ]);
+    clients = c || []; workflowTemplates = w || [];
+    stagesMap = {}; (s||[]).forEach(x => { if(!stagesMap[x.client_id]) stagesMap[x.client_id]=[]; stagesMap[x.client_id].push(x); });
+    parallelMap = {}; (p||[]).forEach(x => { if(!parallelMap[x.client_id]) parallelMap[x.client_id]=[]; parallelMap[x.client_id].push(x); });
+    render(); showTrack('commercial'); setSyncStatus('synced');
+  } catch(e) { setSyncStatus('error'); if(!silent) showToast('שגיאה בטעינת נתונים', 'error'); }
+}
+
+// ================= RENDER & STATS =================
+function setFilter(f) { currentFilter = f; document.querySelectorAll('.toolbar-filters .chip').forEach(c => c.classList.toggle('active', c.dataset.filter === f)); render(); }
+
 function render() {
-  const arr = currentFilter === 'all' ? clients : clients.filter(c => c.system === currentFilter);
-  renderClients(arr);
-  renderStats(arr);
-  document.getElementById('today').textContent = new Date().toLocaleDateString('he-IL');
-}
+  const q = document.getElementById('liveSearch').value.toLowerCase().trim();
+  const list = document.getElementById('clientsList'); list.innerHTML = '';
+  
+  let arr = clients;
+  if(currentFilter !== 'all') arr = arr.filter(c => c.system === currentFilter);
+  if(q) arr = arr.filter(c => c.name.toLowerCase().includes(q));
 
-function renderStats(arr) {
-  const avg = arr.length ? (arr.reduce((a,c)=>a+(c.progress_overall||0), 0)/arr.length).toFixed(1) : 0;
-  document.getElementById('avgProgress').textContent = `${avg}%`;
-  document.getElementById('avgProgressBar').style.width = `${avg}%`;
-  
-  document.getElementById('criticalCount').textContent = arr.filter(c=>c.risk==='high').length;
-  
-  const totalNoVat = arr.reduce((sum, c) => sum + (Number(c.zoho_amount) || 0), 0);
-  document.getElementById('totalRevenue').textContent = `${totalNoVat.toLocaleString()} ₪`;
-  
-  const top = [...arr].sort((a,b)=>(b.progress_overall||0)-(a.progress_overall||0))[0];
-  document.getElementById('topClient').textContent = top ? top.name : '-';
-  document.getElementById('clientCount').textContent = arr.length;
-  document.getElementById('deliveryCount').textContent = clients.filter(c=>c.deliveries?.length).length;
-  document.getElementById('iecCount').textContent = clients.filter(c=>c.system!=='OFF GRID').length;
-}
+  if(!arr.length) { list.innerHTML = '<div style="text-align:center; padding:40px; color:#66758a;">לא נמצאו לקוחות מתאימים.</div>'; }
 
-function progColor(v) { return v >= 70 ? '#1f7a45' : v >= 30 ? '#b58105' : '#b42318'; }
-function progBox(label, val) {
-  const v = val == null ? 0 : val;
-  return `<div class="progBox"><div class="label">${label}</div><div class="bar"><span style="width:${v}%;background:${progColor(v)}"></span></div><div class="value">${v}%</div></div>`;
-}
-
-function renderClients(arr) {
-  const mount = document.getElementById('clients');
-  mount.innerHTML = '';
-  if (arr.length === 0) { mount.innerHTML = '<div style="padding:40px;text-align:center;color:#66758a">אין לקוחות להצגה</div>'; return; }
-  
   arr.forEach(c => {
-    const isOffGrid = c.system === 'OFF GRID';
-    const isBusiness = (c.customer_type || '').includes('עוסק') || (c.customer_type || '').includes('חברה');
+    const isOff = c.system === 'OFF GRID';
+    const prog = c.progress_overall || 0;
     const stages = stagesMap[c.id] || [];
+    const parallels = parallelMap[c.id] || [];
     
-    const el = document.createElement('div');
-    el.className = 'card client';
-    el.innerHTML = `
-      <div class="clientHead">
-        <div style="flex:1;min-width:0">
-          <div class="clientName">${escapeHtml(c.name)}</div>
-          <div class="tagRow">
-            <span class="tag ${isOffGrid ? 'offgrid' : 'ongrid'}">${c.system}</span>
-            <span class="tag" style="background:#ea580c;color:#fff">${c.track_type === 'off_grid' ? '🟣 OFF GRID' : c.track_type === 'green_track' ? '🟢 מסלול ירוק' : '🟠 מסחרי'}</span>
-            ${c.zoho_deal_id ? `<span class="tag" style="background:#e0f2fe;color:#0369a1">☁️ Zoho</span>` : ''}
+    // SMART BOTTLENECK & ACTION DETECTION
+    let nAct = c.next_action; 
+    let blk = c.blocker;
+    
+    let autoBottleneck = "";
+    if (prog >= 100) autoBottleneck = "הכל הושלם";
+    else if (!isOff && (c.progress_papers || 0) < 100) autoBottleneck = `חסרה ניירת ואישורי חח"י (${c.progress_papers || 0}%)`;
+    else if ((c.progress_equipment || 0) < 100) autoBottleneck = `עיכוב בהזמנת ציוד/קונסטרוקציה (${c.progress_equipment || 0}%)`;
+    else if ((c.progress_installation || 0) < 100) autoBottleneck = `ממתין להשלמת התקנה בשטח (${c.progress_installation || 0}%)`;
+    else if ((c.progress_final || 0) < 100) autoBottleneck = `ממתין לבדיקות ואישור הפעלה (${c.progress_final || 0}%)`;
+
+    if(!nAct || nAct.includes('יבוא מ-Zoho') || nAct.includes('הגדרת פרטים')) {
+      if(prog >= 100) nAct = '🎉 הפרויקט הושלם בהצלחה!';
+      else if(!isOff && (c.progress_papers||0) < 100) nAct = 'לסיים פתיחת תיק ותשלום אגרה';
+      else if((c.progress_equipment||0) < 100) nAct = 'להזמין פאנלים, ממירים וקונסטרוקציה';
+      else if((c.progress_installation||0) < 100) nAct = 'תיאום צוות להמשך עבודות התקנה בשטח';
+      else nAct = 'תיאום בודק חח"י / הגשת טפסים סופיים';
+    }
+    
+    if(!blk || blk.includes('יבוא מ-Zoho')) {
+      blk = c.risk === 'high' ? `🚨 חסם קריטי: ${autoBottleneck}` : `⏳ בתהליך: ${autoBottleneck}`;
+    } else if (c.risk === 'high' && !blk.includes('🚨')) {
+      blk = `🚨 ${blk}`; 
+    }
+
+    list.innerHTML += `
+      <div class="client-card">
+        <div class="clientHead">
+          <div style="flex:1;">
+            <div class="client-name">${escapeHtml(c.name)}</div>
+            <div class="client-mini-prog" title="${prog}%"><span style="width:${prog}%; background:${progColor(prog)}"></span></div>
+            <div class="tagRow">
+              <span class="tag ${isOff?'offgrid':'ongrid'}">${c.system}</span>
+              <span class="tag" style="background:#0f2747; color:#fff;">${c.track_type==='off_grid'?'OFF GRID':c.track_type==='green_track'?'מסלול ירוק':'מסחרי'}</span>
+            </div>
+          </div>
+          <div style="text-align:left; display:flex; flex-direction:column; gap:8px; align-items:flex-end;">
+            <span class="risk ${c.risk==='high'?'riskHigh':'riskLow'}">${c.risk==='high'?'🚨 חסם בטיפול':'✅ סטטוס תקין'}</span>
+            <div style="display:flex; gap:4px;">
+              <button class="iconBtn" title="מסמכים וקבצים" onclick="openFilesModal('${c.id}')" style="color:#0891b2; background:#e0f2fe;">📁 מסמכים</button>
+              <button class="iconBtn" title="עריכה" onclick="openEditModal('${c.id}')" style="color:#ea580c; background:#ffedd5;">✏️ עריכה</button>
+            </div>
           </div>
         </div>
-        <div style="display:flex;gap:8px;align-items:center">
-          <button class="iconBtn" onclick="openEditModal('${c.id}')" title="עריכה">✏️ עריכה מהירה</button>
-          <button class="iconBtn danger" onclick="deleteClient('${c.id}')">🗑️</button>
+
+        <div class="grid-3">
+          <div class="info-box"><div class="k">טלפון נייד</div><div class="v" dir="ltr" style="text-align:right;">${escapeHtml(c.phone||'-')}</div></div>
+          ${!isOff ? `
+            <div class="info-box"><div class="k">פתיחת חח"י</div><div class="v">${escapeHtml(c.iec_open||'טרם נפתח')}</div></div>
+            <div class="info-box"><div class="k">אישור ביצוע (אגרה)</div><div class="v">${escapeHtml(c.work_permit||'ממתין לתשלום')}</div></div>
+          ` : `<div class="info-box" style="grid-column: span 2; background:#efe9ff; border-color:#d8b4fe;"><div class="k" style="color:#6d28d9;">סטטוס מערכת</div><div class="v">מערכת מנותקת רשת (OFF GRID)</div></div>`}
         </div>
-      </div>
-      <div class="details">
-        <div class="detail"><div class="k">מייל</div><div class="v">${escapeHtml(c.email || '-')}</div></div>
-        <div class="detail"><div class="k">נייד</div><div class="v">${escapeHtml(c.phone || '-')}</div></div>
-        <div class="detail"><div class="k">מיקום</div><div class="v">${escapeHtml(c.location || '-')}</div></div>
-        ${!isOffGrid ? `
-          <div class="detail"><div class="k">פתיחת חח"י</div><div class="v">${escapeHtml(c.iec_open || '-')}</div></div>
-          <div class="detail"><div class="k">ייפוי כוח</div><div class="v">${escapeHtml(c.poa || '-')}</div></div>
-        ` : `<div class="detail" style="grid-column: span 2; background:#efe9ff; color:#6d28d9"><div class="k" style="color:#6d28d9">מערכת עצמאית</div><div class="v">מנותק רשת (ללא חח"י)</div></div>`}
-      </div>
-      <div class="prog">
-        ${!isOffGrid ? progBox('ניירת / חח"י', c.progress_papers) : ''}
-        ${progBox('ציוד', c.progress_equipment)}
-        ${progBox('התקנה', c.progress_installation)}
-        ${progBox('סה"כ', c.progress_overall)}
+
+        <div class="steps-container">
+          <div class="steps-list">
+            <h4>📍 שלבי עבודה בפועל</h4>
+            ${stages.length ? stages.map(s => `<div class="step-item"><span>${escapeHtml(s.text)}</span><span class="pill p-${s.status==='done'?'done':s.status==='running'?'run':'wait'}">${statusOptions.find(o=>o.value===s.status)?.label||s.status}</span></div>`).join('') : '<div style="font-size:11px;color:#999;">טרם הוגדרו שלבים.</div>'}
+          </div>
+          <div class="steps-list">
+            <h4>⚡ פעולה הבאה, חסמים ולוגיסטיקה</h4>
+            <div class="step-item"><span><b>חסם נוכחי:</b></span><span style="color:${c.risk==='high'?'#b42318':'#ea580c'}">${escapeHtml(blk)}</span></div>
+            <div class="step-item"><span><b>הפעולה הבאה שלנו:</b></span><span style="color:#0369a1; font-weight:600;">${escapeHtml(nAct)}</span></div>
+            ${parallels.map(p => `<div class="step-item"><span>${escapeHtml(p.text)}</span><span class="pill p-run">${statusOptions.find(o=>o.value===p.status)?.label||p.status}</span></div>`).join('')}
+            <div class="step-item" style="border-top:1px solid #e2e8f0; margin-top:5px; padding-top:8px;"><span><b>דדליין:</b></span><span class="deadline ${soon(c.deadline)?'soon':''}">${escapeHtml(c.deadline||'לא הוגדר')}</span></div>
+          </div>
+        </div>
       </div>
     `;
-    mount.appendChild(el);
   });
-}
-
-// ====== Edit Logic & OFF GRID Restrictions ======
-function openEditModal(clientId) {
-  editingClient = clientId ? clients.find(c => c.id === clientId) : null;
-  document.getElementById('editModalTitle').textContent = editingClient ? 'עריכת לקוח' : 'לקוח חדש';
-  renderEditForm();
-  document.getElementById('editModalOverlay').classList.add('active');
-}
-
-function closeEditModal() { document.getElementById('editModalOverlay').classList.remove('active'); }
-
-function renderEditForm() {
-  const c = editingClient || {};
-  const body = document.getElementById('editModalBody');
-  body.innerHTML = `
-    <div class="formSection">
-      <h3>פרטי לקוח</h3>
-      <div class="formGrid cols2">
-        <div class="field"><label>שם לקוח *</label><input class="input" id="f_name" value="${escapeHtml(c.name || '')}"></div>
-        <div class="field"><label>מייל</label><input class="input" id="f_email" value="${escapeHtml(c.email || '')}"></div>
-        <div class="field"><label>סוג מערכת</label>
-            <select class="input" id="f_system" onchange="handleSystemChange()">
-              <option ${c.system==='ON GRID'?'selected':''}>ON GRID</option>
-              <option ${c.system==='HYBRID'?'selected':''}>HYBRID</option>
-              <option ${c.system==='OFF GRID'?'selected':''}>OFF GRID</option>
-            </select>
-        </div>
-        <div class="field"><label>🛤️ מסלול עבודה</label>
-            <select class="input" id="f_track_type">
-              <option value="commercial" ${c.track_type==='commercial'?'selected':''}>🟠 מסחרי / ייצור מפוזר</option>
-              <option value="green_track" ${c.track_type==='green_track'?'selected':''}>🟢 מסלול ירוק (עד 15 KW AC)</option>
-              <option value="off_grid" ${c.track_type==='off_grid'?'selected':''}>🟣 OFF GRID</option>
-            </select>
-        </div>
-      </div>
-    </div>
-    
-    <div class="formSection" id="section_iec">
-      <h3>חברת חשמל / חח"י</h3>
-      <div class="formGrid cols2">
-        <div class="field"><label>פתיחת חח"י</label><input class="input" id="f_iec_open" value="${escapeHtml(c.iec_open || '')}"></div>
-        <div class="field"><label>ייפוי כוח</label><input class="input" id="f_poa" value="${escapeHtml(c.poa || '')}"></div>
-      </div>
-    </div>
-
-    <div class="formSection">
-      <h3>אחוזי התקדמות</h3>
-      <div class="formGrid cols4">
-        <div class="field" id="prog_iec_wrap"><label>ניירת/חח"י</label><input class="input" type="number" min="0" max="100" id="f_progress_papers" value="${c.progress_papers ?? ''}"></div>
-        <div class="field"><label>ציוד</label><input class="input" type="number" min="0" max="100" id="f_progress_equipment" value="${c.progress_equipment ?? 0}"></div>
-        <div class="field"><label>התקנה</label><input class="input" type="number" min="0" max="100" id="f_progress_installation" value="${c.progress_installation ?? 0}"></div>
-        <div class="field"><label>סיום</label><input class="input" type="number" min="0" max="100" id="f_progress_final" value="${c.progress_final ?? 0}"></div>
-      </div>
-    </div>
-  `;
-  handleSystemChange(); // run once to setup initial view
-}
-
-// THE MAGIC: If OFF GRID, hide IEC and force OFF GRID track
-function handleSystemChange() {
-    const sys = document.getElementById('f_system').value;
-    const trackEl = document.getElementById('f_track_type');
-    const iecSection = document.getElementById('section_iec');
-    const progIecWrap = document.getElementById('prog_iec_wrap');
-
-    if (sys === 'OFF GRID') {
-        trackEl.value = 'off_grid';
-        trackEl.disabled = true; // Force user not to change it
-        iecSection.style.display = 'none';
-        progIecWrap.style.display = 'none';
-    } else {
-        trackEl.disabled = false;
-        iecSection.style.display = 'block';
-        progIecWrap.style.display = 'block';
-        if (trackEl.value === 'off_grid') trackEl.value = 'commercial'; // Reset if they moved away from OFF GRID
-    }
-}
-
-async function saveClient() {
-  const name = document.getElementById('f_name').value.trim();
-  if (!name) { showToast('יש להזין שם לקוח', 'error'); return; }
   
-  const sys = document.getElementById('f_system').value;
-  // If disabled, value might not be read correctly in some browsers, fallback to 'off_grid' if OFF GRID system
-  const track = sys === 'OFF GRID' ? 'off_grid' : document.getElementById('f_track_type').value;
-
-  const clientData = {
-    name,
-    email: document.getElementById('f_email').value,
-    system: sys,
-    track_type: track,
-    iec_open: sys === 'OFF GRID' ? null : document.getElementById('f_iec_open').value,
-    poa: sys === 'OFF GRID' ? null : document.getElementById('f_poa').value,
-    progress_papers: sys === 'OFF GRID' ? null : Number(document.getElementById('f_progress_papers').value) || 0,
-    progress_equipment: Number(document.getElementById('f_progress_equipment').value) || 0,
-    progress_installation: Number(document.getElementById('f_progress_installation').value) || 0,
-    progress_final: Number(document.getElementById('f_progress_final').value) || 0,
-  };
-  
-  // Calc Overall
-  let divisor = sys === 'OFF GRID' ? 3 : 4;
-  let sum = clientData.progress_equipment + clientData.progress_installation + clientData.progress_final + (clientData.progress_papers || 0);
-  clientData.progress_overall = Math.round((sum / divisor) * 10) / 10;
-
-  try {
-    if (editingClient) {
-      const trackChanged = editingClient.track_type !== clientData.track_type;
-      await sbPatch('clients', editingClient.id, clientData);
-      
-      if (trackChanged) {
-        if(confirm(`⚠️ שינית מסלול ללקוח!\n\nהאם למשוך את המסמכים והשלבים של המסלול החדש?\n(אל דאגה - פרטי הלקוח וההתקדמות יישמרו!)`)) {
-           // Here logic calls backend to reset stages for the new track.
-           // (Assuming backend function handles template injection like before)
-           showToast('שלבים חודשו בהתאם למסלול החדש!', 'success');
-        }
-      } else {
-          showToast('לקוח עודכן בהצלחה', 'success');
+  // Calculate Delayed/Critical Client for Stats
+  let mostDelayed = null;
+  const highRiskClients = clients.filter(c => c.risk === 'high');
+  if(highRiskClients.length > 0) {
+      mostDelayed = highRiskClients.sort((a,b) => (a.progress_overall||0) - (b.progress_overall||0))[0];
+  } else {
+      const clientsWithDeadlines = clients.filter(c => c.deadline && c.progress_overall < 100);
+      if(clientsWithDeadlines.length > 0) {
+          mostDelayed = clientsWithDeadlines.sort((a,b) => {
+              const dA = new Date(a.deadline.split('/').reverse().join('-'));
+              const dB = new Date(b.deadline.split('/').reverse().join('-'));
+              return dA - dB;
+          })[0];
       }
-    } else {
-      await sbPost('clients', clientData);
-      showToast('לקוח חדש נוצר!', 'success');
+  }
+
+  // Update Stats Header
+  document.getElementById('clientCount').innerText = clients.length;
+  document.getElementById('activeClientsCount').innerText = clients.filter(c=>c.progress_overall < 100).length;
+  const avg = clients.length ? (clients.reduce((a,c)=>a+(c.progress_overall||0),0)/clients.length).toFixed(1) : 0;
+  document.getElementById('avgProgress').innerText = avg + '%';
+  document.getElementById('avgProgressBar').style.width = avg + '%';
+  const rev = clients.reduce((sum,c)=>sum+(Number(c.zoho_amount)||0),0);
+  document.getElementById('totalRevenue').innerText = rev.toLocaleString() + ' ₪';
+  
+  if (mostDelayed) {
+      document.getElementById('topDelayedClient').innerText = mostDelayed.name; // <--- FIX HERE (No escapeHtml to avoid innerText showing &#39;)
+      document.getElementById('topDelayedReason').innerText = mostDelayed.risk === 'high' ? 'מוגדר כחסם קריטי' : `בחריגת זמנים: ${mostDelayed.deadline}`;
+      document.getElementById('topDelayedClient').parentElement.classList.add('alert');
+  } else {
+      document.getElementById('topDelayedClient').innerText = '-';
+      document.getElementById('topDelayedReason').innerText = 'אין עיכובים משמעותיים';
+      document.getElementById('topDelayedClient').parentElement.classList.remove('alert');
+  }
+  
+  const urg = clients.filter(c=>soon(c.deadline)||c.risk==='high');
+  const b = document.getElementById('alertBadge');
+  if(urg.length){ b.innerText=urg.length; b.style.display='flex'; } else { b.style.display='none'; }
+}
+
+function showTrack(track) {
+  document.querySelectorAll('.trackBtn').forEach(b => b.classList.toggle('active', b.dataset.track === track));
+  const stages = workflowTemplates.filter(t => t.track_type === track);
+  const c = document.getElementById('trackDetails');
+  
+  if(!stages.length) { c.innerHTML='<div style="padding:20px; text-align:center; color:#667;">אין שלבים המוגדרים למסלול זה במסד הנתונים.</div>'; return; }
+  
+  c.innerHTML = stages.map(s => `
+    <div class="stage-item">
+      <div style="font-weight:800; font-size:13px; color:#0f2747; margin-bottom:4px;"><span class="stage-num">${s.stage_number}</span> ${escapeHtml(s.stage_name)}</div>
+      <div style="font-size:11px; color:#66758a; margin-bottom:8px; padding-right:30px;">${escapeHtml(s.description||'')}</div>
+      ${s.required_documents && s.required_documents.length ? `
+        <div class="docs-box">
+          <div style="font-size:11px; font-weight:800; margin-bottom:6px;">📋 מסמכים נדרשים לשלב זה:</div>
+          ${s.required_documents.map(d => renderDocWithLink(d)).join('')}
+        </div>
+      ` : ''}
+    </div>
+  `).join('');
+}
+
+// ================= FILES MODAL (NEW UI) =================
+async function openFilesModal(cid) {
+  currentFilesClient = clients.find(c => c.id === cid); 
+  if(!currentFilesClient) return;
+  document.getElementById('filesClientName').innerText = currentFilesClient.name; // Safe against &#39;
+  document.getElementById('filesModal').classList.add('active');
+  const c = document.getElementById('filesListContainer'); 
+  c.innerHTML = '<div style="text-align:center;padding:20px;">מושך מסמכים מהענן...</div>';
+  
+  try {
+    const files = await sb('GET', 'client_files', null, `?client_id=eq.${cid}&order=uploaded_at.desc`);
+    if(!files || !files.length) { 
+      c.innerHTML='<div style="text-align:center;color:#66758a;padding:20px;">אין מסמכים בתיק הלקוח. העלה את המסמך הראשון למעלה ☝️</div>'; 
+      return; 
     }
-    closeEditModal();
-    loadAll();
-  } catch (err) {
-    showToast('שגיאה בשמירה', 'error');
+    
+    c.innerHTML = files.map(f => {
+        const fileUrl = `${SUPABASE_URL}/storage/v1/object/public/client-files/${f.storage_path}`;
+        let icon = '📄';
+        if(f.category === 'site_photos') icon = '🖼️';
+        if(f.category === 'quote') icon = '📑';
+        
+        return `
+      <div class="file-item">
+        <div class="file-icon">${icon}</div>
+        <div style="flex:1;">
+          <div style="font-weight:700;font-size:13px;color:#0f2747;margin-bottom:2px;">${escapeHtml(f.file_name)}</div>
+          <div style="font-size:11px;color:#64748b;">${CATEGORY_LABELS[f.category]||f.category} • הועלה: ${new Date(f.uploaded_at).toLocaleDateString('he-IL')} ${f.description ? '• '+escapeHtml(f.description):''}</div>
+        </div>
+        <div class="file-actions">
+          <a href="${fileUrl}" target="_blank" class="btn-action-sm">👁️ צפייה</a>
+          <a href="${fileUrl}" download class="btn-action-sm">⬇️ הורדה</a>
+          <button class="btn-action-sm" style="color:#ef4444; border-color:#fee2e2; background:#fef2f2;" title="מחק מסמך" onclick="deleteFile('${f.id}','${f.storage_path}')">🗑️</button>
+        </div>
+      </div>
+    `}).join('');
+  } catch(e) { c.innerHTML='<div style="color:#b42318;padding:20px;text-align:center;">שגיאה בטעינת קבצים. ודא הרשאות ענן.</div>'; }
+}
+
+function closeFilesModal(c) { if(c) { document.getElementById('filesModal').classList.remove('active'); currentFilesClient=null; } }
+
+async function uploadFile() {
+  const file = document.getElementById('file_input').files[0]; 
+  if(!file) { showToast('יש לבחור קובץ מהמחשב תחילה', 'error'); return; }
+  
+  const btn = document.getElementById('uploadBtn'); 
+  btn.disabled=true; btn.innerText='⏳ מעלה ל-Supabase...';
+  
+  try {
+    const cat = document.getElementById('file_category').value;
+    const desc = document.getElementById('file_description').value;
+    const safeName = file.name.replace(/[^a-zA-Z0-9.\-_א-ת]/g, '_');
+    const path = `${currentFilesClient.id}/${cat}/${Date.now()}_${safeName}`; 
+    
+    const r = await fetch(`${SUPABASE_URL}/storage/v1/object/client-files/${path}`, {
+      method:'POST',
+      headers:{'apikey':SUPABASE_KEY, 'Authorization':`Bearer ${accessToken}`, 'Content-Type':file.type||'application/octet-stream', 'x-upsert':'true'},
+      body:file
+    });
+    
+    if(!r.ok) throw new Error('שגיאה ב-Storage');
+    
+    await sb('POST', 'client_files', {
+      client_id: currentFilesClient.id, file_name: file.name, storage_path: path, file_size: file.size, 
+      mime_type: file.type, category: cat, description: desc
+    });
+    
+    showToast('המסמך הועלה ונשמר בתיק הלקוח!', 'success'); 
+    document.getElementById('file_input').value=''; 
+    document.getElementById('file_description').value=''; 
+    openFilesModal(currentFilesClient.id);
+  } catch(e) { 
+    showToast('שגיאה בהעלאת הקובץ. ודא חיבור או גודל קובץ.', 'error'); 
+  } finally { 
+    btn.disabled=false; btn.innerText='📤 העלה קובץ'; 
   }
 }
 
-async function deleteClient(id) {
-  if (!confirm('למחוק לקוח זה?')) return;
-  try {
-    await sbDelete('clients', `id=eq.${id}`);
-    showToast('לקוח נמחק', 'success');
-    loadAll();
-  } catch(e) { showToast('שגיאה במחיקה', 'error'); }
+async function deleteFile(id, path) {
+  if(!confirm('האם למחוק קובץ זה מהענן לצמיתות? לא ניתן לשחזר.')) return;
+  try { 
+    await fetch(`${SUPABASE_URL}/storage/v1/object/client-files/${path}`, {
+      method:'DELETE', headers:{'apikey':SUPABASE_KEY, 'Authorization':`Bearer ${accessToken}`}
+    }); 
+    await sb('DELETE', 'client_files', null, `?id=eq.${id}`); 
+    showToast('קובץ נמחק בהצלחה', 'success'); 
+    openFilesModal(currentFilesClient.id); 
+  } catch(e) { showToast('שגיאה במחיקת קובץ', 'error'); }
 }
 
-// ====== Track Stages Visuals ======
-let workflowTemplates = [
-    { track_type: 'commercial', stage_number: 1, stage_name: 'הזמנת ציוד', description: 'ממירים, פאנלים וכו', required_documents: ['הצעת מחיר מאושרת', 'טופס הזמנה'] },
-    { track_type: 'commercial', stage_number: 2, stage_name: 'תהליך חח"י מקביל', description: 'פתיחת תיק, תשלום אגרה', required_documents: ['ייפוי כוח', 'טופס 1400'] },
-    { track_type: 'off_grid', stage_number: 1, stage_name: 'אפיון שטח וצריכה', description: 'בדיקת גודל סוללות דרוש', required_documents: ['תמונות גג', 'חשבון חשמל קודם (אם רלוונטי)'] },
-    { track_type: 'off_grid', stage_number: 2, stage_name: 'התקנה היברידית/אוף גריד', description: 'התקנת פאנלים וסוללות, חיווט ישיר למבנה', required_documents: ['אישור תקינות קונסטרוקציה'] },
-];
-
-function showTrackDetails(track) {
-  currentTrack = track;
-  document.querySelectorAll('.trackBtn').forEach(btn => btn.classList.toggle('active', btn.dataset.track === track));
-  
-  const container = document.getElementById('trackDetails');
-  const stages = workflowTemplates.filter(t => t.track_type === track).sort((a, b) => a.stage_number - b.stage_number);
-  
-  if (stages.length === 0) { container.innerHTML = '<div style="text-align:center;padding:20px">אין שלבים מוגדרים</div>'; return; }
-  
-  container.innerHTML = stages.map(s => {
-    const docs = (s.required_documents || []).map(d => `<div class="docs-item">${escapeHtml(d)}</div>`).join('');
-    return `
-      <div class="stageItem">
-        <h4><span class="num">${s.stage_number}</span> ${escapeHtml(s.stage_name)}</h4>
-        <div class="desc">${escapeHtml(s.description || '')}</div>
-        ${docs ? `<div class="docs"><div class="docs-title">📑 מסמכים שידרשו לשלב זה:</div>${docs}</div>` : ''}
+// ================= AI CHAT (SMART CARDS) =================
+function openAIModal() { 
+  document.getElementById('aiModal').classList.add('active'); 
+  if(!aiConversation.length) { 
+    document.getElementById('aiChatBox').innerHTML = `
+      <div style="text-align:center; padding:20px 0; color:#64748b;">
+         <div style="font-size:40px; margin-bottom:10px;">🤖</div>
+         <p style="font-size:14px; font-weight:bold; color:#0f2747;">היי! אני העוזר החכם שלך.</p>
+         <p style="font-size:13px; margin-bottom:15px;">אני מחובר למסד הנתונים ויכול לנתח את הלקוחות בשבילך.</p>
       </div>
-    `;
-  }).join('');
+      <div>
+        <button class="btn light" style="display:block;width:100%;text-align:right;margin-bottom:8px; border-color:#e2e8f0; color:#475569;" onclick="sendAI('מי הלקוחות שחורגים מהזמנים או נמצאים בעיכוב כרגע?')">🚨 הראה לי לקוחות בעיכוב קריטי או חסם גבוה</button>
+        <button class="btn light" style="display:block;width:100%;text-align:right;margin-bottom:8px; border-color:#e2e8f0; color:#475569;" onclick="sendAI('תארגן לי את הלוז השבועי לשטח לפי הצוותים')">👷 ארגן לי לו"ז צוותי שטח לשבוע הקרוב</button>
+      </div>`; 
+  }
 }
+function closeAIModal(c) { if(c) document.getElementById('aiModal').classList.remove('active'); }
 
-// ====== Filters ======
-document.querySelectorAll('.chip').forEach(b => b.onclick = () => {
-  currentFilter = b.dataset.filter;
-  document.querySelectorAll('.chip').forEach(x => x.classList.toggle('active', x === b));
-  render();
-});
-
-// ====== Zoho Integration ======
-function syncFromZoho() {
-    showToast('מושך נתונים מ-Zoho CRM...', 'info');
-    setTimeout(() => { showToast('סנכרון Zoho הושלם בהצלחה', 'success'); }, 1500);
-}
-
-function syncZohoCalendar() {
-    showToast('מסנכרן יומני צוות מול Zoho Calendar...', 'info');
-    setTimeout(() => { showToast('יומנים עודכנו בזמן אמת', 'success'); }, 2000);
-}
-
-// ====== AI Helper ======
-function openAIModal() { document.getElementById('aiModalOverlay').classList.add('active'); }
-function closeAIModal() { document.getElementById('aiModalOverlay').classList.remove('active'); }
-function sendAI() {
-    const q = document.getElementById('aiQuestion').value;
-    if(!q) return;
-    document.getElementById('aiQuestion').value = '';
+async function sendAI(txt=null) {
+  const q = txt || document.getElementById('aiInput').value; 
+  if(!q) return;
+  
+  aiConversation.push({r:'user', t:q}); 
+  document.getElementById('aiInput').value = '';
+  
+  const b = document.getElementById('aiChatBox');
+  const renderChat = () => {
+    b.innerHTML = aiConversation.map(m => {
+        const content = m.r === 'ai' ? m.t : escapeHtml(m.t);
+        return `
+          <div class="aiMsg ${m.r}">
+            <div style="font-size:11px; color:#64748b; margin-bottom:4px; padding:0 5px;">${m.r==='user'?'את/ה':'AI Assistant'}</div>
+            <div class="bubble">${content}</div>
+          </div>
+        `;
+    }).join(''); 
+    b.scrollTop = b.scrollHeight;
+  };
+  
+  renderChat();
+  
+  const tempId = 'loading-' + Date.now();
+  b.innerHTML += `
+    <div id="${tempId}" class="aiMsg ai">
+      <div style="font-size:11px; color:#64748b; margin-bottom:4px; padding:0 5px;">AI Assistant</div>
+      <div class="bubble" style="background:transparent; border:none; box-shadow:none;">מנתח נתונים מ-Supabase... ⏳</div>
+    </div>`; 
+  b.scrollTop = b.scrollHeight;
+  document.getElementById('aiBtn').disabled = true;
+  
+  try {
+    const res = await fetch(`${SUPABASE_URL}/functions/v1/ai-assistant`, {
+      method: 'POST',
+      headers: {'apikey': SUPABASE_KEY, 'Content-Type': 'application/json'},
+      body: JSON.stringify({question: q, clients})
+    });
+    const d = await res.json(); 
     
-    const body = document.getElementById('aiModalBody');
-    body.innerHTML += `<div class="aiMsg user"><div class="role">את/ה</div><div class="text">${escapeHtml(q)}</div></div>`;
+    let responseText = d.answer || 'סליחה, לא קיבלתי תשובה מהשרת.';
     
-    setTimeout(() => {
-        body.innerHTML += `<div class="aiMsg ai"><div class="role">AI</div><div class="text">אני מעבד את הנתונים שלך (Zoho ו-Supabase)... הלקוחות שלך במצב מצוין! יש 2 הובלות שאפשר לאחד השבוע כדי לחסוך לוגיסטיקה.</div></div>`;
-        body.scrollTop = body.scrollHeight;
-    }, 1000);
+    if(q.includes('עיכוב') || q.includes('חורגים') || q.includes('סיכון') || q.includes('חסם')) {
+        const delayed = clients.filter(c => c.risk === 'high' || soon(c.deadline));
+        if(delayed.length > 0) {
+            let cardsHtml = `<div style="font-weight:bold; margin-bottom:10px;">מצאתי ${delayed.length} לקוחות שדורשים התייחסות מנהל מיידית:</div>`;
+            delayed.forEach(dc => {
+                cardsHtml += `
+                <div class="ai-card">
+                   <div>
+                     <strong style="color:#b42318; font-size:14px;">${escapeHtml(dc.name)}</strong><br>
+                     <span style="color:#64748b;">${dc.risk==='high' ? '🚨 חסם: '+escapeHtml(dc.blocker||'ללא פירוט') : '⏳ דדליין: '+escapeHtml(dc.deadline)}</span>
+                   </div>
+                   <button class="btn light" style="padding:4px 8px; font-size:11px;" onclick="closeAIModal(true); openEditModal('${dc.id}')">פתיחת תיק</button>
+                </div>`;
+            });
+            responseText = cardsHtml;
+        } else {
+            responseText = "מבדיקה שלי במסד הנתונים, כל הפרויקטים עומדים בזמנים ואין חסמים קריטיים כרגע. אפשר להיות רגועים! 🎉";
+        }
+    }
+
+    aiConversation.push({r:'ai', t: responseText});
+  } catch(e) { 
+    aiConversation.push({r:'ai', t: 'שגיאת תקשורת מול מודל ה-AI. ודא שה-Edge Function פעיל.'}); 
+  }
+  
+  document.getElementById('aiBtn').disabled = false; 
+  renderChat();
 }
 
-// Init
-function checkAuth() {
-   // Assuming auth bypassed for code snippet context.
-   document.getElementById('loginScreen').classList.add('hidden');
-   document.getElementById('mainApp').classList.remove('hidden');
-   loadAll();
-   showTrackDetails('commercial'); // Default to commercial instead of regular
+// ================= EDIT CLIENT MODAL =================
+function toggleIECFields() {
+  const sys = document.getElementById('f_system').value;
+  const iec = document.getElementById('iec_section');
+  const pwrap = document.getElementById('p_papers_wrap');
+  const track = document.getElementById('f_track');
+  
+  if(sys === 'OFF GRID') { 
+      iec.style.display = 'none'; pwrap.style.display = 'none'; track.value = 'off_grid'; track.disabled = true;
+  } else { 
+      iec.style.display = 'block'; pwrap.style.display = 'block'; track.disabled = false;
+      if(track.value === 'off_grid') track.value = 'commercial';
+  }
 }
 
-window.onload = checkAuth;
+function openEditModal(id=null) {
+  editingClientId = id;
+  const c = id ? clients.find(x => x.id === id) : {};
+  document.getElementById('editTitle').innerText = id ? 'עריכת פרויקט: ' + c.name : 'יצירת לקוח חדש'; // Safe against &#39;
+  
+  tempStages = id ? [...(stagesMap[id]||[]).map(s=>({text:s.text,status:s.status}))] : [];
+  tempParallel = id ? [...(parallelMap[id]||[]).map(p=>({text:p.text,status:p.status}))] : [];
+
+  document.getElementById('editBody').innerHTML = `
+    <div class="formSection">
+      <h3>1. פרטים כלליים ומסלול עבודה</h3>
+      <div class="formGrid cols2">
+        <div class="field"><label>שם הלקוח *</label><input class="input" id="f_name" value="${escapeHtml(c.name||'')}"></div>
+        <div class="field"><label>מייל</label><input class="input" id="f_email" value="${escapeHtml(c.email||'')}"></div>
+        <div class="field"><label>טלפון נייד</label><input class="input" id="f_phone" value="${escapeHtml(c.phone||'')}"></div>
+        <div class="field"><label>עיר התקנה</label><input class="input" id="f_location" value="${escapeHtml(c.location||'')}"></div>
+        <div class="field"><label>סוג מערכת</label><select class="input" id="f_system" onchange="toggleIECFields()"><option ${c.system==='ON GRID'?'selected':''}>ON GRID</option><option ${c.system==='HYBRID'?'selected':''}>HYBRID</option><option ${c.system==='OFF GRID'?'selected':''}>OFF GRID</option></select></div>
+        <div class="field"><label>מסלול</label><select class="input" id="f_track"><option value="commercial" ${c.track_type==='commercial'?'selected':''}>מסחרי / ייצור מפוזר</option><option value="green_track" ${c.track_type==='green_track'?'selected':''}>מסלול ירוק</option><option value="off_grid" ${c.track_type==='off_grid'?'selected':''}>OFF GRID</option></select></div>
+      </div>
+    </div>
+    
+    <div class="formSection" id="iec_section">
+      <h3>2. חברת חשמל (יוסתר באוף-גריד)</h3>
+      <div class="formGrid cols2">
+        <div class="field"><label>פתיחת חח"י (תאריך או סטטוס)</label><input class="input" id="f_iec" value="${escapeHtml(c.iec_open||'')}"></div>
+        <div class="field"><label>אישור ביצוע (תשלום אגרה 914 ₪)</label><input class="input" id="f_permit" value="${escapeHtml(c.work_permit||'')}"></div>
+      </div>
+    </div>
+
+    <div class="formSection">
+      <h3>3. התקדמות (%) ומצב קריטי</h3>
+      <div class="formGrid cols4">
+        <div class="field" id="p_papers_wrap"><label>ניירת חח"י</label><input type="number" class="input" id="p_papers" value="${c.progress_papers||0}"></div>
+        <div class="field"><label>ציוד</label><input type="number" class="input" id="p_equip" value="${c.progress_equipment||0}"></div>
+        <div class="field"><label>התקנה</label><input type="number" class="input" id="p_inst" value="${c.progress_installation||0}"></div>
+        <div class="field"><label>סיום</label><input type="number" class="input" id="p_final" value="${c.progress_final||0}"></div>
+      </div>
+      <div class="formGrid cols2" style="margin-top:10px;">
+        <div class="field"><label>רמת סיכון</label><select class="input" id="f_risk"><option value="low" ${c.risk==='low'?'selected':''}>תקין (Low)</option><option value="high" ${c.risk==='high'?'selected':''}>חסם קריטי (High)</option></select></div>
+        <div class="field"><label>דדליין (DD/MM/YYYY)</label><input class="input" id="f_deadline" value="${escapeHtml(c.deadline||'')}"></div>
+      </div>
+      <div class="field"><label>פירוט חסם</label><textarea class="input" id="f_blocker">${escapeHtml(c.blocker||'')}</textarea></div>
+    </div>
+
+    <div class="formSection">
+      <h3>4. תיאום שטח ויומן</h3>
+      <div class="formGrid cols2">
+        <div class="field"><label>צוות משובץ</label><select class="input" id="f_team"><option value="">- לא נבחר -</option><option ${c.site_surveyor==='אני (אחמד)'?'selected':''}>אני (אחמד)</option><option ${c.site_surveyor==='מוראד'?'selected':''}>מוראד</option><option ${c.site_surveyor==='אברהים'?'selected':''}>אברהים</option><option ${c.site_surveyor==='אני ומוראד'?'selected':''}>אני ומוראד</option><option ${c.site_surveyor==='כל הצוות'?'selected':''}>כל הצוות</option></select></div>
+        <div class="field"><label>תאריך לסיור</label><input type="datetime-local" class="input" id="f_time" value="${c.survey_time||''}"></div>
+      </div>
+    </div>
+
+    <div class="formSection">
+      <h3>5. משימות ושלבים (ידני)</h3>
+      <div class="field"><label>שלבים בפועל:</label><div id="es_stages"></div><button class="addBtn" onclick="editAddStage()">+ הוסף שלב</button></div>
+      <div class="field" style="margin-top:15px;"><label>במקביל / לוגיסטיקה:</label><div id="es_parallels"></div><button class="addBtn" onclick="editAddParallel()">+ הוסף משימה במקביל</button></div>
+    </div>
+  `;
+  toggleIECFields();
+  renderEditStages();
+  document.getElementById('editModal').classList.add('active');
+}
+
+function renderEditStages() {
+  document.getElementById('es_stages').innerHTML = tempStages.map((s,i) => `<div class="listRow"><input class="input" value="${escapeHtml(s.text)}" oninput="tempStages[${i}].text=this.value" placeholder="תאר את השלב..."><select class="input" onchange="tempStages[${i}].status=this.value">${statusOptions.map(o=>`<option value="${o.value}" ${s.status===o.value?'selected':''}>${o.label}</option>`).join('')}</select><button class="iconBtn danger" onclick="editRemoveStage(${i})">🗑️</button></div>`).join('');
+  document.getElementById('es_parallels').innerHTML = tempParallel.map((p,i) => `<div class="listRow"><input class="input" value="${escapeHtml(p.text)}" oninput="tempParallel[${i}].text=this.value" placeholder="משימה במקביל..."><select class="input" onchange="tempParallel[${i}].status=this.value">${statusOptions.map(o=>`<option value="${o.value}" ${p.status===o.value?'selected':''}>${o.label}</option>`).join('')}</select><button class="iconBtn danger" onclick="editRemoveParallel(${i})">🗑️</button></div>`).join('');
+}
+function editAddStage(){ tempStages.push({text:'',status:'waiting'}); renderEditStages(); }
+function editRemoveStage(i){ tempStages.splice(i,1); renderEditStages(); }
+function editAddParallel(){ tempParallel.push({text:'',status:'parallel'}); renderEditStages(); }
+function editRemoveParallel(i){ tempParallel.splice(i,1); renderEditStages(); }
+
+function closeEditModal(byClick) { if(byClick) document.getElementById('editModal').classList.remove('active'); }
+
+async function saveClient() {
+  const n = document.getElementById('f_name').value.trim(); 
+  if(!n) { showToast('חובה להזין את שם הלקוח','error'); return; }
+  setSyncStatus('saving');
+  const sys = document.getElementById('f_system').value;
+  const track = sys === 'OFF GRID' ? 'off_grid' : document.getElementById('f_track').value;
+  const p = sys === 'OFF GRID' ? 0 : Number(document.getElementById('p_papers').value)||0;
+  const e = Number(document.getElementById('p_equip').value)||0;
+  const i = Number(document.getElementById('p_inst').value)||0;
+  const f = Number(document.getElementById('p_final').value)||0;
+  const div = sys === 'OFF GRID' ? 3 : 4;
+  const tot = Math.min(100, Math.round((p+e+i+f)/div));
+
+  const d = {
+    name: n, email: document.getElementById('f_email').value, phone: document.getElementById('f_phone').value, location: document.getElementById('f_location').value,
+    system: sys, track_type: track, iec_open: sys==='OFF GRID' ? null : document.getElementById('f_iec').value, work_permit: sys==='OFF GRID' ? null : document.getElementById('f_permit').value,
+    progress_papers: p, progress_equipment: e, progress_installation: i, progress_final: f, progress_overall: tot,
+    risk: document.getElementById('f_risk').value, deadline: document.getElementById('f_deadline').value, blocker: document.getElementById('f_blocker').value,
+    site_surveyor: document.getElementById('f_team').value, survey_time: document.getElementById('f_time').value
+  };
+
+  try {
+    let cid = editingClientId;
+    if(cid) {
+      const oldTrack = clients.find(c=>c.id===cid)?.track_type;
+      await sb('PATCH', 'clients', d, `?id=eq.${cid}`);
+      if(oldTrack !== track && confirm(`זיהינו ששינית את מסלול העבודה של הלקוח.\nהאם תרצה למשוך את השלבים המוגדרים למסלול החדש? (הישנים יימחקו)`)) {
+        await sb('DELETE', 'client_stages', null, `?client_id=eq.${cid}`); await sb('DELETE', 'client_parallel', null, `?client_id=eq.${cid}`);
+        const wt = workflowTemplates.filter(w => w.track_type === track);
+        if(wt.length) { 
+          await sb('POST', 'client_stages', wt.filter(w=>!w.is_parallel).map(w=>({client_id:cid,text:w.stage_name,status:'waiting',order_index:w.stage_number}))); 
+          await sb('POST', 'client_parallel', wt.filter(w=>w.is_parallel).map(w=>({client_id:cid,text:w.stage_name,status:'parallel',order_index:w.stage_number}))); 
+        }
+        closeEditModal(true); loadAll(); showToast('לקוח נשמר והשלבים חודשו בהצלחה','success'); return;
+      }
+    } else {
+      const r = await sb('POST', 'clients', d); cid = r[0].id;
+      const wt = workflowTemplates.filter(w => w.track_type === track);
+      if(wt.length) { 
+        await sb('POST', 'client_stages', wt.filter(w=>!w.is_parallel).map(w=>({client_id:cid,text:w.stage_name,status:'waiting',order_index:w.stage_number}))); 
+        await sb('POST', 'client_parallel', wt.filter(w=>w.is_parallel).map(w=>({client_id:cid,text:w.stage_name,status:'parallel',order_index:w.stage_number}))); 
+      }
+      closeEditModal(true); loadAll(); showToast('לקוח חדש נוצר בהצלחה!','success'); return;
+    }
+    
+    await sb('DELETE', 'client_stages', null, `?client_id=eq.${cid}`); await sb('DELETE', 'client_parallel', null, `?client_id=eq.${cid}`);
+    if(tempStages.length) await sb('POST', 'client_stages', tempStages.filter(x=>x.text).map((x,idx)=>({client_id:cid,text:x.text,status:x.status,order_index:idx})));
+    if(tempParallel.length) await sb('POST', 'client_parallel', tempParallel.filter(x=>x.text).map((x,idx)=>({client_id:cid,text:x.text,status:x.status,order_index:idx})));
+    
+    if(d.site_surveyor && d.survey_time) showToast('שולח זימון ליומן Zoho...','info');
+
+    closeEditModal(true); loadAll(); showToast('השינויים נשמרו בענן','success');
+  } catch(e) { setSyncStatus('error'); showToast('שגיאה בתקשורת','error'); }
+}
+
+async function deleteClient(id) { 
+  if(!confirm('אזהרה: למחוק לקוח זה לצמיתות?')) return; 
+  setSyncStatus('saving'); 
+  try { await sb('DELETE', 'clients', null, `?id=eq.${id}`); showToast('הלקוח הוסר', 'success'); loadAll(); } 
+  catch(e) { showToast('שגיאה במחיקה', 'error'); } 
+}
+
+// ================= INIT =================
+checkAuth();
 
 </script>
 </body>
