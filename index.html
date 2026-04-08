@@ -79,11 +79,12 @@ h1 { margin: 0 0 8px; font-size: 28px; line-height: 1.1; }
 .company-prog-bar { height: 6px; background: #e8eef6; border-radius: 999px; overflow: hidden; margin-top: 10px; }
 .company-prog-bar span { display: block; height: 100%; border-radius: 999px; background: linear-gradient(90deg, #16a34a, #0891b2); transition: width 0.5s; }
 
-/* ================= MAIN GRID & CLIENTS ================= */
+/* ================= MAIN GRID ================= */
 .main-grid { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 20px; align-items: start; }
 .sticky-side { position: sticky; top: 20px; }
 .card-section { background: #fff; border-radius: 18px; padding: 20px; border: 1px solid #dbe4ee; box-shadow: 0 4px 12px rgba(0,0,0,0.03); }
 
+/* ================= CLIENTS LIST ================= */
 .clients-list { display: grid; gap: 15px; }
 .client-card { background: #fff; border-radius: 18px; padding: 20px; border: 1px solid #dbe4ee; box-shadow: 0 4px 12px rgba(0,0,0,0.03); transition: border-color 0.2s; }
 .client-card:hover { border-color: #0891b2; }
@@ -148,7 +149,7 @@ h1 { margin: 0 0 8px; font-size: 28px; line-height: 1.1; }
 .input:focus { outline: none; border-color: #6d28d9; }
 textarea.input { min-height: 60px; resize: vertical; }
 
-/* ================= FILES MODAL (NEW DESIGN) ================= */
+/* ================= FILES MODAL ================= */
 .file-upload-area { background: #fff; border: 2px dashed #cbd5e1; border-radius: 12px; padding: 20px; text-align: center; margin-bottom: 20px; transition: border-color 0.2s; }
 .file-upload-area:hover { border-color: #0f2747; }
 .file-item { display: flex; align-items: center; gap: 12px; background: #fff; padding: 12px; border: 1px solid #e2e8f0; border-radius: 12px; margin-bottom: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
@@ -298,8 +299,7 @@ textarea.input { min-height: 60px; resize: vertical; }
       </div>
       
       <h3 style="font-size:14px; color:#0f2747; margin-bottom:10px; border-bottom:1px solid #e8eff7; padding-bottom:5px;">📚 מסמכים קיימים בתיק</h3>
-      <div id="filesListContainer" style="min-height:150px;">
-        </div>
+      <div id="filesListContainer" style="min-height:150px;"></div>
     </div>
   </div>
 </div>
@@ -311,8 +311,7 @@ textarea.input { min-height: 60px; resize: vertical; }
       <button class="iconBtn" onclick="closeAIModal(true)">✕</button>
     </div>
     
-    <div id="aiChatBox" style="min-height:350px; max-height:450px; overflow-y:auto; padding-right:10px; margin-bottom:15px; display:flex; flex-direction:column; gap:10px;">
-      </div>
+    <div id="aiChatBox" style="min-height:350px; max-height:450px; overflow-y:auto; padding-right:10px; margin-bottom:15px; display:flex; flex-direction:column; gap:10px;"></div>
     
     <div style="display:flex; gap:10px; background:#fff; padding:10px; border-radius:12px; border:1px solid #e2e8f0;">
       <input type="text" class="input" style="border:none; box-shadow:none;" id="aiInput" placeholder="בקש ניתוח פרויקטים, איתור עיכובים, או ארגון הלוז..." onkeydown="if(event.key==='Enter') sendAI()">
@@ -371,7 +370,7 @@ let aiConversation = [];
 const statusOptions = [{value:'done', label:'הושלם'}, {value:'running', label:'בתהליך'}, {value:'waiting', label:'ממתין'}, {value:'parallel', label:'במקביל'}];
 const CATEGORY_LABELS = { iec: '🏢 חברת חשמל', certificates: '✅ אישורים', quote: '💰 חוזה/הצעת מחיר', equipment_order: '📦 ציוד', site_photos: '📸 תמונות שטח', other: '📄 אחר' };
 
-// ================= DYNAMIC LINKS (EDITABLE IN-LINE) =================
+// ================= DYNAMIC LINKS =================
 let officialLinks = JSON.parse(localStorage.getItem('doxy_official_links')) || {
   exemption: "https://govforms.gov.il/mw/forms/Exemption_permit@planning.gov.il?gbxid=1",
   pv_permit: "https://govforms.gov.il/mw/forms/PvForm%40mnz.gov.il?gbxid=1",
@@ -389,21 +388,14 @@ function renderDocWithLink(docName) {
   else if (docName.includes('1400')) { key = 'form1400'; link = officialLinks.form1400; }
   
   if (key) {
-    return `
-      <div class="doc-check">
-        <div><span style="color:#0891b2">☐</span> <span style="font-weight:600; color:#0f2747;">${escapeHtml(docName)}</span></div>
-        <div style="display:flex; align-items:center;">
-          <button class="edit-link-btn" title="ערוך קישור מקוון" onclick="editDocLink('${key}')">✏️</button>
-          <a href="${link}" target="_blank" class="doc-link">🔗 פתח טופס</a>
-        </div>
-      </div>`;
+    return `<div class="doc-check"><div><span style="color:#0891b2">☐</span> <span style="font-weight:600; color:#0f2747;">${escapeHtml(docName)}</span></div><div style="display:flex; align-items:center;"><button class="edit-link-btn" title="ערוך קישור" onclick="editDocLink('${key}')">✏️</button><a href="${link}" target="_blank" class="doc-link">🔗 פתח טופס</a></div></div>`;
   }
   return `<div class="doc-check"><div><span style="color:#0891b2">☐</span> <span>${escapeHtml(docName)}</span></div></div>`;
 }
 
 function editDocLink(key) {
   const currentLink = officialLinks[key];
-  const newLink = prompt("הדבק כאן את הקישור החדש והמעודכן לטופס זה:", currentLink);
+  const newLink = prompt("הדבק כאן את הקישור החדש:", currentLink);
   if (newLink !== null && newLink.trim() !== "") {
     officialLinks[key] = newLink.trim();
     localStorage.setItem('doxy_official_links', JSON.stringify(officialLinks));
@@ -416,14 +408,16 @@ function editDocLink(key) {
 // ================= UTILS & AUTH =================
 function showToast(m, t='info') {
   const c = document.getElementById('toastContainer');
+  if(!c) return;
   const div = document.createElement('div'); div.className = `toast show ${t}`; div.innerText = m;
-  c.appendChild(div); setTimeout(() => { div.classList.remove('show'); setTimeout(()=>div.remove(),300); }, 3000);
+  c.appendChild(div); setTimeout(() => { div.classList.remove('show'); setTimeout(()=>div.remove(),300); }, 5000);
 }
+
 setInterval(() => { const el=document.getElementById('liveClock'); if(el) el.innerText=new Date().toLocaleTimeString('he-IL'); }, 1000);
 document.getElementById('todayDate').innerText = new Date().toLocaleDateString('he-IL');
 function escapeHtml(s) { return String(s||'').replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
 function soon(dStr) { if(!dStr) return false; const [d,m,y]=dStr.split('/').map(Number); if(!d||!m||!y) return false; return ((new Date(y,m-1,d)-new Date())/86400000) <= 10; }
-function setSyncStatus(st) { const el=document.getElementById('syncStatus'); if(st==='saving'){el.innerHTML='<span>⟳ שומר...</span>'; el.className='sync-status';}else if(st==='error'){el.innerHTML='<span>⚠️ שגיאה</span>'; el.className='sync-status sync-error';}else{el.innerHTML='<span>☁️ מסונכרן לענן Supabase</span>'; el.className='sync-status';} }
+function setSyncStatus(st) { const el=document.getElementById('syncStatus'); if(st==='saving'){el.innerHTML='<span>⟳ שומר...</span>'; el.className='sync-status';}else if(st==='error'){el.innerHTML='<span>⚠️ שגיאה</span>'; el.className='sync-status sync-error';}else{el.innerHTML='<span>☁️ מסונכרן לענן</span>'; el.className='sync-status';} }
 function progColor(v) { return v>=70?'#16a34a':v>=30?'#ea580c':'#dc2626'; }
 
 let accessToken = null;
@@ -436,11 +430,23 @@ window.fetch = function(url, options = {}) {
   return originalFetch.call(this, url, options);
 };
 
+// CHECK EXPIRATION
 async function checkAuth() {
   const s = localStorage.getItem('doxy_session');
-  if(s) { try { const sess=JSON.parse(s); if(sess.access_token){ accessToken=sess.access_token; initApp(); return; } } catch(e){} }
+  if(s) { 
+    try { 
+      const sess = JSON.parse(s); 
+      if(sess.access_token && sess.expires_at && (sess.expires_at * 1000 > Date.now())) { 
+        accessToken = sess.access_token; 
+        initApp(); 
+        return; 
+      } 
+    } catch(e){} 
+  }
+  localStorage.removeItem('doxy_session');
   document.getElementById('loginScreen').style.display='flex';
 }
+
 async function doLogin() {
   const e = document.getElementById('loginEmail').value, p = document.getElementById('loginPassword').value, err = document.getElementById('loginError');
   if(!e||!p) { err.innerText='מלא הכל'; err.classList.remove('hidden'); return; }
@@ -453,6 +459,28 @@ async function doLogin() {
   } catch(ex) { err.innerText='שגיאת תקשורת'; err.classList.remove('hidden'); document.getElementById('loginBtn').innerText='🔐 התחבר'; }
 }
 
+function initApp() { 
+  document.getElementById('mainApp').classList.remove('hidden'); 
+  
+  // ADD LOGOUT BUTTON
+  const brandDiv = document.querySelector('.brand > div:last-child');
+  if (brandDiv && !document.getElementById('logoutBtn')) {
+    const btn = document.createElement('button');
+    btn.id = 'logoutBtn';
+    btn.innerHTML = '🚪 התנתק';
+    btn.style.cssText = 'background: rgba(255,255,255,0.2); border: none; color: white; padding: 4px 10px; border-radius: 6px; cursor: pointer; font-size: 11px; margin-top: 8px; font-family: inherit;';
+    btn.onclick = doLogout;
+    brandDiv.appendChild(btn);
+  }
+
+  loadAll(); 
+}
+
+function doLogout() {
+  localStorage.removeItem('doxy_session');
+  location.reload();
+}
+
 async function sb(method, table, data=null, query='') {
   const opt = { method, headers: {'apikey':SUPABASE_KEY, 'Content-Type':'application/json', 'Prefer':'return=representation'} };
   if(data) opt.body = JSON.stringify(data);
@@ -462,20 +490,30 @@ async function sb(method, table, data=null, query='') {
   return r.json();
 }
 
-function initApp() { document.getElementById('mainApp').classList.remove('hidden'); loadAll(); }
-
+// ROBUST LOAD (WON'T CRASH IF TABLE MISSING)
 async function loadAll(silent=false) {
   if(!silent) setSyncStatus('saving');
   try {
-    const [c, s, p, w] = await Promise.all([
-      sb('GET', 'clients', null, '?select=*&order=created_at.desc'),
-      sb('GET', 'client_stages'), sb('GET', 'client_parallel'), sb('GET', 'workflow_templates', null, '?order=stage_number.asc')
-    ]);
-    clients = c || []; workflowTemplates = w || [];
+    const c = await sb('GET', 'clients', null, '?select=*&order=created_at.desc');
+    const s = await sb('GET', 'client_stages').catch(() => []);
+    const p = await sb('GET', 'client_parallel').catch(() => []);
+    const w = await sb('GET', 'workflow_templates', null, '?order=stage_number.asc').catch(() => []);
+    
+    clients = c || []; 
+    workflowTemplates = w || [];
     stagesMap = {}; (s||[]).forEach(x => { if(!stagesMap[x.client_id]) stagesMap[x.client_id]=[]; stagesMap[x.client_id].push(x); });
     parallelMap = {}; (p||[]).forEach(x => { if(!parallelMap[x.client_id]) parallelMap[x.client_id]=[]; parallelMap[x.client_id].push(x); });
-    render(); showTrack('commercial'); setSyncStatus('synced');
-  } catch(e) { setSyncStatus('error'); if(!silent) showToast('שגיאה בטעינת נתונים', 'error'); }
+    
+    render(); 
+    showTrack('commercial'); 
+    setSyncStatus('synced');
+  } catch(e) { 
+    setSyncStatus('error'); 
+    console.error(e);
+    let errMsg = e.message || 'שגיאת רשת';
+    if(errMsg.includes('relation "workflow_templates" does not exist')) errMsg = 'חסרה טבלת workflow_templates ב-Supabase!';
+    if(!silent) showToast('שגיאה: ' + errMsg, 'error'); 
+  }
 }
 
 // ================= RENDER & STATS =================
@@ -489,7 +527,7 @@ function render() {
   if(currentFilter !== 'all') arr = arr.filter(c => c.system === currentFilter);
   if(q) arr = arr.filter(c => c.name.toLowerCase().includes(q));
 
-  if(!arr.length) { list.innerHTML = '<div style="text-align:center; padding:40px; color:#66758a;">לא נמצאו לקוחות מתאימים.</div>'; }
+  if(!arr.length) { list.innerHTML = '<div style="text-align:center; padding:40px; color:#66758a;">לא נמצאו לקוחות.</div>'; }
 
   arr.forEach(c => {
     const isOff = c.system === 'OFF GRID';
@@ -497,10 +535,7 @@ function render() {
     const stages = stagesMap[c.id] || [];
     const parallels = parallelMap[c.id] || [];
     
-    // SMART BOTTLENECK & ACTION DETECTION
-    let nAct = c.next_action; 
-    let blk = c.blocker;
-    
+    let nAct = c.next_action; let blk = c.blocker;
     let autoBottleneck = "";
     if (prog >= 100) autoBottleneck = "הכל הושלם";
     else if (!isOff && (c.progress_papers || 0) < 100) autoBottleneck = `חסרה ניירת ואישורי חח"י (${c.progress_papers || 0}%)`;
@@ -546,7 +581,7 @@ function render() {
           <div class="info-box"><div class="k">טלפון נייד</div><div class="v" dir="ltr" style="text-align:right;">${escapeHtml(c.phone||'-')}</div></div>
           ${!isOff ? `
             <div class="info-box"><div class="k">פתיחת חח"י</div><div class="v">${escapeHtml(c.iec_open||'טרם נפתח')}</div></div>
-            <div class="info-box"><div class="k">אישור ביצוע (אגרה)</div><div class="v">${escapeHtml(c.work_permit||'ממתין לתשלום')}</div></div>
+            <div class="info-box"><div class="k">אישור ביצוע</div><div class="v">${escapeHtml(c.work_permit||'ממתין לתשלום')}</div></div>
           ` : `<div class="info-box" style="grid-column: span 2; background:#efe9ff; border-color:#d8b4fe;"><div class="k" style="color:#6d28d9;">סטטוס מערכת</div><div class="v">מערכת מנותקת רשת (OFF GRID)</div></div>`}
         </div>
 
@@ -556,9 +591,9 @@ function render() {
             ${stages.length ? stages.map(s => `<div class="step-item"><span>${escapeHtml(s.text)}</span><span class="pill p-${s.status==='done'?'done':s.status==='running'?'run':'wait'}">${statusOptions.find(o=>o.value===s.status)?.label||s.status}</span></div>`).join('') : '<div style="font-size:11px;color:#999;">טרם הוגדרו שלבים.</div>'}
           </div>
           <div class="steps-list">
-            <h4>⚡ פעולה הבאה, חסמים ולוגיסטיקה</h4>
+            <h4>⚡ פעולה הבאה וחסמים</h4>
             <div class="step-item"><span><b>חסם נוכחי:</b></span><span style="color:${c.risk==='high'?'#b42318':'#ea580c'}">${escapeHtml(blk)}</span></div>
-            <div class="step-item"><span><b>הפעולה הבאה שלנו:</b></span><span style="color:#0369a1; font-weight:600;">${escapeHtml(nAct)}</span></div>
+            <div class="step-item"><span><b>הפעולה הבאה:</b></span><span style="color:#0369a1; font-weight:600;">${escapeHtml(nAct)}</span></div>
             ${parallels.map(p => `<div class="step-item"><span>${escapeHtml(p.text)}</span><span class="pill p-run">${statusOptions.find(o=>o.value===p.status)?.label||p.status}</span></div>`).join('')}
             <div class="step-item" style="border-top:1px solid #e2e8f0; margin-top:5px; padding-top:8px;"><span><b>דדליין:</b></span><span class="deadline ${soon(c.deadline)?'soon':''}">${escapeHtml(c.deadline||'לא הוגדר')}</span></div>
           </div>
@@ -567,7 +602,6 @@ function render() {
     `;
   });
   
-  // Calculate Delayed/Critical Client for Stats
   let mostDelayed = null;
   const highRiskClients = clients.filter(c => c.risk === 'high');
   if(highRiskClients.length > 0) {
@@ -583,7 +617,6 @@ function render() {
       }
   }
 
-  // Update Stats Header
   document.getElementById('clientCount').innerText = clients.length;
   document.getElementById('activeClientsCount').innerText = clients.filter(c=>c.progress_overall < 100).length;
   const avg = clients.length ? (clients.reduce((a,c)=>a+(c.progress_overall||0),0)/clients.length).toFixed(1) : 0;
@@ -593,7 +626,7 @@ function render() {
   document.getElementById('totalRevenue').innerText = rev.toLocaleString() + ' ₪';
   
   if (mostDelayed) {
-      document.getElementById('topDelayedClient').innerText = mostDelayed.name; // <--- FIX HERE (No escapeHtml to avoid innerText showing &#39;)
+      document.getElementById('topDelayedClient').innerHTML = escapeHtml(mostDelayed.name); 
       document.getElementById('topDelayedReason').innerText = mostDelayed.risk === 'high' ? 'מוגדר כחסם קריטי' : `בחריגת זמנים: ${mostDelayed.deadline}`;
       document.getElementById('topDelayedClient').parentElement.classList.add('alert');
   } else {
@@ -612,7 +645,7 @@ function showTrack(track) {
   const stages = workflowTemplates.filter(t => t.track_type === track);
   const c = document.getElementById('trackDetails');
   
-  if(!stages.length) { c.innerHTML='<div style="padding:20px; text-align:center; color:#667;">אין שלבים המוגדרים למסלול זה במסד הנתונים.</div>'; return; }
+  if(!stages.length) { c.innerHTML='<div style="padding:20px; text-align:center; color:#667;">אין שלבים המוגדרים למסלול זה. (ייתכן שחסרה טבלת workflow_templates ב-Supabase)</div>'; return; }
   
   c.innerHTML = stages.map(s => `
     <div class="stage-item">
@@ -628,28 +661,22 @@ function showTrack(track) {
   `).join('');
 }
 
-// ================= FILES MODAL (NEW UI) =================
+// ================= FILES MODAL =================
 async function openFilesModal(cid) {
   currentFilesClient = clients.find(c => c.id === cid); 
   if(!currentFilesClient) return;
-  document.getElementById('filesClientName').innerText = currentFilesClient.name; // Safe against &#39;
+  document.getElementById('filesClientName').innerHTML = escapeHtml(currentFilesClient.name);
   document.getElementById('filesModal').classList.add('active');
   const c = document.getElementById('filesListContainer'); 
   c.innerHTML = '<div style="text-align:center;padding:20px;">מושך מסמכים מהענן...</div>';
   
   try {
     const files = await sb('GET', 'client_files', null, `?client_id=eq.${cid}&order=uploaded_at.desc`);
-    if(!files || !files.length) { 
-      c.innerHTML='<div style="text-align:center;color:#66758a;padding:20px;">אין מסמכים בתיק הלקוח. העלה את המסמך הראשון למעלה ☝️</div>'; 
-      return; 
-    }
+    if(!files || !files.length) { c.innerHTML='<div style="text-align:center;color:#66758a;padding:20px;">אין מסמכים בתיק הלקוח. העלה את המסמך הראשון למעלה ☝️</div>'; return; }
     
     c.innerHTML = files.map(f => {
         const fileUrl = `${SUPABASE_URL}/storage/v1/object/public/client-files/${f.storage_path}`;
-        let icon = '📄';
-        if(f.category === 'site_photos') icon = '🖼️';
-        if(f.category === 'quote') icon = '📑';
-        
+        let icon = '📄'; if(f.category === 'site_photos') icon = '🖼️'; if(f.category === 'quote') icon = '📑';
         return `
       <div class="file-item">
         <div class="file-icon">${icon}</div>
@@ -662,8 +689,7 @@ async function openFilesModal(cid) {
           <a href="${fileUrl}" download class="btn-action-sm">⬇️ הורדה</a>
           <button class="btn-action-sm" style="color:#ef4444; border-color:#fee2e2; background:#fef2f2;" title="מחק מסמך" onclick="deleteFile('${f.id}','${f.storage_path}')">🗑️</button>
         </div>
-      </div>
-    `}).join('');
+      </div>`}).join('');
   } catch(e) { c.innerHTML='<div style="color:#b42318;padding:20px;text-align:center;">שגיאה בטעינת קבצים. ודא הרשאות ענן.</div>'; }
 }
 
@@ -673,8 +699,7 @@ async function uploadFile() {
   const file = document.getElementById('file_input').files[0]; 
   if(!file) { showToast('יש לבחור קובץ מהמחשב תחילה', 'error'); return; }
   
-  const btn = document.getElementById('uploadBtn'); 
-  btn.disabled=true; btn.innerText='⏳ מעלה ל-Supabase...';
+  const btn = document.getElementById('uploadBtn'); btn.disabled=true; btn.innerText='⏳ מעלה ל-Supabase...';
   
   try {
     const cat = document.getElementById('file_category').value;
@@ -683,176 +708,98 @@ async function uploadFile() {
     const path = `${currentFilesClient.id}/${cat}/${Date.now()}_${safeName}`; 
     
     const r = await fetch(`${SUPABASE_URL}/storage/v1/object/client-files/${path}`, {
-      method:'POST',
-      headers:{'apikey':SUPABASE_KEY, 'Authorization':`Bearer ${accessToken}`, 'Content-Type':file.type||'application/octet-stream', 'x-upsert':'true'},
-      body:file
+      method:'POST', headers:{'apikey':SUPABASE_KEY, 'Authorization':`Bearer ${accessToken}`, 'Content-Type':file.type||'application/octet-stream', 'x-upsert':'true'}, body:file
     });
-    
     if(!r.ok) throw new Error('שגיאה ב-Storage');
+    await sb('POST', 'client_files', { client_id: currentFilesClient.id, file_name: file.name, storage_path: path, file_size: file.size, mime_type: file.type, category: cat, description: desc });
     
-    await sb('POST', 'client_files', {
-      client_id: currentFilesClient.id, file_name: file.name, storage_path: path, file_size: file.size, 
-      mime_type: file.type, category: cat, description: desc
-    });
-    
-    showToast('המסמך הועלה ונשמר בתיק הלקוח!', 'success'); 
-    document.getElementById('file_input').value=''; 
-    document.getElementById('file_description').value=''; 
+    showToast('המסמך הועלה ונשמר!', 'success'); 
+    document.getElementById('file_input').value=''; document.getElementById('file_description').value=''; 
     openFilesModal(currentFilesClient.id);
-  } catch(e) { 
-    showToast('שגיאה בהעלאת הקובץ. ודא חיבור או גודל קובץ.', 'error'); 
-  } finally { 
-    btn.disabled=false; btn.innerText='📤 העלה קובץ'; 
-  }
+  } catch(e) { showToast('שגיאה בהעלאת הקובץ.', 'error'); } finally { btn.disabled=false; btn.innerText='📤 העלה קובץ'; }
 }
 
 async function deleteFile(id, path) {
-  if(!confirm('האם למחוק קובץ זה מהענן לצמיתות? לא ניתן לשחזר.')) return;
-  try { 
-    await fetch(`${SUPABASE_URL}/storage/v1/object/client-files/${path}`, {
-      method:'DELETE', headers:{'apikey':SUPABASE_KEY, 'Authorization':`Bearer ${accessToken}`}
-    }); 
-    await sb('DELETE', 'client_files', null, `?id=eq.${id}`); 
-    showToast('קובץ נמחק בהצלחה', 'success'); 
-    openFilesModal(currentFilesClient.id); 
-  } catch(e) { showToast('שגיאה במחיקת קובץ', 'error'); }
+  if(!confirm('האם למחוק קובץ זה לצמיתות?')) return;
+  try { await fetch(`${SUPABASE_URL}/storage/v1/object/client-files/${path}`, { method:'DELETE', headers:{'apikey':SUPABASE_KEY, 'Authorization':`Bearer ${accessToken}`} }); await sb('DELETE', 'client_files', null, `?id=eq.${id}`); showToast('קובץ נמחק בהצלחה', 'success'); openFilesModal(currentFilesClient.id); } catch(e) { showToast('שגיאה במחיקת קובץ', 'error'); }
 }
 
-// ================= AI CHAT (SMART CARDS) =================
+// ================= AI CHAT =================
 function openAIModal() { 
   document.getElementById('aiModal').classList.add('active'); 
   if(!aiConversation.length) { 
-    document.getElementById('aiChatBox').innerHTML = `
-      <div style="text-align:center; padding:20px 0; color:#64748b;">
-         <div style="font-size:40px; margin-bottom:10px;">🤖</div>
-         <p style="font-size:14px; font-weight:bold; color:#0f2747;">היי! אני העוזר החכם שלך.</p>
-         <p style="font-size:13px; margin-bottom:15px;">אני מחובר למסד הנתונים ויכול לנתח את הלקוחות בשבילך.</p>
-      </div>
-      <div>
-        <button class="btn light" style="display:block;width:100%;text-align:right;margin-bottom:8px; border-color:#e2e8f0; color:#475569;" onclick="sendAI('מי הלקוחות שחורגים מהזמנים או נמצאים בעיכוב כרגע?')">🚨 הראה לי לקוחות בעיכוב קריטי או חסם גבוה</button>
-        <button class="btn light" style="display:block;width:100%;text-align:right;margin-bottom:8px; border-color:#e2e8f0; color:#475569;" onclick="sendAI('תארגן לי את הלוז השבועי לשטח לפי הצוותים')">👷 ארגן לי לו"ז צוותי שטח לשבוע הקרוב</button>
-      </div>`; 
+    document.getElementById('aiChatBox').innerHTML = `<div style="text-align:center; padding:20px 0; color:#64748b;"><div style="font-size:40px; margin-bottom:10px;">🤖</div><p style="font-size:14px; font-weight:bold; color:#0f2747;">היי! אני העוזר החכם שלך.</p><p style="font-size:13px; margin-bottom:15px;">אני מחובר למסד הנתונים ויכול לנתח את הלקוחות בשבילך.</p></div><div><button class="btn light" style="display:block;width:100%;text-align:right;margin-bottom:8px; border-color:#e2e8f0; color:#475569;" onclick="sendAI('מי הלקוחות שחורגים מהזמנים או נמצאים בעיכוב כרגע?')">🚨 הראה לי לקוחות בעיכוב קריטי או חסם גבוה</button><button class="btn light" style="display:block;width:100%;text-align:right;margin-bottom:8px; border-color:#e2e8f0; color:#475569;" onclick="sendAI('תארגן לי את הלוז השבועי לשטח לפי הצוותים')">👷 ארגן לי לו"ז צוותי שטח לשבוע הקרוב</button></div>`; 
   }
 }
 function closeAIModal(c) { if(c) document.getElementById('aiModal').classList.remove('active'); }
 
 async function sendAI(txt=null) {
-  const q = txt || document.getElementById('aiInput').value; 
-  if(!q) return;
-  
-  aiConversation.push({r:'user', t:q}); 
-  document.getElementById('aiInput').value = '';
-  
+  const q = txt || document.getElementById('aiInput').value; if(!q) return;
+  aiConversation.push({r:'user', t:q}); document.getElementById('aiInput').value = '';
   const b = document.getElementById('aiChatBox');
   const renderChat = () => {
-    b.innerHTML = aiConversation.map(m => {
-        const content = m.r === 'ai' ? m.t : escapeHtml(m.t);
-        return `
-          <div class="aiMsg ${m.r}">
-            <div style="font-size:11px; color:#64748b; margin-bottom:4px; padding:0 5px;">${m.r==='user'?'את/ה':'AI Assistant'}</div>
-            <div class="bubble">${content}</div>
-          </div>
-        `;
-    }).join(''); 
+    b.innerHTML = aiConversation.map(m => { const content = m.r === 'ai' ? m.t : escapeHtml(m.t); return `<div class="aiMsg ${m.r}"><div style="font-size:11px; color:#64748b; margin-bottom:4px; padding:0 5px;">${m.r==='user'?'את/ה':'AI Assistant'}</div><div class="bubble">${content}</div></div>`; }).join(''); 
     b.scrollTop = b.scrollHeight;
   };
-  
   renderChat();
-  
   const tempId = 'loading-' + Date.now();
-  b.innerHTML += `
-    <div id="${tempId}" class="aiMsg ai">
-      <div style="font-size:11px; color:#64748b; margin-bottom:4px; padding:0 5px;">AI Assistant</div>
-      <div class="bubble" style="background:transparent; border:none; box-shadow:none;">מנתח נתונים מ-Supabase... ⏳</div>
-    </div>`; 
-  b.scrollTop = b.scrollHeight;
-  document.getElementById('aiBtn').disabled = true;
+  b.innerHTML += `<div id="${tempId}" class="aiMsg ai"><div style="font-size:11px; color:#64748b; margin-bottom:4px; padding:0 5px;">AI Assistant</div><div class="bubble" style="background:transparent; border:none; box-shadow:none;">מנתח נתונים מ-Supabase... ⏳</div></div>`; 
+  b.scrollTop = b.scrollHeight; document.getElementById('aiBtn').disabled = true;
   
   try {
-    const res = await fetch(`${SUPABASE_URL}/functions/v1/ai-assistant`, {
-      method: 'POST',
-      headers: {'apikey': SUPABASE_KEY, 'Content-Type': 'application/json'},
-      body: JSON.stringify({question: q, clients})
-    });
+    const res = await fetch(`${SUPABASE_URL}/functions/v1/ai-assistant`, { method: 'POST', headers: {'apikey': SUPABASE_KEY, 'Content-Type': 'application/json'}, body: JSON.stringify({question: q, clients}) });
     const d = await res.json(); 
-    
     let responseText = d.answer || 'סליחה, לא קיבלתי תשובה מהשרת.';
-    
     if(q.includes('עיכוב') || q.includes('חורגים') || q.includes('סיכון') || q.includes('חסם')) {
         const delayed = clients.filter(c => c.risk === 'high' || soon(c.deadline));
         if(delayed.length > 0) {
             let cardsHtml = `<div style="font-weight:bold; margin-bottom:10px;">מצאתי ${delayed.length} לקוחות שדורשים התייחסות מנהל מיידית:</div>`;
-            delayed.forEach(dc => {
-                cardsHtml += `
-                <div class="ai-card">
-                   <div>
-                     <strong style="color:#b42318; font-size:14px;">${escapeHtml(dc.name)}</strong><br>
-                     <span style="color:#64748b;">${dc.risk==='high' ? '🚨 חסם: '+escapeHtml(dc.blocker||'ללא פירוט') : '⏳ דדליין: '+escapeHtml(dc.deadline)}</span>
-                   </div>
-                   <button class="btn light" style="padding:4px 8px; font-size:11px;" onclick="closeAIModal(true); openEditModal('${dc.id}')">פתיחת תיק</button>
-                </div>`;
-            });
+            delayed.forEach(dc => { cardsHtml += `<div class="ai-card"><div><strong style="color:#b42318; font-size:14px;">${escapeHtml(dc.name)}</strong><br><span style="color:#64748b;">${dc.risk==='high' ? '🚨 חסם: '+escapeHtml(dc.blocker||'ללא פירוט') : '⏳ דדליין: '+escapeHtml(dc.deadline)}</span></div><button class="btn light" style="padding:4px 8px; font-size:11px;" onclick="closeAIModal(true); openEditModal('${dc.id}')">פתיחת תיק</button></div>`; });
             responseText = cardsHtml;
-        } else {
-            responseText = "מבדיקה שלי במסד הנתונים, כל הפרויקטים עומדים בזמנים ואין חסמים קריטיים כרגע. אפשר להיות רגועים! 🎉";
-        }
+        } else { responseText = "הכל תקין, אין פרויקטים בחריגה! 🎉"; }
     }
-
     aiConversation.push({r:'ai', t: responseText});
-  } catch(e) { 
-    aiConversation.push({r:'ai', t: 'שגיאת תקשורת מול מודל ה-AI. ודא שה-Edge Function פעיל.'}); 
-  }
+  } catch(e) { aiConversation.push({r:'ai', t: 'שגיאת תקשורת מול שרת ה-AI.'}); }
   
-  document.getElementById('aiBtn').disabled = false; 
-  renderChat();
+  document.getElementById('aiBtn').disabled = false; renderChat();
 }
 
-// ================= EDIT CLIENT MODAL =================
+// ================= EDIT CLIENT =================
 function toggleIECFields() {
   const sys = document.getElementById('f_system').value;
   const iec = document.getElementById('iec_section');
   const pwrap = document.getElementById('p_papers_wrap');
   const track = document.getElementById('f_track');
-  
-  if(sys === 'OFF GRID') { 
-      iec.style.display = 'none'; pwrap.style.display = 'none'; track.value = 'off_grid'; track.disabled = true;
-  } else { 
-      iec.style.display = 'block'; pwrap.style.display = 'block'; track.disabled = false;
-      if(track.value === 'off_grid') track.value = 'commercial';
-  }
+  if(sys === 'OFF GRID') { iec.style.display = 'none'; pwrap.style.display = 'none'; track.value = 'off_grid'; track.disabled = true; } 
+  else { iec.style.display = 'block'; pwrap.style.display = 'block'; track.disabled = false; if(track.value === 'off_grid') track.value = 'commercial'; }
 }
 
 function openEditModal(id=null) {
-  editingClientId = id;
-  const c = id ? clients.find(x => x.id === id) : {};
-  document.getElementById('editTitle').innerText = id ? 'עריכת פרויקט: ' + c.name : 'יצירת לקוח חדש'; // Safe against &#39;
-  
+  editingClientId = id; const c = id ? clients.find(x => x.id === id) : {};
+  document.getElementById('editTitle').innerHTML = id ? 'עריכת פרויקט: ' + escapeHtml(c.name) : 'יצירת לקוח חדש'; 
   tempStages = id ? [...(stagesMap[id]||[]).map(s=>({text:s.text,status:s.status}))] : [];
   tempParallel = id ? [...(parallelMap[id]||[]).map(p=>({text:p.text,status:p.status}))] : [];
 
   document.getElementById('editBody').innerHTML = `
-    <div class="formSection">
-      <h3>1. פרטים כלליים ומסלול עבודה</h3>
+    <div class="formSection"><h3>1. פרטים ומסלול</h3>
       <div class="formGrid cols2">
         <div class="field"><label>שם הלקוח *</label><input class="input" id="f_name" value="${escapeHtml(c.name||'')}"></div>
         <div class="field"><label>מייל</label><input class="input" id="f_email" value="${escapeHtml(c.email||'')}"></div>
-        <div class="field"><label>טלפון נייד</label><input class="input" id="f_phone" value="${escapeHtml(c.phone||'')}"></div>
+        <div class="field"><label>טלפון</label><input class="input" id="f_phone" value="${escapeHtml(c.phone||'')}"></div>
         <div class="field"><label>עיר התקנה</label><input class="input" id="f_location" value="${escapeHtml(c.location||'')}"></div>
         <div class="field"><label>סוג מערכת</label><select class="input" id="f_system" onchange="toggleIECFields()"><option ${c.system==='ON GRID'?'selected':''}>ON GRID</option><option ${c.system==='HYBRID'?'selected':''}>HYBRID</option><option ${c.system==='OFF GRID'?'selected':''}>OFF GRID</option></select></div>
-        <div class="field"><label>מסלול</label><select class="input" id="f_track"><option value="commercial" ${c.track_type==='commercial'?'selected':''}>מסחרי / ייצור מפוזר</option><option value="green_track" ${c.track_type==='green_track'?'selected':''}>מסלול ירוק</option><option value="off_grid" ${c.track_type==='off_grid'?'selected':''}>OFF GRID</option></select></div>
+        <div class="field"><label>מסלול</label><select class="input" id="f_track"><option value="commercial" ${c.track_type==='commercial'?'selected':''}>מסחרי / מפוזר</option><option value="green_track" ${c.track_type==='green_track'?'selected':''}>מסלול ירוק</option><option value="off_grid" ${c.track_type==='off_grid'?'selected':''}>OFF GRID</option></select></div>
       </div>
     </div>
     
-    <div class="formSection" id="iec_section">
-      <h3>2. חברת חשמל (יוסתר באוף-גריד)</h3>
+    <div class="formSection" id="iec_section"><h3>2. חברת חשמל</h3>
       <div class="formGrid cols2">
-        <div class="field"><label>פתיחת חח"י (תאריך או סטטוס)</label><input class="input" id="f_iec" value="${escapeHtml(c.iec_open||'')}"></div>
-        <div class="field"><label>אישור ביצוע (תשלום אגרה 914 ₪)</label><input class="input" id="f_permit" value="${escapeHtml(c.work_permit||'')}"></div>
+        <div class="field"><label>פתיחת חח"י (תאריך/סטטוס)</label><input class="input" id="f_iec" value="${escapeHtml(c.iec_open||'')}"></div>
+        <div class="field"><label>אישור ביצוע (אגרה)</label><input class="input" id="f_permit" value="${escapeHtml(c.work_permit||'')}"></div>
       </div>
     </div>
 
-    <div class="formSection">
-      <h3>3. התקדמות (%) ומצב קריטי</h3>
+    <div class="formSection"><h3>3. התקדמות (%) ומצב קריטי</h3>
       <div class="formGrid cols4">
         <div class="field" id="p_papers_wrap"><label>ניירת חח"י</label><input type="number" class="input" id="p_papers" value="${c.progress_papers||0}"></div>
         <div class="field"><label>ציוד</label><input type="number" class="input" id="p_equip" value="${c.progress_equipment||0}"></div>
@@ -861,32 +808,28 @@ function openEditModal(id=null) {
       </div>
       <div class="formGrid cols2" style="margin-top:10px;">
         <div class="field"><label>רמת סיכון</label><select class="input" id="f_risk"><option value="low" ${c.risk==='low'?'selected':''}>תקין (Low)</option><option value="high" ${c.risk==='high'?'selected':''}>חסם קריטי (High)</option></select></div>
-        <div class="field"><label>דדליין (DD/MM/YYYY)</label><input class="input" id="f_deadline" value="${escapeHtml(c.deadline||'')}"></div>
+        <div class="field"><label>דדליין</label><input class="input" id="f_deadline" value="${escapeHtml(c.deadline||'')}"></div>
       </div>
-      <div class="field"><label>פירוט חסם</label><textarea class="input" id="f_blocker">${escapeHtml(c.blocker||'')}</textarea></div>
+      <div class="field"><label>פירוט חסם (במידה ויש עיכוב)</label><textarea class="input" id="f_blocker">${escapeHtml(c.blocker||'')}</textarea></div>
     </div>
 
-    <div class="formSection">
-      <h3>4. תיאום שטח ויומן</h3>
+    <div class="formSection"><h3>4. תיאום שטח</h3>
       <div class="formGrid cols2">
         <div class="field"><label>צוות משובץ</label><select class="input" id="f_team"><option value="">- לא נבחר -</option><option ${c.site_surveyor==='אני (אחמד)'?'selected':''}>אני (אחמד)</option><option ${c.site_surveyor==='מוראד'?'selected':''}>מוראד</option><option ${c.site_surveyor==='אברהים'?'selected':''}>אברהים</option><option ${c.site_surveyor==='אני ומוראד'?'selected':''}>אני ומוראד</option><option ${c.site_surveyor==='כל הצוות'?'selected':''}>כל הצוות</option></select></div>
         <div class="field"><label>תאריך לסיור</label><input type="datetime-local" class="input" id="f_time" value="${c.survey_time||''}"></div>
       </div>
     </div>
 
-    <div class="formSection">
-      <h3>5. משימות ושלבים (ידני)</h3>
+    <div class="formSection"><h3>5. משימות ושלבים (ידני)</h3>
       <div class="field"><label>שלבים בפועל:</label><div id="es_stages"></div><button class="addBtn" onclick="editAddStage()">+ הוסף שלב</button></div>
       <div class="field" style="margin-top:15px;"><label>במקביל / לוגיסטיקה:</label><div id="es_parallels"></div><button class="addBtn" onclick="editAddParallel()">+ הוסף משימה במקביל</button></div>
     </div>
   `;
-  toggleIECFields();
-  renderEditStages();
-  document.getElementById('editModal').classList.add('active');
+  toggleIECFields(); renderEditStages(); document.getElementById('editModal').classList.add('active');
 }
 
 function renderEditStages() {
-  document.getElementById('es_stages').innerHTML = tempStages.map((s,i) => `<div class="listRow"><input class="input" value="${escapeHtml(s.text)}" oninput="tempStages[${i}].text=this.value" placeholder="תאר את השלב..."><select class="input" onchange="tempStages[${i}].status=this.value">${statusOptions.map(o=>`<option value="${o.value}" ${s.status===o.value?'selected':''}>${o.label}</option>`).join('')}</select><button class="iconBtn danger" onclick="editRemoveStage(${i})">🗑️</button></div>`).join('');
+  document.getElementById('es_stages').innerHTML = tempStages.map((s,i) => `<div class="listRow"><input class="input" value="${escapeHtml(s.text)}" oninput="tempStages[${i}].text=this.value" placeholder="תאר שלב..."><select class="input" onchange="tempStages[${i}].status=this.value">${statusOptions.map(o=>`<option value="${o.value}" ${s.status===o.value?'selected':''}>${o.label}</option>`).join('')}</select><button class="iconBtn danger" onclick="editRemoveStage(${i})">🗑️</button></div>`).join('');
   document.getElementById('es_parallels').innerHTML = tempParallel.map((p,i) => `<div class="listRow"><input class="input" value="${escapeHtml(p.text)}" oninput="tempParallel[${i}].text=this.value" placeholder="משימה במקביל..."><select class="input" onchange="tempParallel[${i}].status=this.value">${statusOptions.map(o=>`<option value="${o.value}" ${p.status===o.value?'selected':''}>${o.label}</option>`).join('')}</select><button class="iconBtn danger" onclick="editRemoveParallel(${i})">🗑️</button></div>`).join('');
 }
 function editAddStage(){ tempStages.push({text:'',status:'waiting'}); renderEditStages(); }
@@ -922,14 +865,14 @@ async function saveClient() {
     if(cid) {
       const oldTrack = clients.find(c=>c.id===cid)?.track_type;
       await sb('PATCH', 'clients', d, `?id=eq.${cid}`);
-      if(oldTrack !== track && confirm(`זיהינו ששינית את מסלול העבודה של הלקוח.\nהאם תרצה למשוך את השלבים המוגדרים למסלול החדש? (הישנים יימחקו)`)) {
+      if(oldTrack !== track && confirm(`שינית את מסלול העבודה.\nלמשוך את השלבים המוגדרים למסלול החדש? (הישנים יימחקו)`)) {
         await sb('DELETE', 'client_stages', null, `?client_id=eq.${cid}`); await sb('DELETE', 'client_parallel', null, `?client_id=eq.${cid}`);
         const wt = workflowTemplates.filter(w => w.track_type === track);
         if(wt.length) { 
           await sb('POST', 'client_stages', wt.filter(w=>!w.is_parallel).map(w=>({client_id:cid,text:w.stage_name,status:'waiting',order_index:w.stage_number}))); 
           await sb('POST', 'client_parallel', wt.filter(w=>w.is_parallel).map(w=>({client_id:cid,text:w.stage_name,status:'parallel',order_index:w.stage_number}))); 
         }
-        closeEditModal(true); loadAll(); showToast('לקוח נשמר והשלבים חודשו בהצלחה','success'); return;
+        closeEditModal(true); loadAll(); showToast('נשמר בהצלחה','success'); return;
       }
     } else {
       const r = await sb('POST', 'clients', d); cid = r[0].id;
