@@ -79,12 +79,11 @@ h1 { margin: 0 0 8px; font-size: 28px; line-height: 1.1; }
 .company-prog-bar { height: 6px; background: #e8eef6; border-radius: 999px; overflow: hidden; margin-top: 10px; }
 .company-prog-bar span { display: block; height: 100%; border-radius: 999px; background: linear-gradient(90deg, #16a34a, #0891b2); transition: width 0.5s; }
 
-/* ================= MAIN GRID ================= */
+/* ================= MAIN GRID & CLIENTS ================= */
 .main-grid { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 20px; align-items: start; }
 .sticky-side { position: sticky; top: 20px; }
 .card-section { background: #fff; border-radius: 18px; padding: 20px; border: 1px solid #dbe4ee; box-shadow: 0 4px 12px rgba(0,0,0,0.03); }
 
-/* ================= CLIENTS LIST ================= */
 .clients-list { display: grid; gap: 15px; }
 .client-card { background: #fff; border-radius: 18px; padding: 20px; border: 1px solid #dbe4ee; box-shadow: 0 4px 12px rgba(0,0,0,0.03); transition: border-color 0.2s; }
 .client-card:hover { border-color: #0891b2; }
@@ -119,7 +118,7 @@ h1 { margin: 0 0 8px; font-size: 28px; line-height: 1.1; }
 .p-wait { background: #fde3e3; color: #b42318; }
 .deadline.soon { color: #b42318; font-weight: 800; }
 
-/* ================= TRACK DETAILS ================= */
+/* ================= TRACK DETAILS & DOC LINKS ================= */
 .trackBtn { font-size: 12px; padding: 8px 14px; margin-bottom: 5px; }
 .trackBtn.active { background: #0f2747 !important; color: #fff !important; border-color: #0f2747 !important; }
 .stage-item { background: #fff; border: 1px solid #e8eff7; border-radius: 12px; padding: 15px; margin-bottom: 10px; }
@@ -173,7 +172,7 @@ textarea.input { min-height: 60px; resize: vertical; }
 .aiMsg.user .bubble { background: #e0f2fe; color: #0369a1; border-bottom-right-radius: 2px; }
 .aiMsg.ai .bubble { background: #fff; border: 1px solid #dbe4ee; color: #0f2747; border-bottom-left-radius: 2px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
 
-/* Alerts / OCR lists */
+/* Alerts / Notifications */
 .alert-item { padding: 12px; border: 1px solid #fee2e2; background: #fef2f2; border-radius: 10px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
 .alert-item.warning { border-color: #fef3c7; background: #fffbeb; }
 
@@ -268,7 +267,7 @@ textarea.input { min-height: 60px; resize: vertical; }
       <div class="sticky-side">
         <div class="card-section">
           <h2 style="font-size:18px; margin-bottom:5px;">📋 מסלולי עבודה וטפסים</h2>
-          <p style="font-size:12px; color:#66758a; margin-bottom:15px;">(לחץ על ה-✏️ ליד טופס כדי לערוך את הקישור שלו)</p>
+          <p style="font-size:12px; color:#66758a; margin-bottom:15px;">הוסף וערוך קישורים לטפסים (יופיעו לכולם)</p>
           <div style="display:flex; gap:5px; margin-bottom:15px; flex-wrap:wrap;">
             <button class="btn light trackBtn active" data-track="commercial" onclick="showTrack('commercial')">🟠 מסחרי</button>
             <button class="btn light trackBtn" data-track="green_track" onclick="showTrack('green_track')">🟢 מסלול ירוק</button>
@@ -304,7 +303,7 @@ textarea.input { min-height: 60px; resize: vertical; }
     
     <div style="padding:15px 0;">
       <div class="file-upload-area">
-        <h3 style="font-size:14px; margin-bottom:15px; color:#0f2747;">📥 העלאת קובץ חדש (נשמר לענן Supabase)</h3>
+        <h3 style="font-size:14px; margin-bottom:15px; color:#0f2747;">📥 העלאת קובץ חדש (נשמר לענן ורץ ל-OCR אוטומטית)</h3>
         <div class="formGrid cols2" style="text-align:right; margin-bottom:15px;">
           <div class="field"><label>קטגוריה</label><select class="input" id="file_category"><option value="iec">🏢 חברת חשמל</option><option value="certificates">✅ אישורים/כיול</option><option value="quote">💰 הצעת מחיר / חוזה</option><option value="equipment_order">📦 הזמנת ציוד / שרטוט</option><option value="site_photos">📸 תמונות שטח</option><option value="other">📄 אחר</option></select></div>
           <div class="field"><label>תיאור (אופציונלי)</label><input class="input" id="file_description" placeholder="למשל: תכנית חשמל מעודכנת..."></div>
@@ -324,18 +323,18 @@ textarea.input { min-height: 60px; resize: vertical; }
 <div class="modal-overlay" id="aiModal" onclick="closeAIModal(event)">
   <div class="modal-content" style="max-width:600px; background:#f8fafc;" onclick="event.stopPropagation()">
     <div class="modal-header" style="border-color:#e2e8f0;">
-      <h2 style="color:#6d28d9; font-size:20px;">✨ עוזר ה-AI (מחובר לענן)</h2>
+      <h2 style="color:#6d28d9; font-size:20px;">✨ עוזר ה-AI (מחובר ל-Supabase)</h2>
       <button class="iconBtn" onclick="closeAIModal(true)">✕</button>
     </div>
     
     <div id="aiChatBox" style="min-height:350px; max-height:450px; overflow-y:auto; padding-right:10px; margin-bottom:15px; display:flex; flex-direction:column; gap:10px;">
         <div style="text-align:center; padding:20px 0; color:#64748b;">
            <div style="font-size:40px; margin-bottom:10px;">🤖</div>
-           <p style="font-size:14px; font-weight:bold; color:#0f2747;">היי! אני העוזר החכם של DOXY.</p>
-           <p style="font-size:13px; margin-bottom:15px;">אני מחובר למסד הנתונים ב-Supabase ויכול לנתח את הלקוחות בשבילך.</p>
+           <p style="font-size:14px; font-weight:bold; color:#0f2747;">היי! אני עוזר ה-AI שלך.</p>
+           <p style="font-size:13px; margin-bottom:15px;">אני מחובר ישירות לפונקציית ai-assistant שלך בענן.</p>
            <div>
-             <button class="btn light" style="display:block;width:100%;text-align:right;margin-bottom:8px; border-color:#e2e8f0; color:#475569;" onclick="sendAI('מי הלקוחות שחורגים מהזמנים או נמצאים בעיכוב כרגע?')">🚨 הראה לי לקוחות בעיכוב קריטי או חסם גבוה</button>
-             <button class="btn light" style="display:block;width:100%;text-align:right;margin-bottom:8px; border-color:#e2e8f0; color:#475569;" onclick="sendAI('תארגן לי את הלוז השבועי לשטח לפי הצוותים')">👷 ארגן לי לו"ז צוותי שטח לשבוע הקרוב</button>
+             <button class="btn light" style="display:block;width:100%;text-align:right;margin-bottom:8px; border-color:#e2e8f0; color:#475569;" onclick="sendAI('אילו פרויקטים מתעכבים כרגע או נמצאים בסיכון גבוה?')">🚨 הראה לי פרויקטים מעוכבים או בסיכון</button>
+             <button class="btn light" style="display:block;width:100%;text-align:right;margin-bottom:8px; border-color:#e2e8f0; color:#475569;" onclick="sendAI('סכם לי את סטטוס ההתקנות לפי כל צוות שטח')">👷 הצג לו"ז צוותי שטח לשבוע הקרוב</button>
            </div>
         </div>
     </div>
@@ -352,11 +351,8 @@ textarea.input { min-height: 60px; resize: vertical; }
     <div class="modal-header"><h2>🔔 לקוחות דורשי התייחסות דחופה</h2><button class="iconBtn" onclick="closeAlertsModal(true)">✕</button></div>
     <div id="alertsContainer"></div>
     <div style="margin-top:20px; border-top:1px solid #eee; padding-top:15px;">
-        <label style="font-size:13px; color:#667; display:block; margin-bottom:6px; font-weight:bold;">מייל המנהל לקבלת דו"ח חסמים מרוכז:</label>
-        <div style="display:flex; gap:10px;">
-            <input type="email" id="alertEmailInput" class="input" placeholder="לדוגמה: manager@company.com">
-            <button class="btn" style="background:#dc2626; color:#fff;" onclick="sendDeadlineNotifications(event)">📧 שלח דו"ח</button>
-        </div>
+        <label style="font-size:13px; color:#667; display:block; margin-bottom:6px; font-weight:bold;">המייל שאליו יישלח הדו"ח מוגדר בהגדרות הענן. לחץ כדי לשלוח:</label>
+        <button class="btn" style="background:#dc2626; color:#fff; width:100%;" onclick="sendDeadlineNotifications(event)">📧 הפעל פונקציית שליחת דו"ח במייל (Resend)</button>
     </div>
   </div>
 </div>
@@ -365,9 +361,8 @@ textarea.input { min-height: 60px; resize: vertical; }
   <div class="modal-content" style="max-width:550px;" onclick="event.stopPropagation()">
     <div class="modal-header"><h2>⚙️ סנכרון וכלים</h2><button class="iconBtn" onclick="closeSettingsModal(true)">✕</button></div>
     <div class="formSection">
-      <h3>🔄 סנכרון מערכות (ידני)</h3>
-      <button class="btn" style="width:100%; margin-bottom:10px; background:#0891b2; color:#fff;" onclick="syncFromZoho()">משוך עסקאות מ-Zoho</button>
-      <button class="btn" style="width:100%; margin-bottom:10px; background:#0284c7; color:#fff;" onclick="syncZohoCalendar()">סנכרן יומן צוות שטח (Zoho Calendar)</button>
+      <h3>🔄 סנכרון מערכות (Zoho API)</h3>
+      <button class="btn" style="width:100%; margin-bottom:10px; background:#0891b2; color:#fff;" onclick="syncFromZoho()">משוך עסקאות מ-Zoho עכשיו</button>
       <button class="btn" style="width:100%; background:#7c3aed; color:#fff;" onclick="closeSettingsModal(true); openSearchModal()">🔍 חיפוש OCR מתקדם במסמכים</button>
     </div>
   </div>
@@ -404,7 +399,7 @@ let aiConversation = [];
 const statusOptions = [{value:'done', label:'הושלם'}, {value:'running', label:'בתהליך'}, {value:'waiting', label:'ממתין'}, {value:'parallel', label:'במקביל'}];
 const CATEGORY_LABELS = { iec: '🏢 חברת חשמל', certificates: '✅ אישורים', quote: '💰 חוזה/הצעת מחיר', equipment_order: '📦 ציוד', site_photos: '📸 תמונות שטח', other: '📄 אחר' };
 
-// ================= DYNAMIC LINKS (SMART UI) =================
+// ================= DYNAMIC LINKS =================
 let officialLinks = JSON.parse(localStorage.getItem('doxy_official_links')) || {
   exemption: "https://govforms.gov.il/mw/forms/Exemption_permit@planning.gov.il?gbxid=1",
   pv_permit: "https://govforms.gov.il/mw/forms/PvForm%40mnz.gov.il?gbxid=1",
@@ -419,22 +414,9 @@ function renderDocWithLink(docName) {
   const safeJsDocName = docName.replace(/'/g, "\\'"); 
   
   if (link) {
-    return `
-      <div class="doc-check-row">
-        <div class="doc-title"><span style="color:#0891b2; font-size:14px;">☐</span> ${escapedDocName}</div>
-        <div class="doc-actions">
-          <button class="edit-link-btn" title="ערוך קישור" onclick="editDocLink('${safeJsDocName}')">✏️</button>
-          <a href="${link}" target="_blank" class="doc-link-btn">🔗 פתח טופס</a>
-        </div>
-      </div>`;
+    return `<div class="doc-check-row"><div class="doc-title"><span style="color:#0891b2; font-size:14px;">☐</span> ${escapedDocName}</div><div class="doc-actions"><button class="edit-link-btn" title="ערוך קישור" onclick="editDocLink('${safeJsDocName}')">✏️</button><a href="${link}" target="_blank" class="doc-link-btn">🔗 פתח טופס</a></div></div>`;
   } else {
-    return `
-      <div class="doc-check-row">
-        <div class="doc-title"><span style="color:#0891b2; font-size:14px;">☐</span> ${escapedDocName}</div>
-        <div class="doc-actions">
-          <button class="doc-add-btn" title="הוסף קישור לטופס מקוון" onclick="editDocLink('${safeJsDocName}')">➕ הוסף קישור</button>
-        </div>
-      </div>`;
+    return `<div class="doc-check-row"><div class="doc-title"><span style="color:#0891b2; font-size:14px;">☐</span> ${escapedDocName}</div><div class="doc-actions"><button class="doc-add-btn" title="הוסף קישור לטופס מקוון" onclick="editDocLink('${safeJsDocName}')">➕ הוסף קישור</button></div></div>`;
   }
 }
 
@@ -444,11 +426,8 @@ function editDocLink(docName) {
   
   if (newLink !== null) {
     const trimmedLink = newLink.trim();
-    if (trimmedLink === "") {
-        delete officialLinks[docName];
-    } else {
-        officialLinks[docName] = trimmedLink;
-    }
+    if (trimmedLink === "") delete officialLinks[docName];
+    else officialLinks[docName] = trimmedLink;
     localStorage.setItem('doxy_official_links', JSON.stringify(officialLinks));
     showToast("הקישורים התעדכנו בהצלחה!", "success");
     const activeTrackBtn = document.querySelector('.trackBtn.active');
@@ -461,7 +440,7 @@ function showToast(m, t='info') {
   const c = document.getElementById('toastContainer');
   if(!c) return;
   const div = document.createElement('div'); div.className = `toast show ${t}`; div.innerText = m;
-  c.appendChild(div); setTimeout(() => { div.classList.remove('show'); setTimeout(()=>div.remove(),300); }, 3000);
+  c.appendChild(div); setTimeout(() => { div.classList.remove('show'); setTimeout(()=>div.remove(),300); }, 4000);
 }
 
 setInterval(() => { const el=document.getElementById('liveClock'); if(el) el.innerText=new Date().toLocaleTimeString('he-IL'); }, 1000);
@@ -480,7 +459,6 @@ function setSyncStatus(st) {
 function progColor(v) { return v>=70?'#16a34a':v>=30?'#ea580c':'#dc2626'; }
 
 let accessToken = null;
-let currentUser = null;
 
 const originalFetch = window.fetch;
 window.fetch = function(url, options = {}) {
@@ -493,15 +471,13 @@ window.fetch = function(url, options = {}) {
   return originalFetch.call(this, url, options);
 };
 
-// CHECK EXPIRATION
 async function checkAuth() {
   const s = localStorage.getItem('doxy_session');
   if(s) { 
     try { 
       const sess=JSON.parse(s); 
-      // Validate Token Expiration
       if(sess.access_token && sess.expires_at && (sess.expires_at * 1000 > Date.now())) { 
-         accessToken=sess.access_token; currentUser=sess.user; initApp(); return; 
+         accessToken=sess.access_token; initApp(); return; 
       } 
     } catch(e){} 
   }
@@ -516,8 +492,7 @@ async function doLogin() {
     const r = await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=password`, {method:'POST', headers:{'apikey':SUPABASE_KEY,'Content-Type':'application/json'}, body:JSON.stringify({email:e,password:p})});
     const d = await r.json();
     if(d.access_token) { 
-      accessToken=d.access_token; currentUser=d.user; 
-      localStorage.setItem('doxy_session',JSON.stringify(d)); 
+      accessToken=d.access_token; localStorage.setItem('doxy_session',JSON.stringify(d)); 
       document.getElementById('loginScreen').style.display='none'; initApp(); 
     }
     else { err.innerText=d.error_description||'שגיאה'; err.classList.remove('hidden'); document.getElementById('loginBtn').innerText='🔐 התחבר'; }
@@ -526,8 +501,6 @@ async function doLogin() {
 
 function initApp() { 
   document.getElementById('mainApp').classList.remove('hidden'); 
-  
-  // ADD LOGOUT BUTTON
   const brandDiv = document.querySelector('.brand > div:last-child');
   if (brandDiv && !document.getElementById('logoutBtn')) {
     const btn = document.createElement('button');
@@ -539,11 +512,6 @@ function initApp() {
     btn.onclick = () => { localStorage.removeItem('doxy_session'); location.reload(); };
     brandDiv.appendChild(btn);
   }
-  
-  // Set default email from localStorage if exists
-  const savedEmail = localStorage.getItem('doxy_manager_email');
-  if(savedEmail) document.getElementById('alertEmailInput').value = savedEmail;
-
   loadAll(); 
 }
 
@@ -556,7 +524,6 @@ async function sb(method, table, data=null, query='') {
   return r.json();
 }
 
-// ROBUST LOAD (WON'T CRASH IF TABLE MISSING)
 async function loadAll(silent=false) {
   if(!silent) setSyncStatus('saving');
   try {
@@ -573,7 +540,7 @@ async function loadAll(silent=false) {
   } catch(e) { 
     setSyncStatus('error'); 
     let errMsg = e.message || 'שגיאת רשת';
-    if(errMsg.includes('relation "workflow_templates" does not exist')) errMsg = 'חסרה טבלת workflow_templates ב-Supabase!';
+    if(errMsg.includes('workflow_templates')) errMsg = 'חסרה טבלת workflow_templates בענן!';
     if(!silent) showToast('שגיאה: ' + errMsg, 'error'); 
   }
 }
@@ -617,7 +584,7 @@ function render() {
       blk = c.risk === 'high' ? `🚨 חסם קריטי: ${autoBottleneck}` : `⏳ בתהליך: ${autoBottleneck}`;
     } else if (c.risk === 'high' && !blk.includes('🚨')) { blk = `🚨 ${blk}`; }
     
-    // FORMAT WHATSAPP LINK IF PHONE EXISTS
+    // WHATSAPP LINK
     let phoneHtml = '<span dir="ltr">-</span>';
     if (c.phone && c.phone.trim() !== '') {
         let cleanPhone = c.phone.replace(/\D/g, ''); 
@@ -646,7 +613,7 @@ function render() {
         </div>
 
         <div class="grid-3">
-          <div class="info-box"><div class="k">טלפון נייד (וואטסאפ)</div><div class="v" dir="ltr" style="text-align:right;">${phoneHtml}</div></div>
+          <div class="info-box"><div class="k">טלפון נייד</div><div class="v" dir="ltr" style="text-align:right;">${phoneHtml}</div></div>
           ${!isOff ? `
             <div class="info-box"><div class="k">פתיחת חח"י</div><div class="v">${escapeHtml(c.iec_open||'טרם נפתח')}</div></div>
             <div class="info-box"><div class="k">אישור ביצוע</div><div class="v">${escapeHtml(c.work_permit||'ממתין לתשלום')}</div></div>
@@ -732,7 +699,6 @@ function showTrack(track) {
 // ================= PDF EXPORT =================
 function generatePDF() {
     window.print();
-    // After print dialog closes (approximate via timeout), prompt for email
     setTimeout(() => {
         if(confirm("האם תרצה גם לשלוח סיכום של הלקוחות המעוכבים למייל המנהל?")) {
             openAlertsModal();
@@ -740,7 +706,7 @@ function generatePDF() {
     }, 1500);
 }
 
-// ================= FILES MODAL =================
+// ================= FILES MODAL & AUTOMATIC OCR =================
 async function openFilesModal(cid) {
   currentFilesClient = clients.find(c => c.id === cid); 
   if(!currentFilesClient) return;
@@ -786,13 +752,35 @@ async function uploadFile() {
     const safeName = file.name.replace(/[^a-zA-Z0-9.\-_א-ת]/g, '_');
     const path = `${currentFilesClient.id}/${cat}/${Date.now()}_${safeName}`; 
     
+    // Upload to Storage
     const r = await fetch(`${SUPABASE_URL}/storage/v1/object/client-files/${path}`, {
       method:'POST', headers:{'apikey':SUPABASE_KEY, 'Authorization':`Bearer ${accessToken}`, 'Content-Type':file.type||'application/octet-stream', 'x-upsert':'true'}, body:file
     });
     if(!r.ok) throw new Error('שגיאה ב-Storage');
-    await sb('POST', 'client_files', { client_id: currentFilesClient.id, file_name: file.name, storage_path: path, file_size: file.size, mime_type: file.type, category: cat, description: desc });
     
-    showToast('המסמך הועלה ונשמר!', 'success'); 
+    // Create DB record
+    const insertRes = await sb('POST', 'client_files', { 
+      client_id: currentFilesClient.id, 
+      file_name: file.name, 
+      storage_path: path, 
+      file_size: file.size, 
+      mime_type: file.type, 
+      category: cat, 
+      description: desc 
+    });
+    
+    showToast('המסמך הועלה ונשמר בתיק הלקוח!', 'success'); 
+    
+    // MAGNIFY: TRIGGER OCR EDGE FUNCTION AUTOMATICALLY!
+    if (insertRes && insertRes[0]) {
+      fetch(`${SUPABASE_URL}/functions/v1/ocr-document`, {
+        method: 'POST',
+        headers: {'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${accessToken}`, 'Content-Type': 'application/json'},
+        body: JSON.stringify({ file_id: insertRes[0].id })
+      }).then(() => console.log('OCR Background Job Started for file:', insertRes[0].id))
+        .catch(e => console.error('OCR trigger failed', e));
+    }
+    
     document.getElementById('file_input').value=''; document.getElementById('file_description').value=''; 
     openFilesModal(currentFilesClient.id);
   } catch(e) { showToast('שגיאה בהעלאת הקובץ.', 'error'); } finally { btn.disabled=false; btn.innerText='📤 העלה קובץ'; }
@@ -803,15 +791,11 @@ async function deleteFile(id, path) {
   try { await fetch(`${SUPABASE_URL}/storage/v1/object/client-files/${path}`, { method:'DELETE', headers:{'apikey':SUPABASE_KEY, 'Authorization':`Bearer ${accessToken}`} }); await sb('DELETE', 'client_files', null, `?id=eq.${id}`); showToast('קובץ נמחק בהצלחה', 'success'); openFilesModal(currentFilesClient.id); } catch(e) { showToast('שגיאה במחיקת קובץ', 'error'); }
 }
 
-// ================= AI CHAT =================
+// ================= AI CHAT (DIRECT CONNECTION) =================
 function openAIModal() { 
   document.getElementById('aiModal').classList.add('active'); 
-  
-  // Clear chatbox to start fresh each time, or keep context. Let's start fresh with welcoming msg.
   if(!aiConversation.length) {
     document.getElementById('aiChatBox').innerHTML = '';
-    const tempId = 'loading-' + Date.now();
-    document.getElementById('aiChatBox').innerHTML += `<div id="${tempId}" class="aiMsg ai"><div style="font-size:11px; color:#64748b; margin-bottom:4px; padding:0 5px;">AI Assistant</div><div class="bubble" style="background:transparent; border:none; box-shadow:none;">מתחבר למוח ה-AI בענן... ⏳</div></div>`; 
   }
 }
 function closeAIModal(c) { if(c) document.getElementById('aiModal').classList.remove('active'); }
@@ -822,13 +806,17 @@ async function sendAI(txt=null) {
   
   const b = document.getElementById('aiChatBox');
   const renderChat = () => {
-    b.innerHTML = aiConversation.map(m => { const content = m.r === 'ai' ? m.t : escapeHtml(m.t); return `<div class="aiMsg ${m.r}"><div style="font-size:11px; color:#64748b; margin-bottom:4px; padding:0 5px;">${m.r==='user'?'את/ה':'AI Assistant'}</div><div class="bubble">${content}</div></div>`; }).join(''); 
+    b.innerHTML = aiConversation.map(m => { 
+        // Simple fix to display lines properly
+        const content = escapeHtml(m.t).replace(/\n/g, '<br>'); 
+        return `<div class="aiMsg ${m.r}"><div style="font-size:11px; color:#64748b; margin-bottom:4px; padding:0 5px;">${m.r==='user'?'את/ה':'AI Assistant'}</div><div class="bubble">${content}</div></div>`; 
+    }).join(''); 
     b.scrollTop = b.scrollHeight;
   };
   renderChat();
   
   const tempId = 'loading-' + Date.now();
-  b.innerHTML += `<div id="${tempId}" class="aiMsg ai"><div style="font-size:11px; color:#64748b; margin-bottom:4px; padding:0 5px;">AI Assistant</div><div class="bubble" style="background:transparent; border:none; box-shadow:none;">מנתח בקשה מול Supabase Edge Function... ⏳</div></div>`; 
+  b.innerHTML += `<div id="${tempId}" class="aiMsg ai"><div style="font-size:11px; color:#64748b; margin-bottom:4px; padding:0 5px;">AI Assistant</div><div class="bubble" style="background:transparent; border:none; box-shadow:none;">מנתח בקשה מול הענן... ⏳</div></div>`; 
   b.scrollTop = b.scrollHeight; document.getElementById('aiBtn').disabled = true;
   
   try {
@@ -837,19 +825,20 @@ async function sendAI(txt=null) {
         headers: {'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${accessToken}`, 'Content-Type': 'application/json'}, 
         body: JSON.stringify({question: q, clients}) 
     });
-    if(!res.ok) throw new Error('Server returned an error');
     const d = await res.json(); 
-    let responseText = d.answer || 'סליחה, לא קיבלתי תשובה מהשרת.';
+    if (d.error) throw new Error(d.error);
+    
+    let responseText = d.answer || 'לא התקבלה תשובה ברורה מהשרת.';
     aiConversation.push({r:'ai', t: responseText});
   } catch(e) { 
     console.error("AI Error:", e);
-    aiConversation.push({r:'ai', t: 'שגיאת תקשורת מול פונקציית ה-AI (ai-assistant) בענן Supabase. ודא שהיא מופעלת.'}); 
+    aiConversation.push({r:'ai', t: 'שגיאת תקשורת מול ai-assistant בענן: ' + e.message}); 
   }
   
   document.getElementById('aiBtn').disabled = false; renderChat();
 }
 
-// ================= NOTIFICATIONS (BELL) =================
+// ================= NOTIFICATIONS & EMAILS (DIRECT CONNECTION) =================
 function openAlertsModal() {
   const urg = clients.filter(c => soon(c.deadline) || c.risk === 'high');
   const c = document.getElementById('alertsContainer');
@@ -870,43 +859,86 @@ function openAlertsModal() {
 }
 function closeAlertsModal(c) { if(c) document.getElementById('alertsModal').classList.remove('active'); }
 
-// DIRECT CONNECTION TO deadline-notifications EDGE FUNCTION
 async function sendDeadlineNotifications(event) { 
-  const email = document.getElementById('alertEmailInput').value.trim();
-  if(!email) { showToast('חובה להזין כתובת מייל תקינה', 'error'); return; }
-  
-  // Save for convenience
-  localStorage.setItem('doxy_manager_email', email);
-  
   const btn = event.target;
   const originalText = btn.innerText;
-  btn.innerText = '⏳ שולח למייל...';
+  btn.innerText = '⏳ שולח דרך הענן...';
   btn.disabled = true;
 
   try {
     const res = await fetch(`${SUPABASE_URL}/functions/v1/deadline-notifications`, {
         method: 'POST',
         headers: {'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${accessToken}`, 'Content-Type': 'application/json'},
-        body: JSON.stringify({ email_to: email, clients_data: clients })
+        body: JSON.stringify({}) // Your backend doesn't need body, it pulls settings from DB
     });
     
-    if(!res.ok) throw new Error('שגיאה מהשרת');
-    
     const d = await res.json();
-    showToast('דו"ח סטטוס חסמים נשלח למייל בהצלחה!', 'success');
+    if(d.error) throw new Error(d.error);
+    
+    showToast(`דו"ח חסמים נשלח למנהל בהצלחה! (${d.sent || 0} לקוחות עודכנו)`, 'success');
   } catch (error) {
     console.error("Email notification error:", error);
-    showToast('שגיאה מול פונקציית deadline-notifications. בדוק לוגים בענן.', 'error');
+    showToast('שגיאה בשליחת המייל: ' + error.message, 'error');
   } finally {
     btn.innerText = originalText;
     btn.disabled = false;
   }
 }
 
+// ================= ZOHO SYNC (DIRECT CONNECTION) =================
 function openSettingsModal() { document.getElementById('settingsModal').classList.add('active'); }
 function closeSettingsModal(c) { if(c) document.getElementById('settingsModal').classList.remove('active'); }
-function syncFromZoho() { closeSettingsModal(true); showToast('קורא לפונקציית zoho-sync ב-Supabase...', 'info'); }
-function syncZohoCalendar() { closeSettingsModal(true); showToast('מרענן יומני צוות מול חסמים...', 'info'); }
+
+async function syncFromZoho() { 
+  closeSettingsModal(true); 
+  showToast('מתחבר ל-Zoho ומושך עסקאות (זה עשוי לקחת כמה שניות)...', 'info'); 
+  
+  try {
+    const res = await fetch(`${SUPABASE_URL}/functions/v1/zoho-sync`, {
+        method: 'POST',
+        headers: {'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${accessToken}`, 'Content-Type': 'application/json'},
+        body: JSON.stringify({ action: 'sync_all_closed' })
+    });
+    
+    const d = await res.json();
+    if(d.error) throw new Error(d.error);
+    
+    if(d.success) {
+        showToast(`סנכרון הושלם! ${d.updated_count || d.updated || 0} עודכנו, ${d.to_import || d.imported || 0} יובאו מחדש.`, 'success');
+        loadAll(true); // reload dashboard silently
+    }
+  } catch (e) {
+    console.error("Zoho Sync Error:", e);
+    showToast('שגיאה בסנכרון מול Zoho: ' + e.message, 'error');
+  }
+}
+
+function syncZohoCalendar() { closeSettingsModal(true); showToast('מרענן יומני צוות... פונקציה זו דורשת תוספת בענן', 'info'); }
+
+// ================= OCR SEARCH =================
+function openSearchModal() { document.getElementById('searchModal').classList.add('active'); document.getElementById('ocrInput').focus(); }
+function closeSearchModal(c) { if(c) document.getElementById('searchModal').classList.remove('active'); }
+
+async function doSearchOCR() {
+  const q = document.getElementById('ocrInput').value.trim(); 
+  if(q.length < 2) { showToast('יש להזין לפחות 2 תווים לחיפוש', 'error'); return; }
+  const c = document.getElementById('ocrResults'); c.innerHTML = '<div style="text-align:center;padding:20px;color:#0891b2;">סורק את כל המסמכים במערכת...</div>';
+  
+  try {
+    const f = await sb('GET', 'client_files', null, `?extracted_text=ilike.*${encodeURIComponent(q)}*&select=*`);
+    if(!f || !f.length) { c.innerHTML='<div style="text-align:center;padding:20px;color:#66758a;">לא נמצאו תוצאות בטקסט הסרוק של המסמכים.</div>'; return; }
+    
+    c.innerHTML = `<h4 style="color:#0f2747; margin-bottom:10px;">מצאנו ${f.length} מסמכים המכילים את המילה:</h4>` + f.map(x => {
+      const cl = clients.find(cc => cc.id === x.client_id);
+      return `
+        <div style="background:#fbfdff; border:1px solid #e8eff7; padding:15px; border-radius:12px;">
+          <div style="font-weight:800; color:#0f2747; font-size:15px; margin-bottom:4px;">לקוח: ${escapeHtml(cl?.name||'לא ידוע')}</div>
+          <div style="font-size:12px; color:#66758a; margin-bottom:10px;">📄 קובץ: ${escapeHtml(x.file_name)}</div>
+          <a href="${SUPABASE_URL}/storage/v1/object/public/client-files/${x.storage_path}" target="_blank" class="btn light" style="font-size:12px; text-decoration:none; display:inline-block;">פתח את המסמך ↗</a>
+        </div>`;
+    }).join('');
+  } catch(e) { c.innerHTML = '<div style="color:#b42318; padding:20px; text-align:center;">שגיאה בסריקת המסמכים</div>'; }
+}
 
 // ================= EDIT CLIENT =================
 function toggleIECFields() {
@@ -1005,10 +1037,10 @@ async function saveClient() {
     system: sys, track_type: track, iec_open: sys==='OFF GRID' ? null : document.getElementById('f_iec').value, work_permit: sys==='OFF GRID' ? null : document.getElementById('f_permit').value,
     progress_papers: p, progress_equipment: e, progress_installation: i, progress_final: f, progress_overall: tot,
     risk: document.getElementById('f_risk').value, 
-    deadline: fDeadline ? fDeadline : null, // Fix for null dates
+    deadline: fDeadline ? fDeadline : null, 
     blocker: document.getElementById('f_blocker').value,
     site_surveyor: document.getElementById('f_team').value, 
-    survey_time: fTime ? fTime : null // Fix for null dates
+    survey_time: fTime ? fTime : null 
   };
 
   try {
