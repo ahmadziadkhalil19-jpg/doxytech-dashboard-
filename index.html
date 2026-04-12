@@ -866,6 +866,14 @@ function openDetailModal(cid) {
         </div>
       </div>
       <div class="detail-section">
+        <h3>💰 פרטים פיננסיים</h3>
+        <div style="font-size:12px; line-height:1.8;">
+          <div><b>סכום עסקה:</b> <span style="color:#16a34a; font-weight:800; font-size:14px;">${c.zoho_amount ? Number(c.zoho_amount).toLocaleString('he-IL') + ' ₪' : 'לא הוגדר'}</span></div>
+          <div style="font-size:11px; color:#64748b;">ללא מע"מ</div>
+        </div>
+      </div>
+      
+      <div class="detail-section">
         <h3>⚡ מצב נוכחי</h3>
         <div style="font-size:12px; line-height:1.8;">
           <div><b>חסם:</b> <span style="color:${c.risk==='high'?'#b42318':'#475569'}">${escapeHtml(blk)}</span></div>
@@ -1308,6 +1316,7 @@ function openEditModal(id=null) {
         <div class="field"><label>מייל</label><input class="input" id="f_email" value="${escapeHtml(c.email||'')}"></div>
         <div class="field"><label>טלפון</label><input class="input" id="f_phone" value="${escapeHtml(c.phone||'')}"></div>
         <div class="field"><label>עיר התקנה</label><input class="input" id="f_location" value="${escapeHtml(c.location||'')}"></div>
+        <div class="field"><label>💰 סכום עסקה (₪, ללא מע"מ)</label><input type="number" class="input" id="f_amount" value="${c.zoho_amount||''}" placeholder="0"></div>
         <div class="field"><label>סוג מערכת</label><select class="input" id="f_system" onchange="toggleIECFields()"><option ${c.system==='ON GRID'?'selected':''}>ON GRID</option><option ${c.system==='HYBRID'?'selected':''}>HYBRID</option><option ${c.system==='OFF GRID'?'selected':''}>OFF GRID</option></select></div>
         <div class="field" id="track_wrap"><label>מסלול</label><select class="input" id="f_track"><option value="commercial" ${c.track_type==='commercial'?'selected':''}>מסחרי</option><option value="green_track" ${c.track_type==='green_track'?'selected':''}>מסלול ירוק</option></select></div>
         <div class="field" id="track_locked_wrap" style="display:none;"><label>מסלול</label><div class="track-locked-display">OFF GRID (מנותק רשת) - אוטומטי</div></div>
@@ -1387,7 +1396,8 @@ async function saveClient() {
     deadline: fDeadline ? fDeadline : null,
     blocker: document.getElementById('f_blocker').value,
     site_surveyor: document.getElementById('f_team').value,
-    survey_time: fTime ? fTime : null
+    survey_time: fTime ? fTime : null,
+    zoho_amount: Number(document.getElementById('f_amount').value) || null
   };
 
   try {
