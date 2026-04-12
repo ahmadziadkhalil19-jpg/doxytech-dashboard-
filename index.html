@@ -719,8 +719,9 @@ function render() {
         <div>
           <div class="cc-name">${escapeHtml(c.name)}</div>
           <div class="cc-tags">
-            <span class="cc-tag ${isOff?'offgrid':'ongrid'}">${c.system}</span>
-            <span class="cc-tag" style="background:#0f2747; color:#fff;">${c.track_type==='off_grid'?'OFF GRID':c.track_type==='green_track'?'מסלול ירוק':'מסחרי'}</span>
+           <span class="cc-tag ${isOff?'offgrid':'ongrid'}">${c.system}</span>
+           <span class="cc-tag" style="background:#0f2747; color:#fff;">${c.track_type==='off_grid'?'OFF GRID':c.track_type==='green_track'?'מסלול ירוק':'מסחרי'}</span>
+           ${c.zoho_amount ? `<span class="cc-tag" style="background:#dcfce7; color:#166534;">💰 ${Number(c.zoho_amount).toLocaleString('he-IL')} ₪</span>` : ''}
           </div>
         </div>
         <div class="cc-progress-wrap">
