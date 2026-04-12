@@ -1063,10 +1063,16 @@ async function sendAI(txt=null) {
     const d = await res.json();
     if (d.error) throw new Error(d.error);
     aiConversation.push({r:'ai', t: d.answer || 'לא התקבלה תשובה.'});
-  } catch(e) {
+    } catch(e) {
     console.error("AI Error:", e);
-    aiConversation.push({r:'ai', t: 'שגיאת AI: ' + e.message});
-  }
+    let msg = 'שגיאת AI: ' + e.message;
+    if (e.message.includes('high demand') || e.message.includes('503') || e.message.includes('overloaded')) {
+      msg = '⏳ כל ספקי ה-AI עמוסים כרגע. נסה שוב בעוד דקה.';
+    } else if (e.message.includes('quota') || e.message.includes('429')) {
+      msg = '⚠️ הגעת למכסה היומית. מתאפס מחר ב-09:00.';
+    }
+    aiConversation.push({r:'ai', t: msg});
+    }
   document.getElementById('aiBtn').disabled = false; renderChat();
   return;
 
