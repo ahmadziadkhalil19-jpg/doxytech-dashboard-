@@ -881,7 +881,7 @@ function openDetailModal(cid) {
     <div><b>דדליין:</b> <span class="${soon(c.deadline)?'deadline soon':''}">${escapeHtml(c.deadline||'לא הוגדר')}</span></div>
     <div style="margin-top:6px;">
       <b>📊 שלב Zoho:</b><br>
-      <select id="zoho_stage_${c.id}" onchange="updateZohoStage('${c.id}', this.value)" 
+      <select id="zoho_stage_${c.id}" onchange="window.updateZohoStage('${c.id}', this.value)" 
         style="width:100%;margin-top:4px;padding:4px 8px;border-radius:6px;border:1px solid #e2e8f0;font-size:11px;direction:rtl;background:#f8fafc;">
         <option value="">-- בחר שלב --</option>
         ${['חזרה חתום + פתיחת פרויקט','תכנון ורגולציה','תכנון הנדסי','QA/QC בקרת איכות','אישורי חשמל/רגולציה','דרישות רכש','הזמנת ציוד','קבלת ציוד','תיאום התקנה','תיאום קבלני משנה','תיאום חברת חשמל','התקנה בשטח','בדיקת וסגירת ליקויים','חיבור לרשת/אישור סופי','סגירת פרויקט'].map(s=>`<option value="${s}" ${c.zoho_project_stage===s?'selected':''}>${s}</option>`).join('')}
@@ -1467,7 +1467,7 @@ async function deleteClient(id) {
   } catch(e) { console.log('Zoho sync:', e); }
 }
 function mapDashboardToZohoStage(nextAction, blocker) {
-  async function updateZohoStage(clientId, stage) {
+  window.updateZohoStage = async function(clientId, stage) {
   if (!stage) return;
   try {
     await fetch(`${SUPABASE_URL}/functions/v1/zoho-sync`, {
