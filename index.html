@@ -1418,7 +1418,7 @@ async function saveClient() {
           await sb('POST', 'client_stages', wt.filter(w=>!w.is_parallel).map(w=>({client_id:cid,text:w.stage_name,status:'waiting',order_index:w.stage_number})));
           await sb('POST', 'client_parallel', wt.filter(w=>w.is_parallel).map(w=>({client_id:cid,text:w.stage_name,status:'parallel',order_index:w.stage_number})));
         }
-        closeEditModal(true); loadAll(); showToast('נשמר בהצלחה - מסלול הוחלף','success'); return;
+        closeEditModal(true); loadAll(); showToast('נשמר בהצלחה - מסלול התחלף','success'); syncStageToZoho(cid, d.next_action, d.blocker); return;
       }
     } else {
       const r = await sb('POST', 'clients', d); cid = r[0].id;
@@ -1427,14 +1427,14 @@ async function saveClient() {
         await sb('POST', 'client_stages', wt.filter(w=>!w.is_parallel).map(w=>({client_id:cid,text:w.stage_name,status:'waiting',order_index:w.stage_number})));
         await sb('POST', 'client_parallel', wt.filter(w=>w.is_parallel).map(w=>({client_id:cid,text:w.stage_name,status:'parallel',order_index:w.stage_number})));
       }
-      closeEditModal(true); loadAll(); showToast('לקוח חדש נוצר בהצלחה!','success'); return;
+      closeEditModal(true); loadAll(); showToast('!לקוח חדש נוצר בהצלחה','success'); syncStageToZoho(cid, d.next_action, d.blocker); return;
     }
 
     await sb('DELETE', 'client_stages', null, `?client_id=eq.${cid}`); await sb('DELETE', 'client_parallel', null, `?client_id=eq.${cid}`);
     if(tempStages.length) await sb('POST', 'client_stages', tempStages.filter(x=>x.text).map((x,idx)=>({client_id:cid,text:x.text,status:x.status,order_index:idx})));
     if(tempParallel.length) await sb('POST', 'client_parallel', tempParallel.filter(x=>x.text).map((x,idx)=>({client_id:cid,text:x.text,status:x.status,order_index:idx})));
     if(d.site_surveyor && d.survey_time) showToast('שולח זימון ליומן...','info');
-    closeEditModal(true); loadAll(); showToast('השינויים נשמרו בענן','success');
+    closeEditModal(true); loadAll(); showToast('השינויים נשמרו בצלחה','success'); syncStageToZoho(cid, d.next_action, d.blocker);
   } catch(e) { setSyncStatus('error'); showToast('שגיאה בתקשורת: נא למלא נתונים תקינים','error'); console.error(e); }
 }
 
@@ -1446,6 +1446,33 @@ async function deleteClient(id) {
 }
 
 // ================= INIT =================
+  async function syncStageToZoho(clientId, nextAction, blocker) {
+  try {
+    const stage = mapDashboardToZohoStage(nextAction, blocker);
+    await fetch(`${SUPABASE_URL}/functions/v1/zoho-sync`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` },
+      body: JSON.stringify({ action: 'update_project_stage', client_id: clientId, stage: stage })
+    });
+  } catch(e) { console.log('Zoho sync:', e); }
+}
+function mapDashboardToZohoStage(nextAction, blocker) {
+  const text = ((nextAction||'') + ' ' + (blocker||'')).toLowerCase();
+  if (text.includes('סגירת פרויקט') || text.includes('סיום')) return 'סגירת פרויקט';
+  if (text.includes('חיבור לרשת') || text.includes('אישור סופי')) return 'חיבור לרשת/אישור סופי';
+  if (text.includes('בדיקת ליקויים')) return 'בדיקת וסגירת ליקויים';
+  if (text.includes('התקנה בשטח') || text.includes('התקנה')) return 'התקנה בשטח';
+  if (text.includes('חברת חשמל')) return 'תיאום חברת חשמל';
+  if (text.includes('קבלני') || text.includes('קבלן')) return 'תיאום קבלני משנה';
+  if (text.includes('תיאום התקנה')) return 'תיאום התקנה';
+  if (text.includes('קבלת ציוד')) return 'קבלת ציוד';
+  if (text.includes('הזמנת ציוד')) return 'הזמנת ציוד';
+  if (text.includes('דרישות רכש')) return 'דרישות רכש';
+  if (text.includes('אישורי חשמל') || text.includes('רגולציה')) return 'אישורי חשמל/רגולציה';
+  if (text.includes('qa') || text.includes('בקרת איכות')) return 'QA/QC בקרת איכות';
+  if (text.includes('תכנון הנדסי')) return 'תכנון הנדסי';
+  return 'חזרה חתום + פתיחת פרויקט';
+}
 checkAuth();
 </script>
 </body>
