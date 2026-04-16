@@ -1451,7 +1451,7 @@ async function deleteClient(id) {
     const stage = mapDashboardToZohoStage(nextAction, blocker);
     await fetch(`${SUPABASE_URL}/functions/v1/zoho-sync`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` },
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${SUPABASE_KEY}` },
       body: JSON.stringify({ action: 'update_project_stage', client_id: clientId, stage: stage })
     });
   } catch(e) { console.log('Zoho sync:', e); }
