@@ -942,7 +942,7 @@ function openDetailModal(cid) {
       <button class="btn light" onclick="closeDetailModal(); openFilesModal('${c.id}')">📁 קבצים ומסמכים</button>
       <button class="btn light" onclick="emailClientReport('${c.id}')">📧 שלח סיכום במייל</button>
       <button class="btn light" style="margin-right:auto;" onclick="closeDetailModal()">סגור</button>
-      <button class="btn light" style="background:#fee2e2;color:#b91c1c;margin-right:auto;" onclick="deleteClient('${c.id}')">🗑️ מחק לקוח</button>
+      ${!c.zoho_project_deal_id && c.zoho_deal_id ? `<button class="btn light" style="background:#e0f2fe;color:#0369a1;" onclick="createProjectDeal('${c.id}')">🔗 קשר לZoho</button>` : ''}<button class="btn light" style="background:#fee2e2;color:#b91c1c;margin-right:auto;" onclick="deleteClient('${c.id}')">🗑️ מחק לקוח</button>
     </div>
   `;
   document.getElementById('detailModal').classList.add('active');
@@ -1482,7 +1482,26 @@ async function deleteClient(id) {
     });
   } catch(e) { console.log('Zoho sync:', e); }
 }
-function mapDashboardToZohoStage(nextAction, blocker) {
+async function createProjectDeal(clientId) {
+  showToast('⏳ יוצר פרויקט בZoho...', 'info');
+  try {
+    const r = await fetch(`${SUPABASE_URL}/functions/v1/zoho-sync`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${SUPABASE_KEY}` },
+      body: JSON.stringify({ action: 'create_project_deal', client_id: clientId })
+    });
+    const d = await r.json();
+    if (d.success) {
+      const c = clients.find(x => x.id === clientId);
+      if (c) { c.zoho_project_deal_id = d.project_deal_id; c.zoho_project_stage = d.stage; }
+      showToast('✅ פרויקט נוצר בZoho ניהול פרויקטים!', 'success');
+      loadAll();
+    } else {
+      showToast('שגיאה: ' + (d.error || 'לא ידוע'), 'error');
+    }
+  } catch(e) { showToast('שגיאת חיבור', 'error'); }
+}
+  function mapDashboardToZohoStage(nextAction, blocker) {
   async function updateZohoStage(clientId, stage) {
   if (!stage) return;
   try {
