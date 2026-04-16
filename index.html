@@ -874,12 +874,21 @@ function openDetailModal(cid) {
       </div>
       
       <div class="detail-section">
-        <h3>⚡ מצב נוכחי</h3>
-        <div style="font-size:12px; line-height:1.8;">
-          <div><b>חסם:</b> <span style="color:${c.risk==='high'?'#b42318':'#475569'}">${escapeHtml(blk)}</span></div>
-          <div><b>פעולה הבאה:</b> <span style="color:#0369a1; font-weight:600;">${escapeHtml(nAct)}</span></div>
-          <div><b>דדליין:</b> <span class="${soon(c.deadline)?'deadline soon':''}">${escapeHtml(c.deadline||'לא הוגדר')}</span></div>
-        </div>
+  <h3>⚡ מצב נוכחי</h3>
+  <div style="font-size:12px; line-height:1.8;">
+    <div><b>חסם:</b> <span style="color:${c.risk==='high'?'#b42318':'#475569'}">${escapeHtml(blk)}</span></div>
+    <div><b>פעולה הבאה:</b> <span style="color:#0369a1; font-weight:600;">${escapeHtml(nAct)}</span></div>
+    <div><b>דדליין:</b> <span class="${soon(c.deadline)?'deadline soon':''}">${escapeHtml(c.deadline||'לא הוגדר')}</span></div>
+    <div style="margin-top:6px;">
+      <b>📊 שלב Zoho:</b><br>
+      <select id="zoho_stage_${c.id}" onchange="updateZohoStage('${c.id}', this.value)" 
+        style="width:100%;margin-top:4px;padding:4px 8px;border-radius:6px;border:1px solid #e2e8f0;font-size:11px;direction:rtl;background:#f8fafc;">
+        <option value="">-- בחר שלב --</option>
+        ${['חזרה חתום + פתיחת פרויקט','תכנון ורגולציה','תכנון הנדסי','QA/QC בקרת איכות','אישורי חשמל/רגולציה','דרישות רכש','הזמנת ציוד','קבלת ציוד','תיאום התקנה','תיאום קבלני משנה','תיאום חברת חשמל','התקנה בשטח','בדיקת וסגירת ליקויים','חיבור לרשת/אישור סופי','סגירת פרויקט'].map(s=>`<option value="${s}" ${c.zoho_project_stage===s?'selected':''}>${s}</option>`).join('')}
+      </select>
+    </div>
+  </div>
+</div>
       </div>
       ${!isOff ? `
       <div class="detail-section">
@@ -917,6 +926,7 @@ function openDetailModal(cid) {
       <button class="btn light" onclick="closeDetailModal(); openFilesModal('${c.id}')">📁 קבצים ומסמכים</button>
       <button class="btn light" onclick="emailClientReport('${c.id}')">📧 שלח סיכום במייל</button>
       <button class="btn light" style="margin-right:auto;" onclick="closeDetailModal()">סגור</button>
+      <button class="btn light" style="background:#fee2e2;color:#b91c1c;margin-right:auto;" onclick="deleteClient('${c.id}')">🗑️ מחק לקוח</button>
     </div>
   `;
   document.getElementById('detailModal').classList.add('active');
@@ -1457,6 +1467,19 @@ async function deleteClient(id) {
   } catch(e) { console.log('Zoho sync:', e); }
 }
 function mapDashboardToZohoStage(nextAction, blocker) {
+  async function updateZohoStage(clientId, stage) {
+  if (!stage) return;
+  try {
+    await fetch(`${SUPABASE_URL}/functions/v1/zoho-sync`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${SUPABASE_KEY}` },
+      body: JSON.stringify({ action: 'update_project_stage', client_id: clientId, stage: stage })
+    });
+    const c = clients.find(x => x.id === clientId);
+    if (c) c.zoho_project_stage = stage;
+    showToast('✅ שלב עודכן ב-Zoho', 'success');
+  } catch(e) { showToast('שגיאה בעדכון Zoho', 'error'); }
+}
   const text = ((nextAction||'') + ' ' + (blocker||'')).toLowerCase();
   if (text.includes('סגירת פרויקט') || text.includes('סיום')) return 'סגירת פרויקט';
   if (text.includes('חיבור לרשת') || text.includes('אישור סופי')) return 'חיבור לרשת/אישור סופי';
